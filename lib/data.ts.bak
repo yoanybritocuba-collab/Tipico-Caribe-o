@@ -1,0 +1,625 @@
+// Mock Data for Típico Caribeño Restaurant
+
+import type { Section, Product, Combo, Event, Reservation, RestaurantInfo } from './types'
+
+export const restaurantInfo: RestaurantInfo = {
+  name: "Típico Caribeño",
+  address: "Carrer de la Marina, 25",
+  city: "Barcelona",
+  postalCode: "08005",
+  phone: "+34 932 123 456",
+  email: "info@tipicocaribeno.com",
+  openingHours: {
+    monday: { open: "12:00", close: "23:00" },
+    tuesday: { open: "12:00", close: "23:00" },
+    wednesday: { open: "12:00", close: "23:00" },
+    thursday: { open: "12:00", close: "23:00" },
+    friday: { open: "12:00", close: "00:00" },
+    saturday: { open: "12:00", close: "00:00" },
+    sunday: { open: "12:00", close: "22:00" }
+  },
+  socialMedia: {
+    instagram: "https://instagram.com/tipicocaribeno",
+    facebook: "https://facebook.com/tipicocaribeno"
+  },
+  googleMapsEmbed: "",
+  googleMapsLink: "https://maps.google.com/?q=Carrer+de+la+Marina+25+Barcelona"
+}
+
+export const initialSections: Section[] = [
+  {
+    id: "sec-1",
+    name: "Platos Fuertes",
+    nameEn: "Main Dishes",
+    description: "Nuestros platos principales de la cocina dominicana tradicional",
+    descriptionEn: "Our traditional Dominican main dishes",
+    order: 1,
+    isActive: true
+  },
+  {
+    id: "sec-2",
+    name: "Arroces",
+    nameEn: "Rice Dishes",
+    description: "Arroces tradicionales dominicanos cocinados con amor",
+    descriptionEn: "Traditional Dominican rice dishes cooked with love",
+    order: 2,
+    isActive: true
+  },
+  {
+    id: "sec-3",
+    name: "Caldos y Sopas",
+    nameEn: "Soups & Broths",
+    description: "Caldos reconfortantes y sopas tradicionales",
+    descriptionEn: "Comforting broths and traditional soups",
+    order: 3,
+    isActive: true
+  },
+  {
+    id: "sec-4",
+    name: "Mariscos",
+    nameEn: "Seafood",
+    description: "Frescos mariscos del Caribe",
+    descriptionEn: "Fresh Caribbean seafood",
+    order: 4,
+    isActive: true
+  },
+  {
+    id: "sec-5",
+    name: "Ensaladas",
+    nameEn: "Salads",
+    description: "Ensaladas frescas y saludables",
+    descriptionEn: "Fresh and healthy salads",
+    order: 5,
+    isActive: true
+  },
+  {
+    id: "sec-6",
+    name: "Postres",
+    nameEn: "Desserts",
+    description: "Dulces tradicionales dominicanos",
+    descriptionEn: "Traditional Dominican sweets",
+    order: 6,
+    isActive: true
+  },
+  {
+    id: "sec-7",
+    name: "Bebidas con Alcohol",
+    nameEn: "Alcoholic Drinks",
+    description: "Cervezas, rones y cócteles caribeños",
+    descriptionEn: "Caribbean beers, rums and cocktails",
+    order: 7,
+    isActive: true
+  },
+  {
+    id: "sec-8",
+    name: "Bebidas sin Alcohol",
+    nameEn: "Non-Alcoholic Drinks",
+    description: "Jugos naturales y refrescos",
+    descriptionEn: "Natural juices and soft drinks",
+    order: 8,
+    isActive: true
+  }
+]
+
+export const initialProducts: Product[] = [
+  // Platos Fuertes
+  {
+    id: "prod-1",
+    sectionId: "sec-1",
+    name: "Mangú con los Tres Golpes",
+    nameEn: "Mangú with Three Sides",
+    description: "Puré de plátano verde con huevos fritos, salami dominicano y queso frito",
+    descriptionEn: "Green plantain mash with fried eggs, Dominican salami and fried cheese",
+    price: 12.50,
+    image: "/images/mangu.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: ["eggs", "dairy"],
+    order: 1
+  },
+  {
+    id: "prod-2",
+    sectionId: "sec-1",
+    name: "Mofongo con Chicharrón",
+    nameEn: "Mofongo with Pork Crackling",
+    description: "Plátano verde majado con chicharrón de cerdo y salsa criolla",
+    descriptionEn: "Mashed green plantain with pork crackling and creole sauce",
+    price: 14.00,
+    image: "/images/mofongo.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: [],
+    order: 2
+  },
+  {
+    id: "prod-3",
+    sectionId: "sec-1",
+    name: "Pollo Guisado Dominicano",
+    nameEn: "Dominican Stewed Chicken",
+    description: "Pollo guisado al estilo dominicano con especias tradicionales",
+    descriptionEn: "Chicken stewed Dominican style with traditional spices",
+    price: 13.00,
+    image: "/images/pollo-guisado.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 3
+  },
+  {
+    id: "prod-4",
+    sectionId: "sec-1",
+    name: "Chivo Guisado",
+    nameEn: "Stewed Goat",
+    description: "Tierno chivo guisado en salsa criolla con hierbas aromáticas",
+    descriptionEn: "Tender goat stewed in creole sauce with aromatic herbs",
+    price: 18.00,
+    image: "/images/chivo-guisado.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 4
+  },
+  {
+    id: "prod-5",
+    sectionId: "sec-1",
+    name: "Tostones con Queso",
+    nameEn: "Fried Plantains with Cheese",
+    description: "Crujientes tostones servidos con queso frito derretido",
+    descriptionEn: "Crispy fried plantains served with melted fried cheese",
+    price: 8.00,
+    image: "/images/tostones.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["dairy"],
+    order: 5
+  },
+  // Arroces
+  {
+    id: "prod-6",
+    sectionId: "sec-2",
+    name: "Arroz con Habichuelas",
+    nameEn: "Rice with Beans",
+    description: "Clásico arroz blanco con habichuelas rojas guisadas",
+    descriptionEn: "Classic white rice with stewed red beans",
+    price: 8.50,
+    image: "/images/arroz-habichuelas.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 1
+  },
+  {
+    id: "prod-7",
+    sectionId: "sec-2",
+    name: "Locrio de Pollo",
+    nameEn: "Chicken Locrio",
+    description: "Arroz guisado con pollo al estilo dominicano",
+    descriptionEn: "Rice cooked with chicken Dominican style",
+    price: 11.00,
+    image: "/images/locrio.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: [],
+    order: 2
+  },
+  {
+    id: "prod-8",
+    sectionId: "sec-2",
+    name: "Arroz con Maíz",
+    nameEn: "Rice with Corn",
+    description: "Arroz cremoso con maíz tierno y especias",
+    descriptionEn: "Creamy rice with tender corn and spices",
+    price: 9.00,
+    image: "/images/arroz-maiz.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 3
+  },
+  // Caldos y Sopas
+  {
+    id: "prod-9",
+    sectionId: "sec-3",
+    name: "Sancocho Dominicano",
+    nameEn: "Dominican Sancocho",
+    description: "Caldo de siete carnes con tubérculos y vegetales. El plato nacional.",
+    descriptionEn: "Seven-meat broth with root vegetables. The national dish.",
+    price: 16.00,
+    image: "/images/sancocho.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: [],
+    order: 1
+  },
+  {
+    id: "prod-10",
+    sectionId: "sec-3",
+    name: "Sopa de Pollo",
+    nameEn: "Chicken Soup",
+    description: "Reconfortante sopa de pollo con fideos y vegetales",
+    descriptionEn: "Comforting chicken soup with noodles and vegetables",
+    price: 10.00,
+    image: "/images/sopa-pollo.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["gluten"],
+    order: 2
+  },
+  {
+    id: "prod-11",
+    sectionId: "sec-3",
+    name: "Asopao de Camarones",
+    nameEn: "Shrimp Asopao",
+    description: "Sopa cremosa de arroz con camarones frescos",
+    descriptionEn: "Creamy rice soup with fresh shrimp",
+    price: 15.00,
+    image: "/images/asopao.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["shellfish"],
+    order: 3
+  },
+  // Mariscos
+  {
+    id: "prod-12",
+    sectionId: "sec-4",
+    name: "Mofongo con Camarones",
+    nameEn: "Mofongo with Shrimp",
+    description: "Mofongo servido con camarones al ajillo en salsa criolla",
+    descriptionEn: "Mofongo served with garlic shrimp in creole sauce",
+    price: 18.00,
+    image: "/images/mofongo-camarones.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: ["shellfish"],
+    order: 1
+  },
+  {
+    id: "prod-13",
+    sectionId: "sec-4",
+    name: "Pescado Frito",
+    nameEn: "Fried Fish",
+    description: "Pescado entero frito crujiente con tostones y ensalada",
+    descriptionEn: "Crispy whole fried fish with plantains and salad",
+    price: 16.00,
+    image: "/images/pescado-frito.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["fish"],
+    order: 2
+  },
+  {
+    id: "prod-14",
+    sectionId: "sec-4",
+    name: "Camarones al Coco",
+    nameEn: "Coconut Shrimp",
+    description: "Camarones rebozados en coco con salsa de mango",
+    descriptionEn: "Coconut-crusted shrimp with mango sauce",
+    price: 17.00,
+    image: "/images/camarones-coco.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["shellfish", "tree nuts"],
+    order: 3
+  },
+  // Ensaladas
+  {
+    id: "prod-15",
+    sectionId: "sec-5",
+    name: "Ensalada Verde",
+    nameEn: "Green Salad",
+    description: "Lechuga fresca, tomate, aguacate y vinagreta de limón",
+    descriptionEn: "Fresh lettuce, tomato, avocado and lime vinaigrette",
+    price: 7.00,
+    image: "/images/ensalada-verde.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 1
+  },
+  {
+    id: "prod-16",
+    sectionId: "sec-5",
+    name: "Ensalada Rusa Dominicana",
+    nameEn: "Dominican Russian Salad",
+    description: "Tradicional ensalada rusa con mayonesa casera",
+    descriptionEn: "Traditional Russian salad with homemade mayonnaise",
+    price: 6.50,
+    image: "/images/ensalada-rusa.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["eggs"],
+    order: 2
+  },
+  // Postres
+  {
+    id: "prod-17",
+    sectionId: "sec-6",
+    name: "Habichuelas con Dulce",
+    nameEn: "Sweet Cream of Beans",
+    description: "Postre tradicional de habichuelas rojas con leche de coco y especias",
+    descriptionEn: "Traditional dessert of red beans with coconut milk and spices",
+    price: 5.50,
+    image: "/images/habichuelas-dulce.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: ["dairy"],
+    order: 1
+  },
+  {
+    id: "prod-18",
+    sectionId: "sec-6",
+    name: "Flan de Coco",
+    nameEn: "Coconut Flan",
+    description: "Cremoso flan de coco con caramelo",
+    descriptionEn: "Creamy coconut flan with caramel",
+    price: 5.00,
+    image: "/images/flan-coco.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["eggs", "dairy"],
+    order: 2
+  },
+  {
+    id: "prod-19",
+    sectionId: "sec-6",
+    name: "Tres Leches",
+    nameEn: "Three Milks Cake",
+    description: "Esponjoso bizcocho bañado en tres tipos de leche",
+    descriptionEn: "Sponge cake soaked in three types of milk",
+    price: 6.00,
+    image: "/images/tres-leches.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["eggs", "dairy", "gluten"],
+    order: 3
+  },
+  {
+    id: "prod-20",
+    sectionId: "sec-6",
+    name: "Majarete",
+    nameEn: "Majarete",
+    description: "Pudín de maíz dulce con canela",
+    descriptionEn: "Sweet corn pudding with cinnamon",
+    price: 4.50,
+    image: "/images/majarete.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["dairy"],
+    order: 4
+  },
+  // Bebidas con Alcohol
+  {
+    id: "prod-21",
+    sectionId: "sec-7",
+    name: "Presidente",
+    nameEn: "Presidente Beer",
+    description: "Cerveza dominicana premium",
+    descriptionEn: "Premium Dominican beer",
+    price: 4.00,
+    image: "/images/presidente.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["gluten"],
+    order: 1
+  },
+  {
+    id: "prod-22",
+    sectionId: "sec-7",
+    name: "Mamajuana",
+    nameEn: "Mamajuana",
+    description: "Tradicional bebida dominicana de ron, vino y hierbas",
+    descriptionEn: "Traditional Dominican drink of rum, wine and herbs",
+    price: 7.00,
+    image: "/images/mamajuana.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 2
+  },
+  {
+    id: "prod-23",
+    sectionId: "sec-7",
+    name: "Mojito Caribeño",
+    nameEn: "Caribbean Mojito",
+    description: "Refrescante mojito con ron dominicano",
+    descriptionEn: "Refreshing mojito with Dominican rum",
+    price: 8.00,
+    image: "/images/mojito.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 3
+  },
+  {
+    id: "prod-24",
+    sectionId: "sec-7",
+    name: "Piña Colada",
+    nameEn: "Piña Colada",
+    description: "Cóctel tropical de ron, piña y coco",
+    descriptionEn: "Tropical cocktail with rum, pineapple and coconut",
+    price: 8.50,
+    image: "/images/pina-colada.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["dairy"],
+    order: 4
+  },
+  // Bebidas sin Alcohol
+  {
+    id: "prod-25",
+    sectionId: "sec-8",
+    name: "Morir Soñando",
+    nameEn: "Morir Soñando",
+    description: "Bebida cremosa de naranja y leche",
+    descriptionEn: "Creamy orange and milk drink",
+    price: 4.50,
+    image: "/images/morir-sonando.jpg",
+    isAvailable: true,
+    isSuggestion: true,
+    allergens: ["dairy"],
+    order: 1
+  },
+  {
+    id: "prod-26",
+    sectionId: "sec-8",
+    name: "Jugo de Chinola",
+    nameEn: "Passion Fruit Juice",
+    description: "Jugo natural de maracuyá",
+    descriptionEn: "Natural passion fruit juice",
+    price: 4.00,
+    image: "/images/chinola.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 2
+  },
+  {
+    id: "prod-27",
+    sectionId: "sec-8",
+    name: "Batida de Lechosa",
+    nameEn: "Papaya Smoothie",
+    description: "Batido cremoso de papaya con leche",
+    descriptionEn: "Creamy papaya smoothie with milk",
+    price: 5.00,
+    image: "/images/batida-lechosa.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: ["dairy"],
+    order: 3
+  },
+  {
+    id: "prod-28",
+    sectionId: "sec-8",
+    name: "Agua de Coco",
+    nameEn: "Coconut Water",
+    description: "Refrescante agua de coco natural",
+    descriptionEn: "Refreshing natural coconut water",
+    price: 3.50,
+    image: "/images/agua-coco.jpg",
+    isAvailable: true,
+    isSuggestion: false,
+    allergens: [],
+    order: 4
+  }
+]
+
+export const initialCombos: Combo[] = [
+  {
+    id: "combo-1",
+    name: "Combo Familiar",
+    nameEn: "Family Combo",
+    description: "Sancocho grande, arroz con habichuelas, tostones y 4 bebidas",
+    descriptionEn: "Large sancocho, rice with beans, fried plantains and 4 drinks",
+    price: 45.00,
+    originalPrice: 55.00,
+    image: "/images/combo-familiar.jpg",
+    productIds: ["prod-9", "prod-6", "prod-5", "prod-25"],
+    isActive: true
+  },
+  {
+    id: "combo-2",
+    name: "Combo Pareja",
+    nameEn: "Couple Combo",
+    description: "2 platos principales + 2 bebidas + postre para compartir",
+    descriptionEn: "2 main dishes + 2 drinks + dessert to share",
+    price: 32.00,
+    originalPrice: 40.00,
+    image: "/images/combo-pareja.jpg",
+    productIds: ["prod-1", "prod-2", "prod-25", "prod-17"],
+    isActive: true
+  },
+  {
+    id: "combo-3",
+    name: "Almuerzo Ejecutivo",
+    nameEn: "Executive Lunch",
+    description: "Plato del día + ensalada + bebida + postre",
+    descriptionEn: "Dish of the day + salad + drink + dessert",
+    price: 14.00,
+    originalPrice: 18.00,
+    image: "/images/combo-ejecutivo.jpg",
+    productIds: ["prod-3", "prod-15", "prod-26", "prod-18"],
+    isActive: true
+  }
+]
+
+export const initialEvents: Event[] = [
+  {
+    id: "event-1",
+    name: "Noche de Bachata",
+    nameEn: "Bachata Night",
+    description: "Disfruta de música en vivo y baile de bachata con DJ invitado",
+    descriptionEn: "Enjoy live music and bachata dancing with guest DJ",
+    date: "2026-04-10",
+    startTime: "20:00",
+    endTime: "01:00",
+    image: "/images/bachata-night.jpg",
+    occupiesVenue: false,
+    isActive: true
+  },
+  {
+    id: "event-2",
+    name: "Carnaval Dominicano",
+    nameEn: "Dominican Carnival",
+    description: "Celebración especial con máscaras, música y platos típicos del carnaval",
+    descriptionEn: "Special celebration with masks, music and typical carnival dishes",
+    date: "2026-04-15",
+    startTime: "18:00",
+    endTime: "00:00",
+    image: "/images/carnaval.jpg",
+    occupiesVenue: true,
+    isActive: true
+  },
+  {
+    id: "event-3",
+    name: "Clase de Cocina Dominicana",
+    nameEn: "Dominican Cooking Class",
+    description: "Aprende a preparar Mangú y Sancocho con nuestro chef",
+    descriptionEn: "Learn to prepare Mangú and Sancocho with our chef",
+    date: "2026-04-20",
+    startTime: "11:00",
+    endTime: "14:00",
+    image: "/images/cooking-class.jpg",
+    occupiesVenue: true,
+    isActive: true
+  }
+]
+
+export const initialReservations: Reservation[] = [
+  {
+    id: "res-1",
+    name: "María García",
+    email: "maria@example.com",
+    phone: "+34 612 345 678",
+    date: "2026-04-05",
+    time: "20:00",
+    guests: 4,
+    notes: "Cumpleaños, por favor mesa cerca de la ventana",
+    status: "confirmed",
+    createdAt: "2026-04-01T10:00:00Z"
+  },
+  {
+    id: "res-2",
+    name: "Carlos Rodríguez",
+    email: "carlos@example.com",
+    phone: "+34 623 456 789",
+    date: "2026-04-06",
+    time: "21:00",
+    guests: 2,
+    notes: "",
+    status: "pending",
+    createdAt: "2026-04-02T14:30:00Z"
+  },
+  {
+    id: "res-3",
+    name: "Ana Martínez",
+    email: "ana@example.com",
+    phone: "+34 634 567 890",
+    date: "2026-04-07",
+    time: "13:00",
+    guests: 6,
+    notes: "Reunión de trabajo, necesitamos zona tranquila",
+    status: "pending",
+    createdAt: "2026-04-02T16:45:00Z"
+  }
+]
