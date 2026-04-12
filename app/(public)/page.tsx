@@ -79,7 +79,11 @@ export default function HomePage() {
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hola, me gustaría hacer una reserva")}`
 
   if (isLoading || isLoadingPortada) {
-    return <div className="flex min-h-screen items-center justify-center bg-black"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+      </div>
+    )
   }
 
   return (
@@ -101,12 +105,12 @@ export default function HomePage() {
           <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">{subtitulo}</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/carta">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full">
+              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700">
                 {t('hero.cta.menu')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full">
+              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600">
                 {t('hero.cta.reserve')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </a>
@@ -172,11 +176,13 @@ export default function HomePage() {
             <p className="text-lg text-gray-400 max-w-2xl mx-auto">{t('home.favoritesDescription')}</p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {suggestions.map((product) => (<SuggestionCard key={product.id} product={product} />))}
+            {suggestions.map((product) => (
+              <SuggestionCard key={product.id} product={product} />
+            ))}
           </div>
           <div className="mt-12 text-center">
             <Link href="/carta">
-              <Button variant="outline" size="lg" className="rounded-full px-8">
+              <Button variant="outline" size="lg" className="rounded-full px-8 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black">
                 {t('home.discoverMenu')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
