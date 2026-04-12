@@ -1,41 +1,48 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    
+    if (savedTheme) {
+      setTheme(savedTheme)
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+    } else {
+      const isDark = prefersDark
+      setTheme(isDark ? 'dark' : 'light')
+      document.documentElement.classList.toggle('dark', isDark)
+    }
   }, [])
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+    document.documentElement.classList.toggle('dark', newTheme === 'dark')
   }
 
   if (!mounted) {
-    return (
-      <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
-        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6" />
-      </Button>
-    )
+    return <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
+      <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+    </Button>
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12"
-      onClick={toggleTheme}
-      title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-    >
-      <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-red-600" />
-      <Moon className="absolute h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-red-600" />
-      <span className="sr-only">Toggle theme</span>
+    <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
+      {theme === 'dark' ? (
+        <Sun className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+      ) : (
+        <Moon className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+      )}
     </Button>
   )
 }
