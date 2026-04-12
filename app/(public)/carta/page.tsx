@@ -9,12 +9,14 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
 import { useI18n } from '@/lib/i18n'
+import { useTranslate } from '@/hooks/useTranslate'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
-  const { t, language, getLocalizedField } = useI18n()
+  const { t, language } = useI18n()
+  const { translateCategory, translateProduct } = useTranslate()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
@@ -139,7 +141,7 @@ export default function MenuPage() {
   const handleAddToCart = (product: Producto, productId: string) => {
     const quantity = quantities[productId] || 1
     if (quantity > 0) {
-      const productName = getLocalizedField(product, 'nombre')
+      const { name: productName } = translateProduct(product)
       addToCart({ id: product.id, name: productName, price: product.precio, image: product.imagenUrl }, quantity)
       toast.success(`${productName} agregado`, { duration: 2000 })
       setQuantities(prev => ({ ...prev, [productId]: 0 }))
@@ -169,10 +171,16 @@ export default function MenuPage() {
   }
 
   interface MenuCategory { id: string; name: string; nameEn: string; type: 'suggestion' | 'all' | 'normal' }
+  
   const menuCategories: MenuCategory[] = [
     ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: 'Sugerencias del Chef', nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
     { id: 'todo', name: 'Todo', nameEn: 'All', type: 'all' as const },
-    ...categories.filter(cat => cat.activo === true).map(cat => ({ id: cat.id, name: cat.nombre, nameEn: cat.nameEn || '', type: 'normal' as const }))
+    ...categories.filter(cat => cat.activo === true).map(cat => ({ 
+      id: cat.id, 
+      name: translateCategory(cat),
+      nameEn: cat.nameEn || '', 
+      type: 'normal' as const 
+    }))
   ]
 
   const availableCategories = menuCategories.filter(cat => {
@@ -186,7 +194,11 @@ export default function MenuPage() {
     categories.forEach(cat => {
       const catProducts = activeProducts.filter(p => p.categoriaGlobalId === cat.id).sort((a, b) => (a.orden || 0) - (b.orden || 0))
       if (catProducts.length > 0) {
-        grouped.push({ categoryId: cat.id, categoryName: getLocalizedField(cat, 'name'), products: catProducts })
+        grouped.push({ 
+          categoryId: cat.id, 
+          categoryName: translateCategory(cat), 
+          products: catProducts 
+        })
       }
     })
     return grouped
@@ -208,8 +220,7 @@ export default function MenuPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
             const quantity = quantities[product.id] || 0
-            const productName = getLocalizedField(product, 'nombre')
-            const productDescription = getLocalizedField(product, 'descripcion')
+            const { name: productName, description: productDescription } = translateProduct(product)
             const isSuggested = product.destacado === true
             return (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
@@ -239,8 +250,7 @@ export default function MenuPage() {
       <div className="space-y-4">
         {productsList.map((product) => {
           const quantity = quantities[product.id] || 0
-          const productName = getLocalizedField(product, 'nombre')
-          const productDescription = getLocalizedField(product, 'descripcion')
+          const { name: productName, description: productDescription } = translateProduct(product)
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
