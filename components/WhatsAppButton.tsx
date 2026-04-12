@@ -2,77 +2,53 @@
 
 import { useState, useEffect } from 'react'
 import { MessageCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
-// Componente de enlace que oculta la URL en la barra de estado
-function HiddenWhatsAppLink({ href, children, onMouseEnter, onMouseLeave, className }: { 
-  href: string; 
-  children: React.ReactNode; 
-  onMouseEnter?: () => void; 
-  onMouseLeave?: () => void;
-  className?: string;
-}) {
-  const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    if (onMouseEnter) onMouseEnter()
+export function WhatsAppButton() {
+  const [whatsappNumber, setWhatsappNumber] = useState('34634492023')
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const loadWhatsapp = async () => {
+      try {
+        const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          if (data.whatsapp) {
+            const cleanNumber = data.whatsapp.replace(/[^0-9]/g, '')
+            setWhatsappNumber(cleanNumber)
+          }
+        }
+      } catch (error) {
+        console.error('Error cargando WhatsApp:', error)
+      }
+    }
+    loadWhatsapp()
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 300)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleClick = () => {
+    window.open(`https://wa.me/${whatsappNumber}`, '_blank')
   }
 
   return (
-    <a 
-      href={href} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={onMouseLeave}
-      className={className}
+    <button
+      onClick={handleClick}
+      className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-300 hover:bg-green-600 hover:scale-110 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20 pointer-events-none'
+      }`}
+      aria-label="WhatsApp"
     >
-      {children}
-    </a>
-  )
-}
-
-export function WhatsAppButton() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-
-  const whatsappNumber = "34682491444"
-  const message = "Hola, me gustaría hacer una reserva"
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  return (
-    <div
-      className={cn(
-        "fixed bottom-6 right-6 z-50 transition-all duration-500 transform",
-        isVisible ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0"
-      )}
-    >
-      <div className="absolute inset-0 rounded-full animate-ping-slow bg-green-400/60" />
-      <div className="absolute inset-0 rounded-full animate-ping-slower bg-green-400/40" />
-      <div className="absolute inset-0 rounded-full animate-ping-slowest bg-green-400/20" />
-      
-      {isHovered && (
-        <div className="absolute inset-0 rounded-full animate-ping bg-green-500/30" />
-      )}
-
-      <HiddenWhatsAppLink
-        href={whatsappLink}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className={cn(
-          "relative flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg transition-all duration-300",
-          "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700",
-          "hover:scale-110 active:scale-95"
-        )}
-      >
-        <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-      </HiddenWhatsAppLink>
-    </div>
+      <MessageCircle className="h-7 w-7" />
+    </button>
   )
 }

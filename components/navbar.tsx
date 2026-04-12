@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, UserCog } from 'lucide-react'
+import { Menu, X, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
@@ -49,7 +49,6 @@ export function Navbar() {
           setLogoUrl(data.logoUrl || '/logo.png')
           setNombreWeb(data.nombreWeb || "Gaby's Club")
           
-          // Configurar tamaño del logo
           const tamaño = data.logoTamaño || 'medio'
           const tamaños: Record<string, string> = {
             pequeño: 'h-12 sm:h-14 md:h-16 lg:h-20 xl:h-24',
@@ -58,7 +57,6 @@ export function Navbar() {
           }
           setLogoTamaño(tamaños[tamaño] || tamaños.medio)
           
-          // Configurar posición del logo
           const posicion = data.logoPosicion || 'izquierda'
           const posiciones: Record<string, string> = {
             izquierda: 'justify-start',
@@ -95,14 +93,14 @@ export function Navbar() {
       <header className={cn("fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-transform duration-300", isVisible ? "translate-y-0" : "-translate-y-full")}>
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex items-center justify-between py-2 sm:py-3">
-            {/* Logo - Configurable */}
+            {/* Logo */}
             <HiddenLink href="/" className={`flex items-center gap-0 flex-shrink-0 ${logoPosicion}`}>
               <img src={logoUrl} alt={nombreWeb} className={`${logoTamaño} object-contain`} />
               <div className="flex flex-col leading-tight">
-                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-red-600 bg-clip-text text-transparent">
+                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent">
                   Gaby's
                 </span>
-                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-red-600 bg-clip-text text-transparent -ml-1 sm:-ml-2">
+                <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-yellow-500 to-amber-600 bg-clip-text text-transparent -ml-1 sm:-ml-2">
                   Club
                 </span>
               </div>
@@ -113,11 +111,15 @@ export function Navbar() {
               <ThemeToggle />
               <HiddenLink href="/admin/login">
                 <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
-                  <UserCog className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-600 dark:text-blue-400" />
+                  <Shield className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
                 </Button>
               </HiddenLink>
               <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <X className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-red-600 dark:text-red-400" /> : <Menu className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-red-600 dark:text-red-400" />}
+                {isOpen ? (
+                  <X className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+                ) : (
+                  <Menu className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+                )}
               </Button>
             </div>
           </div>
@@ -126,7 +128,7 @@ export function Navbar() {
             <div className="border-t mt-2 py-3 sm:py-4">
               <div className="flex flex-col space-y-2 sm:space-y-3 px-2 sm:px-4">
                 {navLinks.map((link) => (
-                  <HiddenLink key={link.href} href={link.href} onClick={() => setIsOpen(false)} className={cn('block rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium', pathname === link.href ? 'bg-gradient-to-r from-blue-600 to-red-600 text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
+                  <HiddenLink key={link.href} href={link.href} onClick={() => setIsOpen(false)} className={cn('block rounded-md px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base font-medium', pathname === link.href ? 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
                     {t(link.labelKey)}
                   </HiddenLink>
                 ))}
