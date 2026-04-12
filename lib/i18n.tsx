@@ -57,10 +57,10 @@ const translations: Translations = {
   // About
   'about.title': { es: 'Sobre Nosotros', en: 'About Us', fr: 'À propos', de: 'Über uns', ru: 'О нас' },
   'about.story.title': { es: 'Nuestra Historia', en: 'Our Story', fr: 'Notre Histoire', de: 'Unsere Geschichte', ru: 'Наша история' },
-  'about.story.p1': { es: 'Típico Caribeño nació del sueño de traer los auténticos sabores de la República Dominicana a Barcelona.', en: 'Típico Caribeño was born from the dream of bringing authentic Dominican flavors to Barcelona.', fr: 'Típico Caribeño est né du rêve d\'apporter les saveurs authentiques de la République dominicaine à Barcelone.', de: 'Típico Caribeño wurde aus dem Traum geboren, authentische dominikanische Aromen nach Barcelona zu bringen.', ru: 'Típico Caribeño родился из мечты привезти аутентичные доминиканские вкусы в Барселону.' },
+  'about.story.p1': { es: 'Gaby\'s Club nació del sueño de traer los auténticos sabores del Caribe a Barcelona.', en: 'Gaby\'s Club was born from the dream of bringing authentic Caribbean flavors to Barcelona.', fr: 'Gaby\'s Club est né du rêve d\'apporter les saveurs authentiques des Caraïbes à Barcelone.', de: 'Gaby\'s Club wurde aus dem Traum geboren, authentische karibische Aromen nach Barcelona zu bringen.', ru: 'Gaby\'s Club родился из мечты привезти аутентичные карибские вкусы в Барселону.' },
   'about.story.p2': { es: 'Cada plato es preparado con recetas familiares transmitidas por generaciones, usando ingredientes frescos y las especias tradicionales que dan a nuestra cocina su sabor único.', en: 'Each dish is prepared with family recipes passed down through generations, using fresh ingredients and traditional spices that give our cuisine its unique flavor.', fr: 'Chaque plat est préparé avec des recettes familiales transmises de génération en génération, en utilisant des ingrédients frais et des épices traditionnelles qui donnent à notre cuisine sa saveur unique.', de: 'Jedes Gericht wird mit Familienrezepten zubereitet, die über Generationen weitergegeben wurden, unter Verwendung frischer Zutaten und traditioneller Gewürze, die unserer Küche ihren einzigartigen Geschmack verleihen.', ru: 'Каждое блюдо готовится по семейным рецептам, передаваемым из поколения в поколение, с использованием свежих ингредиентов и традиционных специй, которые придают нашей кухне неповторимый вкус.' },
   'about.cuisine.title': { es: 'Nuestra Cocina', en: 'Our Cuisine', fr: 'Notre Cuisine', de: 'Unsere Küche', ru: 'Наша кухня' },
-  'about.cuisine.p1': { es: 'La cocina dominicana es una fusión de influencias taínas, españolas y africanas que resulta en sabores únicos y reconfortantes.', en: 'Dominican cuisine is a fusion of Taíno, Spanish and African influences that results in unique and comforting flavors.', fr: 'La cuisine dominicaine est une fusion d\'influences taïnos, espagnoles et africaines qui donne des saveurs uniques et réconfortantes.', de: 'Die dominikanische Küche ist eine Fusion aus Taíno-, spanischen und afrikanischen Einflüssen, die einzigartige und wohltuende Aromen hervorbringt.', ru: 'Доминиканская кухня представляет собой смесь влияний таино, испанцев и африканцев, что придает уникальный и уютный вкус.' },
+  'about.cuisine.p1': { es: 'La cocina caribeña es una fusión de influencias que resulta en sabores únicos y reconfortantes.', en: 'Caribbean cuisine is a fusion of influences that results in unique and comforting flavors.', fr: 'La cuisine caribéenne est une fusion d\'influences qui donne des saveurs uniques et réconfortantes.', de: 'Die karibische Küche ist eine Fusion von Einflüssen, die einzigartige und wohltuende Aromen hervorbringt.', ru: 'Карибская кухня представляет собой смесь влияний, что придает уникальный и уютный вкус.' },
   
   // Location
   'location.title': { es: 'Encuéntranos', en: 'Find Us', fr: 'Trouvez-nous', de: 'Finden Sie uns', ru: 'Найдите нас' },
@@ -107,7 +107,7 @@ const translations: Translations = {
   
   // Carousel
   'carousel.main.title': { es: 'Platos Fuertes', en: 'Main Dishes', fr: 'Plats principaux', de: 'Hauptgerichte', ru: 'Основные блюда' },
-  'carousel.main.subtitle': { es: 'Sabores auténticos de la República Dominicana', en: 'Authentic flavors of the Dominican Republic', fr: 'Saveurs authentiques de la République dominicaine', de: 'Authentische Aromen der Dominikanischen Republik', ru: 'Аутентичные вкусы Доминиканской Республики' },
+  'carousel.main.subtitle': { es: 'Sabores auténticos del Caribe', en: 'Authentic Caribbean flavors', fr: 'Saveurs authentiques des Caraïbes', de: 'Authentische karibische Aromen', ru: 'Аутентичные карибские вкусы' },
   'carousel.salads.title': { es: 'Ensaladas Frescas', en: 'Fresh Salads', fr: 'Salades fraîches', de: 'Frische Salate', ru: 'Свежие салаты' },
   'carousel.salads.subtitle': { es: 'Ingredientes naturales y saludables', en: 'Natural and healthy ingredients', fr: 'Ingrédients naturels et sains', de: 'Natürliche und gesunde Zutaten', ru: 'Натуральные и полезные ингредиенты' },
   'carousel.drinks.title': { es: 'Bebidas Tropicales', en: 'Tropical Drinks', fr: 'Boissons tropicales', de: 'Tropische Getränke', ru: 'Тропические напитки' },
@@ -115,7 +115,7 @@ const translations: Translations = {
   'carousel.desserts.title': { es: 'Postres Caseros', en: 'Homemade Desserts', fr: 'Desserts maison', de: 'Hausgemachte Desserts', ru: 'Домашние десерты' },
   'carousel.desserts.subtitle': { es: 'Dulce tentación tradicional', en: 'Traditional sweet temptation', fr: 'Douce tentation traditionnelle', de: 'Traditionelle süße Versuchung', ru: 'Традиционное сладкое искушение' },
   'carousel.meat.title': { es: 'Parrillada Caribeña', en: 'Caribbean Grill', fr: 'Grillade caribéenne', de: 'Karibischer Grill', ru: 'Карибский гриль' },
-  'carousel.meat.subtitle': { es: 'Carnes a la brasa con toque dominicano', en: 'Grilled meats with Dominican touch', fr: 'Viandes grillées avec touche dominicaine', de: 'Gegrilltes Fleisch mit dominikanischer Note', ru: 'Мясо на гриле с доминиканским акцентом' },
+  'carousel.meat.subtitle': { es: 'Carnes a la brasa con toque caribeño', en: 'Grilled meats with Caribbean touch', fr: 'Viandes grillées avec touche caribéenne', de: 'Gegrilltes Fleisch mit karibischer Note', ru: 'Мясо на гриле с карибским акцентом' },
   'carousel.grilled.title': { es: 'Carnes Asadas', en: 'Roasted Meats', fr: 'Viandes rôties', de: 'Gebratenes Fleisch', ru: 'Жареное мясо' },
   'carousel.grilled.subtitle': { es: 'Jugosidad y tradición', en: 'Juicy and traditional', fr: 'Juteux et traditionnel', de: 'Saftig und traditionell', ru: 'Сочное и традиционное' },
 
@@ -136,7 +136,7 @@ const translations: Translations = {
   'home.favoritesDescription': { es: 'Los favoritos de nuestros comensales, seleccionados por el chef', en: 'Our diners favorites, selected by the chef', fr: 'Les favoris de nos convives, sélectionnés par le chef', de: 'Die Favoriten unserer Gäste, ausgewählt vom Küchenchef', ru: 'Любимые блюда наших гостей, выбранные шеф-поваром' },
   'home.discoverMenu': { es: 'Descubrir toda la carta', en: 'Discover the full menu', fr: 'Découvrir toute la carte', de: 'Entdecken Sie die gesamte Speisekarte', ru: 'Откройте полное меню' },
   'home.cta.title': { es: '¿Listo para una experiencia caribeña?', en: 'Ready for a Caribbean experience?', fr: 'Prêt pour une expérience caribéenne?', de: 'Bereit für ein karibisches Erlebnis?', ru: 'Готовы к карибскому опыту?' },
-  'home.cta.subtitle': { es: 'Reserva tu mesa y disfruta de los auténticos sabores de la República Dominicana', en: 'Book your table and enjoy the authentic flavors of the Dominican Republic', fr: 'Réservez votre table et profitez des saveurs authentiques de la République dominicaine', de: 'Buchen Sie Ihren Tisch und genießen Sie die authentischen Aromen der Dominikanischen Republik', ru: 'Забронируйте столик и насладитесь аутентичными вкусами Доминиканской Республики' },
+  'home.cta.subtitle': { es: 'Reserva tu mesa y disfruta de los auténticos sabores del Caribe', en: 'Book your table and enjoy the authentic Caribbean flavors', fr: 'Réservez votre table et profitez des saveurs authentiques des Caraïbes', de: 'Buchen Sie Ihren Tisch und genießen Sie die authentischen karibischen Aromen', ru: 'Забронируйте столик и насладитесь аутентичными карибскими вкусами' },
   'home.cta.button': { es: 'Reservar ahora', en: 'Book now', fr: 'Réserver maintenant', de: 'Jetzt buchen', ru: 'Забронировать сейчас' },
   
   // Admin
@@ -205,6 +205,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }
 
   const getLocalizedField = (item: any, field: string): string => {
+    // Para categorías: nombre, nameEn, nameFr, nameDe, nameRu
+    // Para productos: nombre, nameEn, nameFr, nameDe, nameRu, descripcion, descriptionEn, etc.
+    
+    if (!item) return ''
+    
     if (language === 'en' && item[`${field}En`]) {
       return item[`${field}En`]
     }
