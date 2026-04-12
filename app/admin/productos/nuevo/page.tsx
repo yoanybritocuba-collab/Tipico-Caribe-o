@@ -16,15 +16,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { getCategoriasActivasGlobales, createProducto, uploadImage, type CategoriaGlobal } from '@/lib/firebase-services'
-import { translateText } from '@/lib/translate'
+import { translateToAllLanguages } from '@/lib/translate'
 import { toast } from 'sonner'
-
-const LANGUAGES = [
-  { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Français' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'ru', name: 'Русский' }
-]
 
 export default function NewProductPage() {
   const router = useRouter()
@@ -72,19 +65,6 @@ export default function NewProductPage() {
     }
   }
 
-  const translateToAllLanguages = async (text: string) => {
-    const translations: Record<string, string> = { es: text }
-    for (const lang of LANGUAGES) {
-      try {
-        translations[lang.code] = await translateText(text, lang.code)
-      } catch (error) {
-        console.error(`Error traduciendo a ${lang.code}:`, error)
-        translations[lang.code] = text
-      }
-    }
-    return translations
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -94,7 +74,7 @@ export default function NewProductPage() {
     }
 
     setIsSaving(true)
-    toast.loading('Traduciendo nombre y descripción a 4 idiomas...', { id: 'saving' })
+    toast.loading('Guardando y traduciendo a 4 idiomas...', { id: 'saving' })
 
     try {
       const [nameTranslations, descTranslations] = await Promise.all([
@@ -129,7 +109,7 @@ export default function NewProductPage() {
         orden: Date.now(),
       })
 
-      toast.success('Producto creado y traducido a 4 idiomas', { id: 'saving' })
+      toast.success('Producto guardado y traducido a Inglés, Francés, Alemán y Ruso', { id: 'saving' })
       router.push('/admin/productos')
     } catch (error) {
       console.error('Error creating product:', error)
@@ -291,16 +271,11 @@ export default function NewProductPage() {
           </CardContent>
         </Card>
 
-        <div className="flex gap-3">
-          <Button type="submit" disabled={isSaving} className="flex-1 bg-gradient-to-r from-green-600 to-green-500">
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <Languages className="mr-2 h-4 w-4" />
-            {isSaving ? 'Traduciendo...' : 'Guardar y traducir'}
-          </Button>
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancelar
-          </Button>
-        </div>
+        <Button type="submit" disabled={isSaving} className="w-full bg-gradient-to-r from-green-600 to-green-500">
+          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Languages className="mr-2 h-4 w-4" />
+          {isSaving ? 'Guardando y traduciendo...' : 'Guardar y traducir'}
+        </Button>
       </form>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>

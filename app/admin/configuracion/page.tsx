@@ -18,6 +18,7 @@ import { getAuth, updateProfile } from 'firebase/auth'
 import { app, db } from '@/lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/firebase-services'
+import { translateToAllLanguages } from '@/lib/translate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 export default function ConfiguracionPage() {
@@ -71,7 +72,8 @@ export default function ConfiguracionPage() {
   const [footerBgColor, setFooterBgColor] = useState('#1a1a1a')
   const [footerTextColor, setFooterTextColor] = useState('#9ca3af')
 
-  // Cargar configuración
+  const fuentes = ['Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New', 'Impact', 'Comic Sans MS', 'Trebuchet MS', 'Montserrat', 'Open Sans', 'Roboto']
+
   useEffect(() => {
     const loadConfig = async () => {
       try {
@@ -86,8 +88,6 @@ export default function ConfiguracionPage() {
           })
           setCartaTitulo(data.cartaTitulo || 'La Carta')
           setCartaImagen(data.cartaImagen || '')
-          
-          // Línea informativa
           setLineaActiva(data.lineaActiva || false)
           setLineaTexto(data.lineaTexto || '')
           setLineaColorTexto(data.lineaColorTexto || '#ffffff')
@@ -98,7 +98,6 @@ export default function ConfiguracionPage() {
           setLineaTiempoEntre(data.lineaTiempoEntre || 2)
           setLineaAncho(data.lineaAncho || 100)
           setLineaPosicion(data.lineaPosicion || 'center')
-          
           setLogoUrl(data.logoUrl || '/logo.png')
           setNombreWeb(data.nombreWeb || "Gaby's Club")
           setLogoTamaño(data.logoTamaño || 'medio')
@@ -142,9 +141,8 @@ export default function ConfiguracionPage() {
         await updateProfile(user, { displayName: adminName })
         toast.success('Perfil actualizado', { id: 'update-profile' })
       }
-    } catch (error) {
-      toast.error('Error al actualizar', { id: 'update-profile' })
-    } finally { setIsLoading(false) }
+    } catch (error) { toast.error('Error al actualizar', { id: 'update-profile' }) }
+    finally { setIsLoading(false) }
   }
 
   const handleDarkModeChange = (checked: boolean) => {
@@ -210,19 +208,28 @@ export default function ConfiguracionPage() {
 
   const handleSaveCarta = async () => {
     setIsSavingCarta(true)
-    toast.loading('Guardando carta...', { id: 'saving-carta' })
+    toast.loading('Guardando y traduciendo...', { id: 'saving-carta' })
     try {
       let imagenUrl = cartaImagen
       if (cartaImagenFile) {
         imagenUrl = await uploadImage(cartaImagenFile, `carta/${Date.now()}_${cartaImagenFile.name}`)
       }
+      
+      // Traducir el título de la carta a 4 idiomas
+      const titleTranslations = await translateToAllLanguages(cartaTitulo)
+      
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
-        cartaTitulo, cartaImagen: imagenUrl,
+        cartaTitulo: cartaTitulo,
+        cartaTituloEn: titleTranslations.en || cartaTitulo,
+        cartaTituloFr: titleTranslations.fr || cartaTitulo,
+        cartaTituloDe: titleTranslations.de || cartaTitulo,
+        cartaTituloRu: titleTranslations.ru || cartaTitulo,
+        cartaImagen: imagenUrl,
         lineaActiva, lineaTexto, lineaColorTexto, lineaColorFondo,
         lineaTamanioLetra, lineaTipoLetra, lineaVelocidad, lineaTiempoEntre,
         lineaAncho, lineaPosicion
       })
-      toast.success('Carta guardada', { id: 'saving-carta' })
+      toast.success('Carta guardada y traducida', { id: 'saving-carta' })
       setCartaImagenFile(null); setCartaImagenPreview('')
     } catch (error) { toast.error('Error', { id: 'saving-carta' }) }
     finally { setIsSavingCarta(false) }
@@ -245,12 +252,6 @@ export default function ConfiguracionPage() {
     } catch (error) { toast.error('Error', { id: 'saving-logo' }) }
     finally { setIsSavingLogo(false) }
   }
-
-  // Fuentes disponibles
-  const fuentes = [
-    'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New', 
-    'Impact', 'Comic Sans MS', 'Trebuchet MS', 'Montserrat', 'Open Sans', 'Roboto'
-  ]
 
   return (
     <div className="space-y-6">
@@ -293,232 +294,20 @@ export default function ConfiguracionPage() {
         <CardContent className="space-y-4">
           <div><Label>Título del banner</Label><Input value={cartaTitulo} onChange={(e) => setCartaTitulo(e.target.value)} placeholder="Ej: La Carta" /></div>
           <div><Label>Imagen del banner (hero)</Label><div className="flex items-center gap-4">{cartaImagenPreview ? <div className="relative"><img src={cartaImagenPreview} className="h-24 w-40 object-cover rounded border-2 border-green-500" /><button onClick={() => { setCartaImagenFile(null); setCartaImagenPreview(''); }} className="absolute -right-2 -top-2 bg-red-500 rounded-full p-1"><X className="h-3 w-3" /></button></div> : <label className="flex h-24 w-40 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-700"><Upload className="h-6 w-6" /><input type="file" accept="image/*" className="hidden" onChange={handleCartaImageChange} /></label>}</div></div>
-          <Button onClick={handleSaveCarta} disabled={isSavingCarta}>Guardar configuración de la carta</Button>
-        </CardContent>
-      </Card>
-
-      {/* Sección Línea Informativa */}
-      <Card className="border border-gray-800 bg-gray-950/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <MoveHorizontal className="h-4 w-4 text-yellow-400" />
-            Línea Informativa (Ticker)
-          </CardTitle>
-          <CardDescription className="text-gray-400">
-            Configura la línea de texto que se desplaza de izquierda a derecha en la portada y en la carta
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Activar/Desactivar */}
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
-            <div>
-              <Label className="text-white font-medium">Activar línea informativa</Label>
-              <p className="text-sm text-gray-400">Muestra el ticker en la portada y en la carta</p>
-            </div>
-            <Switch checked={lineaActiva} onCheckedChange={setLineaActiva} />
+          
+          <div className="border-t border-gray-800 pt-4 mt-2"><h3 className="font-semibold text-white mb-3">📢 Línea informativa</h3>
+            <div className="flex items-center justify-between mb-3"><Label>Activar línea</Label><Switch checked={lineaActiva} onCheckedChange={setLineaActiva} /></div>
+            {lineaActiva && (<div className="space-y-3"><Input value={lineaTexto} onChange={(e) => setLineaTexto(e.target.value)} placeholder="Ej: Envío gratis desde 20€" /><div><Label>Color del texto</Label><div className="flex items-center gap-2"><input type="color" value={lineaColorTexto} onChange={(e) => setLineaColorTexto(e.target.value)} className="h-10 w-10 rounded border" /><span>{lineaColorTexto}</span></div></div><div><Label>Color de fondo</Label><div className="flex items-center gap-2"><input type="color" value={lineaColorFondo} onChange={(e) => setLineaColorFondo(e.target.value)} className="h-10 w-10 rounded border" /><span>{lineaColorFondo}</span></div></div>
+            <div><Label>Tamaño de letra (px)</Label><div className="flex items-center gap-4"><input type="range" min="10" max="48" value={lineaTamanioLetra} onChange={(e) => setLineaTamanioLetra(parseInt(e.target.value))} className="flex-1" /><span>{lineaTamanioLetra}px</span></div></div>
+            <div><Label>Tipo de letra</Label><select value={lineaTipoLetra} onChange={(e) => setLineaTipoLetra(e.target.value)} className="w-full bg-gray-900 border-gray-700 rounded-md p-2 text-white">{fuentes.map(fuente => (<option key={fuente} value={fuente} style={{ fontFamily: fuente }}>{fuente}</option>))}</select></div>
+            <div><Label>Velocidad (segundos)</Label><div className="flex items-center gap-4"><input type="range" min="3" max="30" step="1" value={lineaVelocidad} onChange={(e) => setLineaVelocidad(parseInt(e.target.value))} className="flex-1" /><span>{lineaVelocidad}s</span></div></div>
+            <div><Label>Tiempo entre repeticiones (s)</Label><div className="flex items-center gap-4"><input type="range" min="0" max="10" step="0.5" value={lineaTiempoEntre} onChange={(e) => setLineaTiempoEntre(parseFloat(e.target.value))} className="flex-1" /><span>{lineaTiempoEntre}s</span></div></div>
+            <div><Label>Ancho de la línea (%)</Label><div className="flex items-center gap-4"><input type="range" min="30" max="100" value={lineaAncho} onChange={(e) => setLineaAncho(parseInt(e.target.value))} className="flex-1" /><span>{lineaAncho}%</span></div></div>
+            <div><Label>Posición</Label><div className="flex gap-2"><Button type="button" variant={lineaPosicion === 'left' ? 'default' : 'outline'} className="flex-1" onClick={() => setLineaPosicion('left')}><AlignLeftIcon className="h-4 w-4 mr-2" />Izquierda</Button><Button type="button" variant={lineaPosicion === 'center' ? 'default' : 'outline'} className="flex-1" onClick={() => setLineaPosicion('center')}><AlignCenter className="h-4 w-4 mr-2" />Centro</Button><Button type="button" variant={lineaPosicion === 'right' ? 'default' : 'outline'} className="flex-1" onClick={() => setLineaPosicion('right')}><AlignRight className="h-4 w-4 mr-2" />Derecha</Button></div></div></div>)}
           </div>
-
-          {lineaActiva && (
-            <>
-              {/* Texto */}
-              <div>
-                <Label className="text-white">Texto</Label>
-                <Input 
-                  value={lineaTexto} 
-                  onChange={(e) => setLineaTexto(e.target.value)} 
-                  placeholder="Ej: Envío gratis desde 20€ | Reserva tu mesa | Los mejores cócteles"
-                  className="mt-1 bg-gray-900 border-gray-700 text-white"
-                />
-              </div>
-
-              {/* Color del texto y fondo */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white">Color del texto</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <input 
-                      type="color" 
-                      value={lineaColorTexto} 
-                      onChange={(e) => setLineaColorTexto(e.target.value)} 
-                      className="h-10 w-10 rounded border border-gray-700 cursor-pointer"
-                    />
-                    <span className="text-gray-400 text-sm">{lineaColorTexto}</span>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-white">Color de fondo</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <input 
-                      type="color" 
-                      value={lineaColorFondo} 
-                      onChange={(e) => setLineaColorFondo(e.target.value)} 
-                      className="h-10 w-10 rounded border border-gray-700 cursor-pointer"
-                    />
-                    <span className="text-gray-400 text-sm">{lineaColorFondo}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tamaño y tipo de letra */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <Type className="h-4 w-4" /> Tamaño de letra (px)
-                  </Label>
-                  <div className="flex items-center gap-4 mt-1">
-                    <input 
-                      type="range" 
-                      min="10" 
-                      max="48" 
-                      value={lineaTamanioLetra} 
-                      onChange={(e) => setLineaTamanioLetra(parseInt(e.target.value))}
-                      className="flex-1"
-                    />
-                    <span className="text-gray-400 w-12">{lineaTamanioLetra}px</span>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <AlignLeftIcon className="h-4 w-4" /> Tipo de letra
-                  </Label>
-                  <select 
-                    value={lineaTipoLetra} 
-                    onChange={(e) => setLineaTipoLetra(e.target.value)}
-                    className="w-full mt-1 bg-gray-900 border-gray-700 rounded-md p-2 text-white"
-                  >
-                    {fuentes.map(fuente => (
-                      <option key={fuente} value={fuente} style={{ fontFamily: fuente }}>{fuente}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Velocidad y tiempo entre repeticiones */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <Gauge className="h-4 w-4" /> Velocidad (segundos)
-                  </Label>
-                  <div className="flex items-center gap-4 mt-1">
-                    <input 
-                      type="range" 
-                      min="3" 
-                      max="30" 
-                      step="1"
-                      value={lineaVelocidad} 
-                      onChange={(e) => setLineaVelocidad(parseInt(e.target.value))}
-                      className="flex-1"
-                    />
-                    <span className="text-gray-400 w-12">{lineaVelocidad}s</span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Tiempo que tarda en cruzar la pantalla</p>
-                </div>
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <Repeat className="h-4 w-4" /> Tiempo entre repeticiones (s)
-                  </Label>
-                  <div className="flex items-center gap-4 mt-1">
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="10" 
-                      step="0.5"
-                      value={lineaTiempoEntre} 
-                      onChange={(e) => setLineaTiempoEntre(parseFloat(e.target.value))}
-                      className="flex-1"
-                    />
-                    <span className="text-gray-400 w-12">{lineaTiempoEntre}s</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Ancho y posición */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <Maximize2 className="h-4 w-4" /> Ancho de la línea (%)
-                  </Label>
-                  <div className="flex items-center gap-4 mt-1">
-                    <input 
-                      type="range" 
-                      min="30" 
-                      max="100" 
-                      value={lineaAncho} 
-                      onChange={(e) => setLineaAncho(parseInt(e.target.value))}
-                      className="flex-1"
-                    />
-                    <span className="text-gray-400 w-12">{lineaAncho}%</span>
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-white flex items-center gap-2">
-                    <AlignCenter className="h-4 w-4" /> Posición
-                  </Label>
-                  <div className="flex gap-2 mt-1">
-                    <Button 
-                      type="button"
-                      variant={lineaPosicion === 'left' ? 'default' : 'outline'}
-                      className="flex-1"
-                      onClick={() => setLineaPosicion('left')}
-                    >
-                      <AlignLeftIcon className="h-4 w-4 mr-2" /> Izquierda
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant={lineaPosicion === 'center' ? 'default' : 'outline'}
-                      className="flex-1"
-                      onClick={() => setLineaPosicion('center')}
-                    >
-                      <AlignCenter className="h-4 w-4 mr-2" /> Centro
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant={lineaPosicion === 'right' ? 'default' : 'outline'}
-                      className="flex-1"
-                      onClick={() => setLineaPosicion('right')}
-                    >
-                      <AlignRight className="h-4 w-4 mr-2" /> Derecha
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Vista previa en tiempo real */}
-              <div className="mt-6 pt-4 border-t border-gray-800">
-                <div className="flex items-center gap-2 mb-3">
-                  <Monitor className="h-4 w-4 text-green-400" />
-                  <Label className="text-white">Vista previa en tiempo real</Label>
-                </div>
-                <div 
-                  className="w-full overflow-hidden rounded-lg"
-                  style={{ 
-                    backgroundColor: lineaColorFondo,
-                    width: `${lineaAncho}%`,
-                    marginLeft: lineaPosicion === 'center' ? 'auto' : lineaPosicion === 'right' ? 'auto' : '0',
-                    marginRight: lineaPosicion === 'center' ? 'auto' : lineaPosicion === 'left' ? 'auto' : '0'
-                  }}
-                >
-                  <div
-                    className="whitespace-nowrap"
-                    style={{
-                      animation: `marquee ${lineaVelocidad}s linear infinite`,
-                      fontFamily: lineaTipoLetra,
-                      fontSize: `${lineaTamanioLetra}px`,
-                      color: lineaColorTexto,
-                      padding: '8px 0',
-                      display: 'inline-block'
-                    }}
-                  >
-                    {lineaTexto || "Escribe un texto para ver la vista previa..."}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          <Button onClick={handleSaveCarta} disabled={isSavingCarta} className="w-full">
-            <Save className="h-4 w-4 mr-2" />
-            Guardar línea informativa
+          <Button onClick={handleSaveCarta} disabled={isSavingCarta} className="w-full bg-gradient-to-r from-green-600 to-green-500">
+            {isSavingCarta && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Guardar y traducir carta
           </Button>
         </CardContent>
       </Card>
@@ -538,6 +327,15 @@ export default function ConfiguracionPage() {
         <CardHeader><CardTitle>🏪 Información del Negocio</CardTitle></CardHeader>
         <CardContent><div className="grid grid-cols-1 md:grid-cols-2 gap-4"><div><Label>Dirección</Label><Input value={portadaData.direccion} onChange={(e) => setPortadaData({...portadaData, direccion: e.target.value})} /></div><div><Label>Teléfono</Label><Input value={portadaData.telefono} onChange={(e) => setPortadaData({...portadaData, telefono: e.target.value})} /></div><div><Label>Email</Label><Input value={portadaData.email} onChange={(e) => setPortadaData({...portadaData, email: e.target.value})} /></div><div><Label>WhatsApp</Label><Input value={portadaData.whatsapp} onChange={(e) => setPortadaData({...portadaData, whatsapp: e.target.value})} /></div><div><Label>Instagram</Label><Input value={portadaData.instagram} onChange={(e) => setPortadaData({...portadaData, instagram: e.target.value})} /></div><div><Label>TikTok</Label><Input value={portadaData.tiktok} onChange={(e) => setPortadaData({...portadaData, tiktok: e.target.value})} /></div></div>
         <Button onClick={handleSavePortada} disabled={isSavingPortada} className="mt-4">Guardar información</Button></CardContent>
+      </Card>
+
+      {/* Perfil del Administrador */}
+      <Card className="border border-gray-800 bg-gray-950/50">
+        <CardHeader><CardTitle className="flex items-center gap-2 text-white"><User className="h-4 w-4 text-blue-400" /> Perfil</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"><div><Label>Nombre</Label><Input value={adminName} onChange={(e) => setAdminName(e.target.value)} className="bg-gray-900" /></div><div><Label>Email</Label><Input value={adminEmail} disabled className="bg-gray-800 text-gray-400" /></div></div>
+          <Button onClick={handleUpdateProfile} disabled={isLoading} className="bg-gradient-to-r from-blue-600 to-blue-500">Actualizar perfil</Button>
+        </CardContent>
       </Card>
 
       {/* Modales de vista previa */}

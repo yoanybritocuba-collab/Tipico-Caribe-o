@@ -10,15 +10,8 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
 import { db } from '@/lib/firebase'
 import { collection, addDoc } from 'firebase/firestore'
-import { translateText } from '@/lib/translate'
+import { translateToAllLanguages } from '@/lib/translate'
 import { Loader2, Languages } from 'lucide-react'
-
-const LANGUAGES = [
-  { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Français' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'ru', name: 'Русский' }
-]
 
 export default function NuevaCategoriaPage() {
   const router = useRouter()
@@ -29,19 +22,6 @@ export default function NuevaCategoriaPage() {
     order: 1
   })
 
-  const translateToAllLanguages = async (text: string) => {
-    const translations: Record<string, string> = { es: text }
-    for (const lang of LANGUAGES) {
-      try {
-        translations[lang.code] = await translateText(text, lang.code)
-      } catch (error) {
-        console.error(`Error traduciendo a ${lang.code}:`, error)
-        translations[lang.code] = text
-      }
-    }
-    return translations
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -51,7 +31,7 @@ export default function NuevaCategoriaPage() {
     }
 
     setIsLoading(true)
-    toast.loading('Traduciendo a 4 idiomas...', { id: 'saving' })
+    toast.loading('Guardando y traduciendo a 4 idiomas...', { id: 'saving' })
     
     try {
       const translations = await translateToAllLanguages(formData.nombre)
@@ -67,7 +47,7 @@ export default function NuevaCategoriaPage() {
         createdAt: new Date().toISOString()
       })
       
-      toast.success('Categoría creada y traducida a 4 idiomas', { id: 'saving' })
+      toast.success('Categoría guardada y traducida a Inglés, Francés, Alemán y Ruso', { id: 'saving' })
       router.push('/admin/categorias')
     } catch (error) {
       console.error('Error:', error)
@@ -82,7 +62,7 @@ export default function NuevaCategoriaPage() {
       <Card>
         <CardHeader>
           <CardTitle>Nueva Categoría</CardTitle>
-          <p className="text-sm text-gray-500">El nombre se traducirá automáticamente a Inglés, Francés, Alemán y Ruso</p>
+          <p className="text-sm text-gray-500">Se traducirá automáticamente a Inglés, Francés, Alemán y Ruso</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,16 +93,11 @@ export default function NuevaCategoriaPage() {
               />
             </div>
             
-            <div className="flex gap-2 pt-4">
-              <Button type="submit" disabled={isLoading} className="flex-1 bg-gradient-to-r from-green-600 to-green-500">
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                <Languages className="mr-2 h-4 w-4" />
-                {isLoading ? 'Traduciendo...' : 'Guardar y traducir'}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => router.back()}>
-                Cancelar
-              </Button>
-            </div>
+            <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-green-600 to-green-500">
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Languages className="mr-2 h-4 w-4" />
+              {isLoading ? 'Guardando y traduciendo...' : 'Guardar y traducir'}
+            </Button>
           </form>
         </CardContent>
       </Card>
