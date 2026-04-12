@@ -1,14 +1,13 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n'
 import { Star } from 'lucide-react'
 
 export function SuggestionCard({ product }: { product: any }) {
-  const { getLocalizedField } = useI18n()
-  
-  const nombre = getLocalizedField(product, 'nombre')
-  const descripcion = getLocalizedField(product, 'descripcion')
-  
+  // Los nombres y descripciones traducidos vienen desde Firestore
+  // El componente usa directamente product.nombre (español) y product.nameEn, etc.
+  const nombre = product.nombre || ''
+  const descripcion = product.descripcion || ''
+
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:border-yellow-500/50 transition-all duration-300">
       <div className="aspect-[4/3] overflow-hidden bg-gray-800">
