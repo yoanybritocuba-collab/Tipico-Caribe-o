@@ -13,10 +13,19 @@ import { useI18n } from '@/lib/i18n'
 export function LanguageToggle() {
   const { language, setLanguage } = useI18n()
   const [mounted, setMounted] = useState(false)
+  const [currentLang, setCurrentLang] = useState(language)
 
   useEffect(() => {
     setMounted(true)
-  }, [])
+    // Sincronizar con el localStorage al cargar
+    const saved = localStorage.getItem('gaby-club-language') as 'es' | 'en' | 'fr' | 'de' | 'ru'
+    if (saved && saved !== language) {
+      setLanguage(saved)
+      setCurrentLang(saved)
+    } else {
+      setCurrentLang(language)
+    }
+  }, [language, setLanguage])
 
   const languages = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
@@ -26,7 +35,15 @@ export function LanguageToggle() {
     { code: 'ru', name: 'Русский', flag: '🇷🇺' }
   ]
 
-  const currentLanguage = languages.find(l => l.code === language) || languages[0]
+  const currentLanguage = languages.find(l => l.code === currentLang) || languages[0]
+
+  const handleLanguageChange = (code: 'es' | 'en' | 'fr' | 'de' | 'ru') => {
+    setCurrentLang(code)
+    setLanguage(code)
+    localStorage.setItem('gaby-club-language', code)
+    // Forzar recarga de la página para aplicar todos los cambios
+    window.location.reload()
+  }
 
   if (!mounted) {
     return (
@@ -47,12 +64,12 @@ export function LanguageToggle() {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => setLanguage(lang.code as any)}
-            className={`cursor-pointer gap-2 ${language === lang.code ? 'bg-yellow-500/20 text-yellow-500' : 'text-gray-300'}`}
+            onClick={() => handleLanguageChange(lang.code as any)}
+            className={`cursor-pointer gap-2 ${currentLang === lang.code ? 'bg-yellow-500/20 text-yellow-500' : 'text-gray-300'}`}
           >
             <span className="text-xl">{lang.flag}</span>
             <span>{lang.name}</span>
-            {language === lang.code && <span className="ml-auto text-yellow-500">✓</span>}
+            {currentLang === lang.code && <span className="ml-auto text-yellow-500">✓</span>}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
