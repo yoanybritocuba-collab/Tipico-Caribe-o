@@ -18,18 +18,18 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Gavi-Club | Bar en Barcelona',
-  description: 'Auténtico bar en el corazón de Barcelona. Disfruta de picaderas y cócteles en un ambiente acogedor.',
-  keywords: ['bar', 'cócteles', 'picaderas', 'Barcelona', 'Gavi-Club'],
-  authors: [{ name: 'Gavi-Club' }],
+  title: "Gaby's Club | Coctelería y Picaderas",
+  description: "El mejor lugar para disfrutar de cócteles y picaderas en Barcelona",
+  keywords: ['bar', 'cócteles', 'picaderas', 'Barcelona', 'Gaby\'s Club'],
+  authors: [{ name: 'Gaby\'s Club' }],
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
-    title: 'Gavi-Club | Bar en Barcelona',
-    description: 'Auténtico bar en el corazón de Barcelona',
+    title: "Gaby's Club | Coctelería y Picaderas",
+    description: 'El mejor lugar para disfrutar de cócteles y picaderas en Barcelona',
     type: 'website',
     locale: 'es_ES',
     alternateLocale: 'en_US',
