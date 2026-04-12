@@ -1,50 +1,44 @@
 'use client'
 
-import { Star } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
 import { useI18n } from '@/lib/i18n'
-import type { Product } from '@/lib/types'  // <-- CAMBIADO de data a types
+import { Star } from 'lucide-react'
 
-interface SuggestionCardProps {
-  product: Product
-}
-
-export function SuggestionCard({ product }: SuggestionCardProps) {
+export function SuggestionCard({ product }: { product: any }) {
   const { getLocalizedField } = useI18n()
-
-  const name = getLocalizedField(product, 'name')
-  const description = getLocalizedField(product, 'description')
-
+  
+  const nombre = getLocalizedField(product, 'nombre')
+  const descripcion = getLocalizedField(product, 'descripcion')
+  
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-xl">
-      <div className="relative aspect-square overflow-hidden bg-muted">
-        {product.image ? (
-          <div 
-            className="h-full w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-            style={{ backgroundImage: `url(${product.image})` }}
+    <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:border-yellow-500/50 transition-all duration-300">
+      <div className="aspect-[4/3] overflow-hidden bg-gray-800">
+        {product.imagenUrl ? (
+          <img 
+            src={product.imagenUrl} 
+            alt={nombre} 
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
-            <span className="text-6xl">🍽️</span>
+          <div className="flex h-full items-center justify-center text-4xl bg-gradient-to-br from-gray-800 to-gray-900">
+            🍽️
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-          <div className="mb-2 flex items-center gap-2">
-            <Star className="h-5 w-5 fill-accent text-accent" />
-            <span className="text-sm font-medium text-accent">Sugerencia del Chef</span>
-          </div>
-          <h3 className="font-serif text-xl font-bold">{name}</h3>
-        </div>
       </div>
-      <CardContent className="p-4">
-        <p className="mb-3 text-sm text-muted-foreground line-clamp-2">{description}</p>
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-primary">
-            {product.price.toFixed(2)}€
-          </span>
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="font-bold text-white line-clamp-1">{nombre}</h3>
+          <p className="font-bold text-yellow-500">€{product.precio.toFixed(2)}</p>
         </div>
-      </CardContent>
-    </Card>
+        {descripcion && (
+          <p className="text-sm text-gray-400 line-clamp-2 mb-3">{descripcion}</p>
+        )}
+        {product.destacado && (
+          <div className="flex items-center gap-1">
+            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+            <span className="text-xs text-yellow-500">Destacado</span>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
