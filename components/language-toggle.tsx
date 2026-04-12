@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -32,7 +31,7 @@ export function LanguageToggle() {
   if (!mounted) {
     return (
       <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
-        <Globe className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
+        <span className="text-xl sm:text-2xl">🇪🇸</span>
       </Button>
     )
   }
