@@ -15,6 +15,10 @@ export function LanguageToggle() {
     { code: 'ru', name: 'Русский', flag: '🇷🇺' }
   ]
 
+  // Encontrar el idioma actual para mostrar su bandera
+  const currentLanguage = languages.find(l => l.code === language) || languages[0]
+  
+  // Encontrar el siguiente idioma para el tooltip
   const currentIndex = languages.findIndex(l => l.code === language)
   const nextIndex = (currentIndex + 1) % languages.length
   const nextLanguage = languages[nextIndex]
@@ -22,10 +26,6 @@ export function LanguageToggle() {
   const handleClick = () => {
     setIsChanging(true)
     setLanguage(nextLanguage.code as any)
-    // La recarga ocurre dentro de setLanguage, pero mostramos loader antes
-    setTimeout(() => {
-      // El reload ya ocurre en setLanguage
-    }, 100)
   }
 
   return (
@@ -41,11 +41,11 @@ export function LanguageToggle() {
       <button
         onClick={handleClick}
         className="relative h-9 w-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-all"
-        title={`Cambiar idioma (${nextLanguage.name})`}
+        title={`Cambiar a ${nextLanguage.name}`}
       >
-        <span className="text-sm font-medium text-yellow-500">
-          {language.toUpperCase()}
-        </span>
+        {/* Mostrar la bandera del idioma ACTUAL */}
+        <span className="text-lg">{currentLanguage.flag}</span>
+        {/* Mostrar la bandera del próximo idioma en la esquina */}
         <span className="absolute -bottom-1 -right-1 text-[10px] leading-none drop-shadow-md">
           {nextLanguage.flag}
         </span>
