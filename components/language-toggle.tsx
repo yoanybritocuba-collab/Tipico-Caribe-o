@@ -8,14 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Globe } from 'lucide-react'
 
 export function LanguageToggle() {
   const [currentLang, setCurrentLang] = useState('es')
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const saved = localStorage.getItem('gaby-club-language')
     if (saved) {
       setCurrentLang(saved)
@@ -33,16 +30,11 @@ export function LanguageToggle() {
   const currentLanguage = languages.find(l => l.code === currentLang) || languages[0]
 
   const handleLanguageChange = (code: string) => {
+    console.log('Cambiando a:', code)
     localStorage.setItem('gaby-club-language', code)
-    window.location.reload()
-  }
-
-  if (!mounted) {
-    return (
-      <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12">
-        <Globe className="h-5 w-5 sm:h-5 sm:w-5 md:h-6 md:w-6 text-yellow-500" />
-      </Button>
-    )
+    setCurrentLang(code)
+    // Recargar la página para aplicar cambios
+    window.location.href = window.location.href
   }
 
   return (
