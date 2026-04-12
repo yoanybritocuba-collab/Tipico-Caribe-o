@@ -26,7 +26,6 @@ export default function MenuPage() {
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
   
-  // Configuración de la carta desde Firestore
   const [cartaTitulo, setCartaTitulo] = useState('La Carta')
   const [cartaImagen, setCartaImagen] = useState('')
   const [lineaActiva, setLineaActiva] = useState(false)
@@ -302,7 +301,7 @@ export default function MenuPage() {
     <div className="min-h-screen bg-black">
       {/* Hero Banner */}
       {cartaImagen && (
-        <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
+        <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartaImagen})` }} />
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
@@ -315,6 +314,9 @@ export default function MenuPage() {
           </div>
         </div>
       )}
+
+      {/* Espacio extra antes del menú de categorías */}
+      <div className="pt-8"></div>
 
       {/* Menú horizontal de categorías */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
