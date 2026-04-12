@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Upload, X, Eye, Loader2 } from 'lucide-react'
+import { ArrowLeft, Upload, X, Eye, Loader2, Languages } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,6 +19,14 @@ import { getCategoriasActivasGlobales, createProducto, uploadImage, type Categor
 import { translateText } from '@/lib/translate'
 import { toast } from 'sonner'
 
+const LANGUAGES = [
+  { code: 'es', name: 'Español' },
+  { code: 'en', name: 'English' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'ru', name: 'Русский' }
+]
+
 export default function NewProductPage() {
   const router = useRouter()
   const [categories, setCategories] = useState<CategoriaGlobal[]>([])
@@ -27,6 +35,7 @@ export default function NewProductPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isTranslating, setIsTranslating] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -65,7 +74,24 @@ export default function NewProductPage() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const translateToAllLanguages = async (text: string) => {
+    const translations: Record<string, string> = {}
+    for (const lang of LANGUAGES) {
+      if (lang.code === 'es') {
+        translations[lang.code] = text
+      } else {
+        try {
+          translations[lang.code] = await translateText(text, lang.code)
+        } catch (error) {
+          console.error(`Error traduciendo a ${lang.code}:`, error)
+          translations[lang.code] = text
+        }
+      }
+    }
+    return translations
+  }
+
+  const handleSubmit = async (e: React.FormEvent, shouldTranslate: boolean = true) => {
     e.preventDefault()
     
     if (!formData.nombre || !formData.precio || !formData.categoriaGlobalId) {
@@ -73,14 +99,24 @@ export default function NewProductPage() {
       return
     }
 
-    setIsSaving(true)
-    toast.loading('Traduciendo y guardando...', { id: 'saving' })
+    if (shouldTranslate) {
+      setIsTranslating(true)
+      toast.loading('Traduciendo nombre y descripción a 5 idiomas...', { id: 'saving' })
+    } else {
+      setIsSaving(true)
+      toast.loading('Guardando...', { id: 'saving' })
+    }
 
     try {
-      const [translatedName, translatedDescription] = await Promise.all([
-        translateText(formData.nombre, 'en'),
-        formData.descripcion ? translateText(formData.descripcion, 'en') : Promise.resolve('')
-      ])
+      let nameTranslations: Record<string, string> = {}
+      let descTranslations: Record<string, string> = {}
+      
+      if (shouldTranslate) {
+        [nameTranslations, descTranslations] = await Promise.all([
+          translateToAllLanguages(formData.nombre),
+          formData.descripcion ? translateToAllLanguages(formData.descripcion) : Promise.resolve({ es: '', en: '', fr: '', de: '', ru: '' })
+        ])
+      }
       
       let imagenUrl = null
       if (imageFile) {
@@ -92,9 +128,15 @@ export default function NewProductPage() {
 
       await createProducto({
         nombre: formData.nombre,
-        nameEn: translatedName,
+        nameEn: nameTranslations.en || formData.nombre,
+        nameFr: nameTranslations.fr || formData.nombre,
+        nameDe: nameTranslations.de || formData.nombre,
+        nameRu: nameTranslations.ru || formData.nombre,
         descripcion: formData.descripcion,
-        descriptionEn: translatedDescription,
+        descriptionEn: descTranslations.en || formData.descripcion,
+        descriptionFr: descTranslations.fr || formData.descripcion,
+        descriptionDe: descTranslations.de || formData.descripcion,
+        descriptionRu: descTranslations.ru || formData.descripcion,
         precio: parseFloat(formData.precio),
         categoriaGlobalId: formData.categoriaGlobalId,
         activo: formData.activo,
@@ -103,13 +145,14 @@ export default function NewProductPage() {
         orden: Date.now(),
       })
 
-      toast.success('Producto creado correctamente', { id: 'saving' })
+      toast.success(shouldTranslate ? 'Producto creado y traducido a 5 idiomas' : 'Producto creado', { id: 'saving' })
       router.push('/admin/productos')
     } catch (error) {
       console.error('Error creating product:', error)
       toast.error('Error al crear el producto', { id: 'saving' })
     } finally {
       setIsSaving(false)
+      setIsTranslating(false)
     }
   }
 
@@ -133,7 +176,7 @@ export default function NewProductPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6">
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-6">
             <Label className="text-white">Imagen del producto</Label>
@@ -194,7 +237,7 @@ export default function NewProductPage() {
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                 placeholder="Ej: Mojito"
               />
-              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente al inglés</p>
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
             </div>
 
             <div>
@@ -206,7 +249,7 @@ export default function NewProductPage() {
                 className="mt-1 bg-gray-900 border-gray-700 text-white"
                 placeholder="Descripción del producto"
               />
-              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente al inglés</p>
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,9 +309,22 @@ export default function NewProductPage() {
         </Card>
 
         <div className="flex gap-3">
-          <Button type="submit" className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600" disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSaving ? 'Traduciendo y guardando...' : 'Guardar producto'}
+          <Button 
+            type="submit" 
+            disabled={isTranslating || isSaving} 
+            className="flex-1 bg-gradient-to-r from-green-600 to-green-500"
+          >
+            {(isTranslating || isSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Languages className="mr-2 h-4 w-4" />
+            {isTranslating ? 'Traduciendo a 5 idiomas...' : 'Guardar y traducir'}
+          </Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={(e) => handleSubmit(e, false)}
+            disabled={isTranslating || isSaving}
+          >
+            Solo guardar (sin traducir)
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancelar

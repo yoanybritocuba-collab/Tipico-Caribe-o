@@ -19,6 +19,14 @@ import { getCategoriasGlobales, getProductoById, updateProducto, uploadImage, ty
 import { translateText } from '@/lib/translate'
 import { toast } from 'sonner'
 
+const LANGUAGES = [
+  { code: 'es', name: 'Español' },
+  { code: 'en', name: 'English' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'ru', name: 'Русский' }
+]
+
 export default function EditProductPage() {
   const router = useRouter()
   const params = useParams()
@@ -33,14 +41,13 @@ export default function EditProductPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
-    nameEn: '',
     descripcion: '',
-    descriptionEn: '',
     precio: '',
     categoriaGlobalId: '',
     activo: true,
     destacado: false,
   })
+  const [originalData, setOriginalData] = useState<any>(null)
 
   useEffect(() => {
     loadData()
@@ -63,14 +70,13 @@ export default function EditProductPage() {
       setImagePreview(productoData.imagenUrl || null)
       setFormData({
         nombre: productoData.nombre || '',
-        nameEn: productoData.nameEn || '',
         descripcion: productoData.descripcion || '',
-        descriptionEn: productoData.descriptionEn || '',
         precio: productoData.precio?.toString() || '',
         categoriaGlobalId: productoData.categoriaGlobalId || '',
         activo: productoData.activo ?? true,
         destacado: productoData.destacado ?? false,
       })
+      setOriginalData(productoData)
       setCategories(categoriasData)
     } catch (error) {
       console.error('Error loading product:', error)
@@ -92,57 +98,24 @@ export default function EditProductPage() {
     }
   }
 
-  const handleTranslateAndSave = async () => {
-    if (!formData.nombre.trim()) {
-      toast.error('El nombre en español es obligatorio')
-      return
-    }
-
-    if (!formData.categoriaGlobalId) {
-      toast.error('Selecciona una categoría')
-      return
-    }
-
-    setIsTranslating(true)
-    toast.loading('Traduciendo y guardando...', { id: 'saving' })
-    
-    try {
-      const [translatedName, translatedDescription] = await Promise.all([
-        translateText(formData.nombre, 'en'),
-        formData.descripcion ? translateText(formData.descripcion, 'en') : Promise.resolve('')
-      ])
-      
-      let imagenUrl = imagePreview
-      if (imageFile) {
-        const timestamp = Date.now()
-        const cleanName = formData.nombre.replace(/[^a-z0-9]/gi, '_').toLowerCase()
-        const path = `productos/${timestamp}_${cleanName}`
-        imagenUrl = await uploadImage(imageFile, path)
+  const translateToAllLanguages = async (text: string) => {
+    const translations: Record<string, string> = {}
+    for (const lang of LANGUAGES) {
+      if (lang.code === 'es') {
+        translations[lang.code] = text
+      } else {
+        try {
+          translations[lang.code] = await translateText(text, lang.code)
+        } catch (error) {
+          console.error(`Error traduciendo a ${lang.code}:`, error)
+          translations[lang.code] = text
+        }
       }
-
-      await updateProducto(id, {
-        nombre: formData.nombre,
-        nameEn: translatedName,
-        descripcion: formData.descripcion,
-        descriptionEn: translatedDescription,
-        precio: parseFloat(formData.precio),
-        categoriaGlobalId: formData.categoriaGlobalId,
-        activo: formData.activo,
-        destacado: formData.destacado,
-        imagenUrl: imagenUrl,
-      })
-
-      toast.success('Producto actualizado correctamente', { id: 'saving' })
-      router.push('/admin/productos')
-    } catch (error) {
-      console.error('Error updating product:', error)
-      toast.error('Error al actualizar el producto', { id: 'saving' })
-    } finally {
-      setIsTranslating(false)
     }
+    return translations
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, shouldTranslate: boolean = true) => {
     e.preventDefault()
     
     if (!formData.nombre || !formData.precio || !formData.categoriaGlobalId) {
@@ -150,12 +123,26 @@ export default function EditProductPage() {
       return
     }
 
-    setIsSaving(true)
-    const loadingToast = toast.loading('Actualizando producto...')
+    if (shouldTranslate) {
+      setIsTranslating(true)
+      toast.loading('Traduciendo nombre y descripción a 5 idiomas...', { id: 'saving' })
+    } else {
+      setIsSaving(true)
+      toast.loading('Guardando...', { id: 'saving' })
+    }
 
     try {
-      let imagenUrl = imagePreview
+      let nameTranslations: Record<string, string> = {}
+      let descTranslations: Record<string, string> = {}
       
+      if (shouldTranslate) {
+        [nameTranslations, descTranslations] = await Promise.all([
+          translateToAllLanguages(formData.nombre),
+          formData.descripcion ? translateToAllLanguages(formData.descripcion) : Promise.resolve({ es: '', en: '', fr: '', de: '', ru: '' })
+        ])
+      }
+      
+      let imagenUrl = imagePreview
       if (imageFile) {
         const timestamp = Date.now()
         const cleanName = formData.nombre.replace(/[^a-z0-9]/gi, '_').toLowerCase()
@@ -163,25 +150,47 @@ export default function EditProductPage() {
         imagenUrl = await uploadImage(imageFile, path)
       }
 
-      await updateProducto(id, {
+      const updateData: any = {
         nombre: formData.nombre,
-        nameEn: formData.nameEn,
         descripcion: formData.descripcion,
-        descriptionEn: formData.descriptionEn,
         precio: parseFloat(formData.precio),
         categoriaGlobalId: formData.categoriaGlobalId,
         activo: formData.activo,
         destacado: formData.destacado,
         imagenUrl: imagenUrl,
-      })
+      }
+      
+      if (shouldTranslate) {
+        updateData.nameEn = nameTranslations.en
+        updateData.nameFr = nameTranslations.fr
+        updateData.nameDe = nameTranslations.de
+        updateData.nameRu = nameTranslations.ru
+        updateData.descriptionEn = descTranslations.en
+        updateData.descriptionFr = descTranslations.fr
+        updateData.descriptionDe = descTranslations.de
+        updateData.descriptionRu = descTranslations.ru
+      } else {
+        // Mantener traducciones existentes
+        if (originalData?.nameEn) updateData.nameEn = originalData.nameEn
+        if (originalData?.nameFr) updateData.nameFr = originalData.nameFr
+        if (originalData?.nameDe) updateData.nameDe = originalData.nameDe
+        if (originalData?.nameRu) updateData.nameRu = originalData.nameRu
+        if (originalData?.descriptionEn) updateData.descriptionEn = originalData.descriptionEn
+        if (originalData?.descriptionFr) updateData.descriptionFr = originalData.descriptionFr
+        if (originalData?.descriptionDe) updateData.descriptionDe = originalData.descriptionDe
+        if (originalData?.descriptionRu) updateData.descriptionRu = originalData.descriptionRu
+      }
 
-      toast.success('Producto actualizado correctamente', { id: loadingToast })
+      await updateProducto(id, updateData)
+
+      toast.success(shouldTranslate ? 'Producto traducido a 5 idiomas' : 'Producto actualizado', { id: 'saving' })
       router.push('/admin/productos')
     } catch (error) {
       console.error('Error updating product:', error)
-      toast.error('Error al actualizar el producto', { id: loadingToast })
+      toast.error('Error al actualizar', { id: 'saving' })
     } finally {
       setIsSaving(false)
+      setIsTranslating(false)
     }
   }
 
@@ -213,7 +222,7 @@ export default function EditProductPage() {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6">
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="p-4">
             <Label className="text-white">Imagen del producto</Label>
@@ -254,49 +263,27 @@ export default function EditProductPage() {
 
         <Card className="border-gray-800 bg-gray-950/50">
           <CardContent className="space-y-4 p-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-white">🇪🇸 Nombre (Español) *</Label>
-                <Input
-                  required
-                  value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                  className="mt-1 bg-gray-900 border-gray-700 text-white"
-                />
-              </div>
-              <div>
-                <Label className="text-white">🇺🇸 Nombre (Inglés)</Label>
-                <Input
-                  value={formData.nameEn}
-                  onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                  className="mt-1 bg-gray-900 border-gray-700 text-white"
-                  placeholder="English name"
-                />
-                <p className="text-xs text-gray-500 mt-1">Si lo dejas vacío, se traducirá automáticamente al guardar</p>
-              </div>
+            <div>
+              <Label className="text-white">🇪🇸 Nombre (Español) *</Label>
+              <Input
+                required
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+              />
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label className="text-white">🇪🇸 Descripción (Español)</Label>
-                <Textarea
-                  value={formData.descripcion}
-                  onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-                  rows={3}
-                  className="mt-1 bg-gray-900 border-gray-700 text-white"
-                  placeholder="Descripción del producto"
-                />
-              </div>
-              <div>
-                <Label className="text-white">🇺🇸 Descripción (Inglés)</Label>
-                <Textarea
-                  value={formData.descriptionEn}
-                  onChange={(e) => setFormData({ ...formData, descriptionEn: e.target.value })}
-                  rows={3}
-                  className="mt-1 bg-gray-900 border-gray-700 text-white"
-                  placeholder="English description"
-                />
-              </div>
+            <div>
+              <Label className="text-white">🇪🇸 Descripción</Label>
+              <Textarea
+                value={formData.descripcion}
+                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                rows={3}
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+                placeholder="Descripción del producto"
+              />
+              <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a 5 idiomas</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -350,21 +337,21 @@ export default function EditProductPage() {
 
         <div className="flex gap-3">
           <Button 
-            type="button" 
-            onClick={handleTranslateAndSave}
-            disabled={isTranslating || !formData.nombre || !formData.categoriaGlobalId}
-            className="flex-1 gap-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600"
+            type="submit" 
+            disabled={isTranslating || isSaving} 
+            className="flex-1 bg-gradient-to-r from-green-600 to-green-500"
           >
-            {isTranslating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Languages className="h-4 w-4" />
-            )}
-            {isTranslating ? 'Traduciendo y guardando...' : 'Traducir y Guardar'}
+            {(isTranslating || isSaving) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Languages className="mr-2 h-4 w-4" />
+            {isTranslating ? 'Traduciendo a 5 idiomas...' : 'Guardar y traducir'}
           </Button>
-          <Button type="submit" className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500" disabled={isSaving}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSaving ? 'Guardando...' : 'Guardar sin traducir'}
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={(e) => handleSubmit(e, false)}
+            disabled={isTranslating || isSaving}
+          >
+            Solo guardar (sin traducir)
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancelar
