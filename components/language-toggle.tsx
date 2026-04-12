@@ -8,24 +8,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useI18n } from '@/lib/i18n'
 
 export function LanguageToggle() {
-  const { language, setLanguage } = useI18n()
+  const [currentLang, setCurrentLang] = useState('es')
   const [mounted, setMounted] = useState(false)
-  const [currentLang, setCurrentLang] = useState(language)
 
   useEffect(() => {
     setMounted(true)
-    // Sincronizar con el localStorage al cargar
-    const saved = localStorage.getItem('gaby-club-language') as 'es' | 'en' | 'fr' | 'de' | 'ru'
-    if (saved && saved !== language) {
-      setLanguage(saved)
+    const saved = localStorage.getItem('gaby-club-language')
+    if (saved) {
       setCurrentLang(saved)
-    } else {
-      setCurrentLang(language)
     }
-  }, [language, setLanguage])
+  }, [])
 
   const languages = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
@@ -37,11 +31,10 @@ export function LanguageToggle() {
 
   const currentLanguage = languages.find(l => l.code === currentLang) || languages[0]
 
-  const handleLanguageChange = (code: 'es' | 'en' | 'fr' | 'de' | 'ru') => {
-    setCurrentLang(code)
-    setLanguage(code)
+  const handleLanguageChange = (code: string) => {
+    // Guardar el idioma elegido
     localStorage.setItem('gaby-club-language', code)
-    // Forzar recarga de la página para aplicar todos los cambios
+    // Recargar la página para que se vea el nuevo idioma
     window.location.reload()
   }
 
@@ -64,7 +57,7 @@ export function LanguageToggle() {
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => handleLanguageChange(lang.code as any)}
+            onClick={() => handleLanguageChange(lang.code)}
             className={`cursor-pointer gap-2 ${currentLang === lang.code ? 'bg-yellow-500/20 text-yellow-500' : 'text-gray-300'}`}
           >
             <span className="text-xl">{lang.flag}</span>
