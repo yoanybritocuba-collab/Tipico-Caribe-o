@@ -6,8 +6,7 @@ import {
   Settings, Shield, User, Bell, Globe, Palette, ChevronRight, Loader2, Key, Moon, Sun,
   Upload, X, Eye, Image as ImageIcon, LayoutTemplate, Type, AlignLeft, Maximize2,
   Instagram, Facebook, MapPin, Phone, MessageCircle, Mail, Clock, Save,
-  Monitor, MoveHorizontal, Speed, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight,
-  Bold, Italic, Underline
+  Monitor, MoveHorizontal, Gauge, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -398,7 +397,7 @@ export default function ConfiguracionPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-white flex items-center gap-2">
-                    <Speed className="h-4 w-4" /> Velocidad (segundos)
+                    <Gauge className="h-4 w-4" /> Velocidad (segundos)
                   </Label>
                   <div className="flex items-center gap-4 mt-1">
                     <input 
@@ -499,33 +498,20 @@ export default function ConfiguracionPage() {
                     marginRight: lineaPosicion === 'center' ? 'auto' : lineaPosicion === 'left' ? 'auto' : '0'
                   }}
                 >
-                  <div 
-                    className="whitespace-nowrap animate-marquee"
+                  <div
+                    className="whitespace-nowrap"
                     style={{
-                      animationDuration: `${lineaVelocidad}s`,
+                      animation: `marquee ${lineaVelocidad}s linear infinite`,
                       fontFamily: lineaTipoLetra,
                       fontSize: `${lineaTamanioLetra}px`,
                       color: lineaColorTexto,
                       padding: '8px 0',
-                      display: 'inline-block',
-                      animationIterationCount: 'infinite',
-                      animationTimingFunction: 'linear'
+                      display: 'inline-block'
                     }}
                   >
                     {lineaTexto || "Escribe un texto para ver la vista previa..."}
                   </div>
                 </div>
-                <style jsx>{`
-                  @keyframes marquee {
-                    0% { transform: translateX(100%); }
-                    100% { transform: translateX(-100%); }
-                  }
-                  .animate-marquee {
-                    animation-name: marquee;
-                    animation-iteration-count: infinite;
-                    animation-timing-function: linear;
-                  }
-                `}</style>
               </div>
             </>
           )}

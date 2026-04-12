@@ -56,29 +56,23 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       }}
     >
       <div
-        className={`whitespace-nowrap ${isVisible ? 'animate-marquee' : 'opacity-0'}`}
+        className="whitespace-nowrap"
         style={{
-          animationDuration: `${config.velocidad}s`,
+          animation: `marquee ${config.velocidad}s linear infinite`,
           fontFamily: config.tipoLetra,
           fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
           padding: '8px 0',
           display: 'inline-block',
-          animationIterationCount: isVisible ? 'infinite' : 0,
-          animationTimingFunction: 'linear'
+          opacity: isVisible ? 1 : 0
         }}
       >
         {config.texto}
       </div>
-      <style jsx>{`
+      <style>{`
         @keyframes marquee {
           0% { transform: translateX(100%); }
           100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-          animation-name: marquee;
-          animation-iteration-count: infinite;
-          animation-timing-function: linear;
         }
       `}</style>
     </div>
