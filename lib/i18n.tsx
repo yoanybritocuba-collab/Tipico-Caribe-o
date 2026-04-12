@@ -20,12 +20,15 @@ const translations: Record<string, Record<Language, string>> = {
   'nav.location': { es: 'Ubicación', en: 'Location', fr: 'Emplacement', de: 'Standort', ru: 'Расположение' },
   'nav.admin': { es: 'Admin', en: 'Admin', fr: 'Admin', de: 'Admin', ru: 'Админ' },
 
+  // ============ CARTA TITLE ============
+  'carta.title': { es: 'La Carta', en: 'The Menu', fr: 'La Carte', de: 'Die Karte', ru: 'Меню' },
+
   // ============ HERO / PORTADA ============
   'hero.welcome': { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue', de: 'Willkommen', ru: 'Добро пожаловать' },
   'hero.cta.menu': { es: 'Ver Carta', en: 'View Menu', fr: 'Voir la carte', de: 'Menü ansehen', ru: 'Посмотреть меню' },
   'hero.cta.reserve': { es: 'Reservar', en: 'Book', fr: 'Réserver', de: 'Reservieren', ru: 'Забронировать' },
 
-  // ============ FEATURES (Características) ============
+  // ============ FEATURES ============
   'features.delivery.title': { es: 'Envío a Domicilio', en: 'Delivery', fr: 'Livraison', de: 'Lieferung', ru: 'Доставка' },
   'features.delivery.subtitle': { es: 'Pedidos a toda la ciudad', en: 'City-wide delivery', fr: 'Livraison dans toute la ville', de: 'Lieferung in der ganzen Stadt', ru: 'Доставка по всему городу' },
   'features.homemade.title': { es: 'Sabor Casero', en: 'Homemade', fr: 'Fait maison', de: 'Hausgemacht', ru: 'Домашний' },
@@ -45,7 +48,7 @@ const translations: Record<string, Record<Language, string>> = {
   'home.cta.subtitle': { es: 'Reserva tu mesa', en: 'Book your table', fr: 'Réservez votre table', de: 'Reservieren Sie Ihren Tisch', ru: 'Забронируйте столик' },
   'home.cta.button': { es: 'Reservar ahora', en: 'Book now', fr: 'Réserver maintenant', de: 'Jetzt buchen', ru: 'Забронировать сейчас' },
 
-  // ============ CARTA (MENU PAGE) ============
+  // ============ MENU PAGE ============
   'menu.title': { es: 'Nuestra Carta', en: 'Our Menu', fr: 'Notre carte', de: 'Unsere Speisekarte', ru: 'Наше меню' },
   'menu.suggestionsCategory': { es: 'Sugerencias del Chef', en: "Chef's Suggestions", fr: 'Suggestions du Chef', de: 'Empfehlungen des Küchenchefs', ru: 'Рекомендации шеф-повара' },
   'menu.todo': { es: 'Todo', en: 'All', fr: 'Tout', de: 'Alle', ru: 'Все' },
@@ -151,7 +154,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
     localStorage.setItem('gaby-club-language', lang)
-    // Recargar la página para aplicar cambios
     window.location.reload()
   }
 
@@ -159,7 +161,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (translations[key] && translations[key][language]) {
       return translations[key][language]
     }
-    // Si no encuentra la traducción, devolver la clave
     return key
   }
 

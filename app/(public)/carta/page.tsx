@@ -9,14 +9,12 @@ import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
 import { useI18n } from '@/lib/i18n'
-import { useTranslate } from '@/hooks/useTranslate'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
   const { t, language } = useI18n()
-  const { translateCategory, translateProduct } = useTranslate()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
@@ -29,7 +27,6 @@ export default function MenuPage() {
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
   
-  const [cartaTitulo, setCartaTitulo] = useState('La Carta')
   const [cartaImagen, setCartaImagen] = useState('')
   const [lineaConfig, setLineaConfig] = useState<any>(null)
   const [isLoadingConfig, setIsLoadingConfig] = useState(true)
@@ -43,7 +40,6 @@ export default function MenuPage() {
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
           const data = docSnap.data()
-          setCartaTitulo(data.cartaTitulo || 'La Carta')
           setCartaImagen(data.cartaImagen || '')
           setLineaConfig({
             activo: data.lineaActiva || false,
@@ -141,9 +137,9 @@ export default function MenuPage() {
   const handleAddToCart = (product: Producto, productId: string) => {
     const quantity = quantities[productId] || 1
     if (quantity > 0) {
-      const { name: productName } = translateProduct(product)
+      const productName = product.nombre || ''
       addToCart({ id: product.id, name: productName, price: product.precio, image: product.imagenUrl }, quantity)
-      toast.success(`${productName} agregado`, { duration: 2000 })
+      toast.success(`${productName} ${t('common.added')}`, { duration: 2000 })
       setQuantities(prev => ({ ...prev, [productId]: 0 }))
       setExpandedProduct(null)
     }
@@ -167,17 +163,17 @@ export default function MenuPage() {
   const suggestedProducts = activeProducts.filter(p => p.destacado === true)
 
   if (activeProducts.length === 0) {
-    return <div className="bg-black min-h-screen"><div className="container mx-auto px-4 py-16 text-center"><h2 className="text-2xl font-bold mb-4 text-white">Carta</h2><p className="text-gray-400">No hay productos disponibles</p></div></div>
+    return <div className="bg-black min-h-screen"><div className="container mx-auto px-4 py-16 text-center"><h2 className="text-2xl font-bold mb-4 text-white">{t('menu.title')}</h2><p className="text-gray-400">{t('menu.noProducts')}</p></div></div>
   }
 
   interface MenuCategory { id: string; name: string; nameEn: string; type: 'suggestion' | 'all' | 'normal' }
   
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: 'Sugerencias del Chef', nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
-    { id: 'todo', name: 'Todo', nameEn: 'All', type: 'all' as const },
+    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
+    { id: 'todo', name: t('menu.todo'), nameEn: 'All', type: 'all' as const },
     ...categories.filter(cat => cat.activo === true).map(cat => ({ 
       id: cat.id, 
-      name: translateCategory(cat),
+      name: cat.nombre,
       nameEn: cat.nameEn || '', 
       type: 'normal' as const 
     }))
@@ -196,7 +192,7 @@ export default function MenuPage() {
       if (catProducts.length > 0) {
         grouped.push({ 
           categoryId: cat.id, 
-          categoryName: translateCategory(cat), 
+          categoryName: cat.nombre, 
           products: catProducts 
         })
       }
@@ -220,7 +216,8 @@ export default function MenuPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
             const quantity = quantities[product.id] || 0
-            const { name: productName, description: productDescription } = translateProduct(product)
+            const productName = product.nombre || ''
+            const productDescription = product.descripcion || ''
             const isSuggested = product.destacado === true
             return (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
@@ -250,7 +247,8 @@ export default function MenuPage() {
       <div className="space-y-4">
         {productsList.map((product) => {
           const quantity = quantities[product.id] || 0
-          const { name: productName, description: productDescription } = translateProduct(product)
+          const productName = product.nombre || ''
+          const productDescription = product.descripcion || ''
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
@@ -285,7 +283,7 @@ export default function MenuPage() {
                   <div className="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-800">
                     {quantity > 0 && <><Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-8 text-center font-semibold text-white">{quantity}</span></>}
                     <Button size="default" onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }} className="gap-2">
-                      {quantity === 0 ? "Agregar al pedido" : `Confirmar ${quantity} x €${product.precio.toFixed(2)}`} <Plus className="h-4 w-4" />
+                      {quantity === 0 ? t('menu.addToOrder') : `${t('common.confirm')} ${quantity} x €${product.precio.toFixed(2)}`} <Plus className="h-4 w-4" />
                     </Button>
                     <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}><X className="h-4 w-4" /></Button>
                   </div>
@@ -325,7 +323,7 @@ export default function MenuPage() {
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartaImagen})` }} />
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">{cartaTitulo}</h1>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">{t('carta.title')}</h1>
           </div>
         </div>
       )}
@@ -371,7 +369,7 @@ export default function MenuPage() {
         {renderMainContent()}
         
         {currentData.type === 'single' && (currentData.data as Producto[]).length === 0 && (
-          <div className="text-center py-12"><p className="text-gray-400">No hay productos en esta categoría</p></div>
+          <div className="text-center py-12"><p className="text-gray-400">{t('menu.noProductsInCategory')}</p></div>
         )}
       </div>
 
