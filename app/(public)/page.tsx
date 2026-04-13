@@ -84,10 +84,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Línea Informativa */}
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Section - altura reducida para PC y móvil */}
       <section className="relative h-[40vh] min-h-[350px] md:h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <div 
@@ -119,7 +117,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -149,13 +146,12 @@ export default function HomePage() {
                 <Clock className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.flexible.title')}</h3>
-              <p className="text-sm text-gray-400}>{t('features.flexible.subtitle')}</p>
+              <p className="text-sm text-gray-400">{t('features.flexible.subtitle')}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Suggestions Section */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -193,7 +189,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-gray-900 to-black">
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
