@@ -243,7 +243,7 @@ export default function MenuPage() {
                   <div className="p-4">
                     <h3 className="font-bold text-base text-white mb-2">{productName}</h3>
                     {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
-                    <p className="font-bold text-lg text-gold mt-2">€{product.precio.toFixed(2)}</p>
+                    <p className="font-bold text-xl text-gold mt-2">{product.precio.toFixed(2)}€</p>
                   </div>
                 </CardContent>
               </Card>
@@ -281,7 +281,7 @@ export default function MenuPage() {
                         {productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}
                       </div>
                     </div>
-                    <p className="font-bold text-base sm:text-lg text-gold text-right mt-2">€{product.precio.toFixed(2)}</p>
+                    <p className="font-bold text-base sm:text-lg text-gold text-right mt-2">{product.precio.toFixed(2)}€</p>
                     <div className="flex items-center justify-end gap-2 mt-3">
                       <Button size="sm" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8 text-gold hover:text-gold-dark hover:bg-gold/10" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
                         <Maximize2 className="h-3 w-3" />
@@ -304,7 +304,7 @@ export default function MenuPage() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">{productName}</h3>
                   {productDescription && <p className="text-sm text-gray-400 mb-4 leading-relaxed">{productDescription}</p>}
-                  <p className="text-2xl font-bold text-gold mb-4">€{product.precio.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-gold mb-4">{product.precio.toFixed(2)}€</p>
                   <div className="flex items-center justify-end mt-4 pt-3 border-t border-gray-800">
                     <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
                       <X className="h-4 w-4" />
@@ -339,7 +339,7 @@ export default function MenuPage() {
     <div className="min-h-screen bg-black">
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Botón volver a home - más abajo y más pequeño */}
+      {/* Botón volver a home */}
       <div className="fixed top-24 left-4 z-50">
         <Link href="/">
           <Button 
