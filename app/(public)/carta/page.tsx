@@ -33,7 +33,7 @@ export default function MenuPage() {
   const [cartaTituloFr, setCartaTituloFr] = useState('La Carte')
   const [cartaTituloDe, setCartaTituloDe] = useState('Die Karte')
   const [cartaTituloRu, setCartaTituloRu] = useState('Меню')
-  const [lineaConfig, setLineaConfig] = useState<any>(null)
+  const [tickerConfig, setTickerConfig] = useState<any>(null)
   const [isLoadingConfig, setIsLoadingConfig] = useState(true)
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -51,17 +51,14 @@ export default function MenuPage() {
           setCartaTituloFr(data.cartaTituloFr || 'La Carte')
           setCartaTituloDe(data.cartaTituloDe || 'Die Karte')
           setCartaTituloRu(data.cartaTituloRu || 'Меню')
-          setLineaConfig({
-            activo: data.lineaActiva || false,
-            texto: data.lineaTexto || '',
-            colorTexto: data.lineaColorTexto || '#ffffff',
-            colorFondo: data.lineaColorFondo || '#000000',
-            tamanioLetra: data.lineaTamanioLetra || 16,
-            tipoLetra: data.lineaTipoLetra || 'Arial',
-            velocidad: data.lineaVelocidad || 10,
-            tiempoEntre: data.lineaTiempoEntre || 2,
-            ancho: data.lineaAncho || 100,
-            posicion: data.lineaPosicion || 'center'
+          setTickerConfig({
+            activo: data.tickerActivo || false,
+            texto: data.tickerTexto || '',
+            colorTexto: data.tickerColorTexto || '#d1b275',
+            colorFondo: data.tickerColorFondo || '#000000',
+            velocidad: data.tickerVelocidad || 15,
+            altura: data.tickerAltura || 40,
+            posicion: data.tickerPosicion || 'top'
           })
         }
       } catch (error) {
@@ -176,7 +173,7 @@ export default function MenuPage() {
   if (isLoading || isLoadingConfig) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-gold" />
       </div>
     )
   }
@@ -250,13 +247,13 @@ export default function MenuPage() {
             const isSuggested = product.destacado === true
             return (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
-                {isSuggested && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /></div>}
+                {isSuggested && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
                 <CardContent className="p-0">
                   <div className="aspect-[4/3] overflow-hidden bg-gray-800">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
                   </div>
                   <div className="p-4">
-                    <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-bold text-base text-white">{productName}</h3><p className="font-bold text-lg text-yellow-500">€{product.precio.toFixed(2)}</p></div>
+                    <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-bold text-base text-white">{productName}</h3><p className="font-bold text-lg text-gold">€{product.precio.toFixed(2)}</p></div>
                     {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
                     <div className="flex items-center justify-end gap-2 mt-2">
                       {quantity > 0 && <><Button size="icon" variant="outline" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium text-white">{quantity}</span></>}
@@ -283,14 +280,14 @@ export default function MenuPage() {
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
           return (
             <div key={product.id} className={cn("bg-gray-900/95 rounded-xl border border-gray-800 transition-all duration-300 cursor-pointer relative overflow-hidden", isExpanded ? "shadow-xl" : "hover:shadow-md")} onClick={() => toggleExpand(product.id, currentCategoryId)}>
-              {isSuggested && !isExpanded && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /></div>}
+              {isSuggested && !isExpanded && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
               {!isExpanded && (
                 <div className="flex">
                   <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] flex-shrink-0 bg-gray-800">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl">🍽️</div>}
                   </div>
                   <div className="flex-1 p-3 sm:p-4">
-                    <div className="flex items-start justify-between gap-2"><div className="flex-1"><h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>{productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}</div><p className="font-bold text-base sm:text-lg text-yellow-500 whitespace-nowrap">€{product.precio.toFixed(2)}</p></div>
+                    <div className="flex items-start justify-between gap-2"><div className="flex-1"><h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>{productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}</div><p className="font-bold text-base sm:text-lg text-gold whitespace-nowrap">€{product.precio.toFixed(2)}</p></div>
                     <div className="flex items-center justify-end gap-2 mt-3">
                       {quantity > 0 && <><Button size="icon" variant="outline" className="h-7 w-7 sm:h-8 sm:w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium text-white text-sm">{quantity}</span></>}
                       <Button size={quantity > 0 ? "icon" : "sm"} className={cn(quantity > 0 ? "h-7 w-7 sm:h-8 sm:w-8" : "gap-1 h-7 sm:h-8 text-xs sm:text-sm")} onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }}>
@@ -303,11 +300,11 @@ export default function MenuPage() {
               )}
               {isExpanded && (
                 <div className="p-4">
-                  {isSuggested && <div className="flex justify-end mb-2 gap-0.5"><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /></div>}
+                  {isSuggested && <div className="flex justify-end mb-2 gap-0.5"><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /></div>}
                   <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
                   </div>
-                  <div className="flex items-start justify-between gap-2 mb-2"><h3 className="text-xl font-bold text-white">{productName}</h3><p className="text-2xl font-bold text-yellow-500">€{product.precio.toFixed(2)}</p></div>
+                  <div className="flex items-start justify-between gap-2 mb-2"><h3 className="text-xl font-bold text-white">{productName}</h3><p className="text-2xl font-bold text-gold">€{product.precio.toFixed(2)}</p></div>
                   {productDescription && <p className="text-sm text-gray-400 mb-4 leading-relaxed">{productDescription}</p>}
                   <div className="flex items-center justify-end gap-3 mt-4 pt-3 border-t border-gray-800">
                     {quantity > 0 && <><Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-8 text-center font-semibold text-white">{quantity}</span></>}
@@ -331,7 +328,7 @@ export default function MenuPage() {
         <div className="space-y-12">
           {(currentData.data as { categoryId: string; categoryName: string; products: Producto[] }[]).map((group) => (
             <div key={group.categoryId}>
-              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-yellow-500/30 text-white">{group.categoryName}</h2>
+              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-gold/30 text-white">{group.categoryName}</h2>
               {renderProducts(group.products)}
             </div>
           ))}
@@ -343,21 +340,25 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {lineaConfig && <LineaInformativa config={lineaConfig} />}
+      {/* Línea Informativa */}
+      {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Banner - Imagen ajustada a pantalla completa */}
-      {cartaImagen && (
-        <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">{getCartaTitulo()}</h1>
+      {/* Hero Banner - ajustado debajo de la barra de navegación */}
+      <div className="pt-16 md:pt-20">
+        {cartaImagen && (
+          <div className="relative h-[40vh] min-h-[300px] w-full overflow-hidden">
+            <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
+            <div className="absolute inset-0 bg-black/50" />
+            <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4">{getCartaTitulo()}</h1>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      <div className="pt-8"></div>
+      <div className="pt-6"></div>
 
+      {/* Menú horizontal de categorías */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center gap-2">
@@ -368,7 +369,7 @@ export default function MenuPage() {
                 const isActive = activeCategory === category.id
                 return (
                   <Button key={category.id} id={`cat-btn-${category.id}`} onClick={() => changeCategory(category.id)} variant={isActive ? "default" : "outline"} size="default" className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0">
-                    {category.type === 'suggestion' && <Star className="inline-block h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />}
+                    {category.type === 'suggestion' && <Star className="inline-block h-3 w-3 mr-1 fill-gold text-gold" />}
                     {categoryName}
                   </Button>
                 )
@@ -379,16 +380,17 @@ export default function MenuPage() {
         </div>
       </div>
 
+      {/* Contenido principal */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-end mb-6">
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
-            <button onClick={() => setView('grid')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'grid' ? "bg-yellow-500 text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><LayoutGrid className="h-4 w-4" /></button>
-            <button onClick={() => setView('list')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'list' ? "bg-yellow-500 text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><List className="h-4 w-4" /></button>
+            <button onClick={() => setView('grid')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'grid' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><LayoutGrid className="h-4 w-4" /></button>
+            <button onClick={() => setView('list')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'list' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}><List className="h-4 w-4" /></button>
           </div>
         </div>
 
         {currentCategory && activeCategory !== 'todo' && (
-          <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-yellow-500/30 text-white">{getCategoryName(currentCategory)}</h2></div>
+          <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-gold/30 text-white">{getCategoryName(currentCategory)}</h2></div>
         )}
 
         {renderMainContent()}
@@ -398,7 +400,7 @@ export default function MenuPage() {
         )}
       </div>
 
-      {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-yellow-500 hover:bg-yellow-600 text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
+      {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
     </div>
   )
 }
