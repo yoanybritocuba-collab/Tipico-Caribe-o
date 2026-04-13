@@ -175,15 +175,45 @@ export default function MenuPage() {
     )
   }
 
-  interface MenuCategory { id: string; name: string; nameEn: string; type: 'suggestion' | 'all' | 'normal' }
+  interface MenuCategory { 
+    id: string
+    name: string
+    nameEn: string
+    nameFr?: string
+    nameDe?: string
+    nameRu?: string
+    type: 'suggestion' | 'all' | 'normal'
+  }
   
+  // Función para obtener el nombre traducido de la categoría según el idioma
+  const getTranslatedCategoryName = (cat: any): string => {
+    if (language === 'en') return cat.nameEn || cat.nombre
+    if (language === 'fr') return cat.nameFr || cat.nombre
+    if (language === 'de') return cat.nameDe || cat.nombre
+    if (language === 'ru') return cat.nameRu || cat.nombre
+    return cat.nombre
+  }
+
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Bartender's Suggestions", type: 'suggestion' as const }] : []),
-    { id: 'todo', name: t('menu.todo'), nameEn: 'All', type: 'all' as const },
+    ...(suggestedProducts.length > 0 ? [{ 
+      id: 'sugerencias', 
+      name: t('menu.suggestionsCategory'), 
+      nameEn: "Bartender's Suggestions",
+      type: 'suggestion' as const 
+    }] : []),
+    { 
+      id: 'todo', 
+      name: t('menu.todo'), 
+      nameEn: 'All', 
+      type: 'all' as const 
+    },
     ...categories.filter(cat => cat.activo === true).map(cat => ({ 
       id: cat.id, 
       name: cat.nombre,
       nameEn: cat.nameEn || '', 
+      nameFr: cat.nameFr || '',
+      nameDe: cat.nameDe || '',
+      nameRu: cat.nameRu || '',
       type: 'normal' as const 
     }))
   ]
@@ -201,7 +231,7 @@ export default function MenuPage() {
       if (catProducts.length > 0) {
         grouped.push({ 
           categoryId: cat.id, 
-          categoryName: cat.nombre, 
+          categoryName: getTranslatedCategoryName(cat), 
           products: catProducts 
         })
       }
@@ -217,7 +247,23 @@ export default function MenuPage() {
 
   const currentData = getProductsByCategory()
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
-  const getCategoryName = (category: MenuCategory) => language === 'en' ? category.nameEn : category.name
+
+  // Obtener nombre de categoría para mostrar en el botón del menú horizontal
+  const getCategoryButtonName = (category: MenuCategory): string => {
+    if (category.type === 'suggestion') return category.name
+    if (category.type === 'all') return category.name
+    // Para categorías normales, usar la traducción
+    return getTranslatedCategoryName(category)
+  }
+
+  // Obtener nombre de categoría para el título (cuando se selecciona una categoría normal)
+  const getCurrentCategoryTitle = (): string => {
+    if (activeCategory === 'sugerencias') return t('menu.suggestionsCategory')
+    if (activeCategory === 'todo') return t('menu.todo')
+    const cat = categories.find(c => c.id === activeCategory)
+    if (cat) return getTranslatedCategoryName(cat)
+    return ''
+  }
 
   const renderProducts = (productsList: Producto[]) => {
     if (view === 'grid') {
@@ -352,27 +398,27 @@ export default function MenuPage() {
         </Link>
       </div>
 
-      <div className="pt-[70px] md:pt-[85px]">
-        {cartaImagen && (
-          <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
-            <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">{getCartaTitulo()}</h1>
-            </div>
+      {/* Imagen de portada - SIN padding superior */}
+      {cartaImagen && (
+        <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-4">{getCartaTitulo()}</h1>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="pt-2"></div>
 
+      {/* Menú horizontal de categorías */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center gap-2">
             {showLeftArrow && <button onClick={() => scrollHorizontal('left')} className="hidden md:flex absolute left-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-gray-900 shadow-md border border-gray-700"><ChevronLeft className="h-4 w-4 text-white" /></button>}
             <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto scroll-smooth py-3" style={{ scrollbarWidth: 'thin' }}>
               {availableCategories.map((category) => {
-                const categoryName = getCategoryName(category)
+                const categoryName = getCategoryButtonName(category)
                 const isActive = activeCategory === category.id
                 return (
                   <Button 
@@ -404,6 +450,7 @@ export default function MenuPage() {
         </div>
       </div>
 
+      {/* Contenido principal */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-end mb-3">
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
@@ -424,10 +471,11 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {currentCategory && activeCategory !== 'todo' && (
+        {/* Título de categoría (solo para categorías normales, no para "Todo" ni "Sugerencias") */}
+        {activeCategory !== 'todo' && activeCategory !== 'sugerencias' && (
           <div className="mb-3">
             <h2 className="text-2xl font-bold pb-2 border-b border-gold/30 text-white">
-              {getCategoryName(currentCategory)}
+              {getCurrentCategoryTitle()}
             </h2>
           </div>
         )}
