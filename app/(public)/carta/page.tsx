@@ -340,10 +340,8 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Línea Informativa */}
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Banner - ajustado debajo de la barra de navegación con altura reducida */}
       <div className="pt-[70px] md:pt-[85px]">
         {cartaImagen && (
           <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
@@ -358,7 +356,6 @@ export default function MenuPage() {
 
       <div className="pt-6"></div>
 
-      {/* Menú horizontal de categorías */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center gap-2">
@@ -368,7 +365,18 @@ export default function MenuPage() {
                 const categoryName = getCategoryName(category)
                 const isActive = activeCategory === category.id
                 return (
-                  <Button key={category.id} id={`cat-btn-${category.id}`} onClick={() => changeCategory(category.id)} variant={isActive ? "default" : "outline"} size="default" className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0">
+                  <Button 
+                    key={category.id} 
+                    id={`cat-btn-${category.id}`} 
+                    onClick={() => changeCategory(category.id)} 
+                    variant={isActive ? "default" : "outline"} 
+                    size="default" 
+                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-gold text-black border-gold hover:shadow-gold' 
+                        : 'bg-black border-2 border-gold text-gold hover:shadow-gold'
+                    }`}
+                  >
                     {category.type === 'suggestion' && <Star className="inline-block h-3 w-3 mr-1 fill-gold text-gold" />}
                     {categoryName}
                   </Button>
@@ -380,7 +388,6 @@ export default function MenuPage() {
         </div>
       </div>
 
-      {/* Contenido principal */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-end mb-6">
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">

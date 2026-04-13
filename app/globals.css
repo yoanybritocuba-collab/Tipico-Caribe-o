@@ -113,7 +113,7 @@
   }
 }
 
-/* Colores personalizados */
+/* ============ COLORES PERSONALIZADOS ============ */
 .text-gold {
   color: #d1b275;
 }
@@ -130,11 +130,44 @@
   background-color: #b89a5e;
 }
 
-.hover\\:bg-gold-dark:hover {
+.hover\:bg-gold-dark:hover {
   background-color: #b89a5e;
 }
 
-/* Scrollbar */
+/* ============ SOMBRA DORADA ============ */
+.shadow-gold {
+  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.4);
+}
+
+.hover\:shadow-gold:hover {
+  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+/* ============ BOTONES CON BORDE DORADO ============ */
+.btn-outline-gold {
+  background-color: #000000;
+  border: 2px solid #d1b275;
+  color: #d1b275;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-gold:hover {
+  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
+}
+
+/* ============ BOTONES ACTIVOS ============ */
+.btn-active-gold {
+  background-color: #d1b275;
+  color: #000000;
+  border: 2px solid #d1b275;
+}
+
+.btn-active-gold:hover {
+  box-shadow: 0 6px 20px rgba(209, 178, 117, 0.5);
+}
+
+/* ============ SCROLLBAR ============ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -154,7 +187,7 @@
   background: #b89a5e;
 }
 
-/* Animación para ticker */
+/* ============ ANIMACIÓN PARA TICKER ============ */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

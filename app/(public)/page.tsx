@@ -104,12 +104,20 @@ export default function HomePage() {
           <p className="mb-8 max-w-2xl text-base md:text-lg text-white/90">{subtitulo}</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/carta">
-              <Button variant="default" size="lg" className="text-base md:text-lg px-6 md:px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="text-base md:text-lg px-6 md:px-8 rounded-full bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300"
+              >
                 {t('hero.cta.menu')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="default" size="lg" className="text-base md:text-lg px-6 md:px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="text-base md:text-lg px-6 md:px-8 rounded-full bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300"
+              >
                 {t('hero.cta.reserve')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </a>
@@ -194,7 +202,7 @@ export default function HomePage() {
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
           <p className="text-base md:text-lg mb-8 max-w-2xl mx-auto text-gray-300">{t('home.cta.subtitle')}</p>
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-            <Button variant="default" size="lg" className="bg-gold text-black hover:bg-gold-dark text-base md:text-lg px-8 rounded-full shadow-xl">
+            <Button variant="outline" size="lg" className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 text-base md:text-lg px-8 rounded-full">
               {t('home.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </a>
