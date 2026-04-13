@@ -343,10 +343,10 @@ export default function MenuPage() {
       {/* Línea Informativa */}
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Banner - ajustado debajo de la barra de navegación */}
+      {/* Hero Banner - ajustado debajo de la barra de navegación con altura reducida */}
       <div className="pt-[70px] md:pt-[85px]">
         {cartaImagen && (
-          <div className="relative h-[30vh] min-h-[200px] md:h-[35vh] w-full overflow-hidden">
+          <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
             <div className="absolute inset-0 bg-black/50" />
             <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">

@@ -87,8 +87,8 @@ export default function HomePage() {
       {/* Línea Informativa */}
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Section - altura ajustada para PC */}
-      <section className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
+      {/* Hero Section - altura reducida para PC y móvil */}
+      <section className="relative h-[40vh] min-h-[350px] md:h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -101,17 +101,17 @@ export default function HomePage() {
             <Sparkles className="h-4 w-4 text-amber-400" />
             <span className="text-xs uppercase tracking-wider">{t('hero.welcome')}</span>
           </div>
-          <h1 className="mb-4 font-display text-5xl md:text-7xl lg:text-8xl font-bold">{titulo}</h1>
+          <h1 className="mb-4 font-display text-4xl md:text-6xl lg:text-7xl font-bold">{titulo}</h1>
           <div className="h-0.5 w-20 bg-gold mx-auto my-6 rounded-full" />
-          <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">{subtitulo}</p>
+          <p className="mb-8 max-w-2xl text-base md:text-lg text-white/90">{subtitulo}</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/carta">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
+              <Button variant="default" size="lg" className="text-base md:text-lg px-6 md:px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
                 {t('hero.cta.menu')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
+              <Button variant="default" size="lg" className="text-base md:text-lg px-6 md:px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
                 {t('hero.cta.reserve')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </a>
@@ -149,7 +149,7 @@ export default function HomePage() {
                 <Clock className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.flexible.title')}</h3>
-              <p className="text-sm text-gray-400">{t('features.flexible.subtitle')}</p>
+              <p className="text-sm text-gray-400}>{t('features.flexible.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
               <Star className="h-4 w-4 text-gold fill-gold" />
               <span className="text-xs font-semibold uppercase tracking-wider text-gold">{t('home.mostRequested')}</span>
             </div>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
               <span className="text-white">{t('home.specialties')}</span>
               <span className="text-gold mx-3">{t('home.ofTheHouse')}</span>
             </h2>
@@ -176,7 +176,7 @@ export default function HomePage() {
               </div>
               <div className="h-px w-16 bg-gradient-to-l from-transparent to-gold" />
             </div>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">{t('home.favoritesDescription')}</p>
+            <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">{t('home.favoritesDescription')}</p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {suggestions.map((product) => (
@@ -197,9 +197,9 @@ export default function HomePage() {
       <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-gray-900 to-black">
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-gray-300">{t('home.cta.subtitle')}</p>
+          <p className="text-base md:text-lg mb-8 max-w-2xl mx-auto text-gray-300">{t('home.cta.subtitle')}</p>
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-            <Button variant="default" size="lg" className="bg-gold text-black hover:bg-gold-dark text-lg px-8 rounded-full shadow-xl">
+            <Button variant="default" size="lg" className="bg-gold text-black hover:bg-gold-dark text-base md:text-lg px-8 rounded-full shadow-xl">
               {t('home.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </a>
