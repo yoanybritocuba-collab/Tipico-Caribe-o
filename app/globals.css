@@ -1,86 +1,262 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
-body {
-  background-color: black;
-  color: white;
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Modo Claro - Colores Dominicanos (Azul, Rojo, Blanco) */
+  --background: oklch(100% 0 0);
+  --foreground: oklch(0% 0 0);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(0% 0 0);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(0% 0 0);
+  /* AZUL DOMINICANO - Primary */
+  --primary: oklch(55% 0.2 260);
+  --primary-foreground: oklch(100% 0 0);
+  /* ROJO DOMINICANO - Secondary */
+  --secondary: oklch(55% 0.25 30);
+  --secondary-foreground: oklch(100% 0 0);
+  --muted: oklch(96% 0 0);
+  --muted-foreground: oklch(45% 0 0);
+  --accent: oklch(95% 0.05 260);
+  --accent-foreground: oklch(30% 0.15 260);
+  --destructive: oklch(55% 0.25 30);
+  --destructive-foreground: oklch(100% 0 0);
+  --border: oklch(90% 0 0);
+  --input: oklch(90% 0 0);
+  --ring: oklch(55% 0.2 260);
+  --radius: 0.75rem;
+  --sidebar: oklch(98% 0 0);
+  --sidebar-foreground: oklch(0% 0 0);
+  --sidebar-primary: oklch(55% 0.2 260);
+  --sidebar-primary-foreground: oklch(100% 0 0);
+  --sidebar-accent: oklch(96% 0 0);
+  --sidebar-accent-foreground: oklch(0% 0 0);
+  --sidebar-border: oklch(90% 0 0);
+  --sidebar-ring: oklch(55% 0.2 260);
+  /* Colores Dominicanos personalizados */
+  --dominicana-blue: oklch(55% 0.2 260);
+  --dominicana-red: oklch(55% 0.25 30);
+  --dominicana-white: oklch(100% 0 0);
 }
 
-.text-gold {
-  color: #d1b275;
+.dark {
+  /* Modo Oscuro - Colores Dominicanos más sobrios */
+  --background: oklch(7% 0 0);
+  --foreground: oklch(100% 0 0);
+  --card: oklch(10% 0 0);
+  --card-foreground: oklch(100% 0 0);
+  --popover: oklch(10% 0 0);
+  --popover-foreground: oklch(100% 0 0);
+  /* AZUL DOMINICANO más brillante en oscuro */
+  --primary: oklch(60% 0.2 260);
+  --primary-foreground: oklch(100% 0 0);
+  /* ROJO DOMINICANO más brillante en oscuro */
+  --secondary: oklch(60% 0.25 30);
+  --secondary-foreground: oklch(100% 0 0);
+  --muted: oklch(15% 0 0);
+  --muted-foreground: oklch(65% 0 0);
+  --accent: oklch(20% 0.1 260);
+  --accent-foreground: oklch(80% 0.1 260);
+  --destructive: oklch(55% 0.25 30);
+  --destructive-foreground: oklch(100% 0 0);
+  --border: oklch(20% 0 0);
+  --input: oklch(20% 0 0);
+  --ring: oklch(60% 0.2 260);
+  --sidebar: oklch(10% 0 0);
+  --sidebar-foreground: oklch(100% 0 0);
+  --sidebar-primary: oklch(60% 0.2 260);
+  --sidebar-primary-foreground: oklch(100% 0 0);
+  --sidebar-accent: oklch(15% 0 0);
+  --sidebar-accent-foreground: oklch(100% 0 0);
+  --sidebar-border: oklch(20% 0 0);
+  --sidebar-ring: oklch(60% 0.2 260);
+  /* Colores Dominicanos en modo oscuro */
+  --dominicana-blue: oklch(60% 0.2 260);
+  --dominicana-red: oklch(60% 0.25 30);
+  --dominicana-white: oklch(100% 0 0);
 }
 
-.border-gold {
-  border-color: #d1b275;
+@theme inline {
+  --font-sans: 'Poppins', 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-display: 'Playfair Display', serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* Colores Dominicanos */
+  --color-dominicana-blue: var(--dominicana-blue);
+  --color-dominicana-red: var(--dominicana-red);
+  --color-dominicana-white: var(--dominicana-white);
 }
 
-.bg-gold {
-  background-color: #d1b275;
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
 }
 
-.btn-gold {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s;
-  font-weight: 600;
-  background: linear-gradient(135deg, #d1b275 0%, #b89a5e 100%);
-  color: #0a0a0a;
-  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
+@layer components {
+  /* Patrón de bandera dominicana */
+  .dominican-pattern {
+    background: linear-gradient(
+      90deg,
+      oklch(55% 0.2 260) 0%,
+      oklch(55% 0.2 260) 25%,
+      oklch(55% 0.25 30) 25%,
+      oklch(55% 0.25 30) 50%,
+      oklch(55% 0.2 260) 50%,
+      oklch(55% 0.2 260) 75%,
+      oklch(55% 0.25 30) 75%,
+      oklch(55% 0.25 30) 100%
+    );
+  }
 }
 
-.btn-gold:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(209, 178, 117, 0.5);
+/* Ajustes de contraste para modo claro */
+.light .text-dominicana-blue {
+  color: #0050FF;
 }
 
-.btn-outline-gold {
-  border: 2px solid #d1b275;
-  background: transparent;
-  color: #d1b275;
-  transition: all 0.3s;
+.light .text-dominicana-red {
+  color: #FF0000;
 }
 
-.btn-outline-gold:hover {
-  background-color: #d1b275;
-  color: #0a0a0a;
-  box-shadow: 0 4px 15px rgba(209, 178, 117, 0.3);
+.dark .text-dominicana-blue {
+  color: #6080FF;
 }
 
-input, select, textarea {
-  background-color: #111827;
-  border: 1px solid #374151;
-  color: white;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  transition: all 0.2s;
+.dark .text-dominicana-red {
+  color: #FF6060;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #d1b275;
-  box-shadow: 0 0 0 2px rgba(209, 178, 117, 0.2);
+/* Mejora del botón de tema */
+.light .theme-toggle-icon {
+  color: #1a1a1a;
 }
 
-a:hover {
-  color: #d1b275;
+.dark .theme-toggle-icon {
+  color: #ffffff;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Animaciones para el botón de WhatsApp */
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: #111827;
-  border-radius: 9999px;
+@keyframes ping-slower {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #d1b275;
-  border-radius: 9999px;
+@keyframes ping-slowest {
+  0% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  75%, 100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #b89a5e;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-ping-slower {
+  animation: ping-slower 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-ping-slowest {
+  animation: ping-slowest 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Animación de gradiente para botones */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.btn-gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 1.5s ease infinite;
+}
+
+/* Botones de categorías - eliminar efecto azul al hacer clic */
+button[id^="cat-btn-"] {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+button[id^="cat-btn-"]:active {
+  transform: scale(0.98);
 }
