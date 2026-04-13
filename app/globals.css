@@ -4,82 +4,70 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Modo Claro - Colores Dominicanos (Azul, Rojo, Blanco) */
+  /* Modo Claro */
   --background: oklch(100% 0 0);
   --foreground: oklch(0% 0 0);
   --card: oklch(100% 0 0);
   --card-foreground: oklch(0% 0 0);
   --popover: oklch(100% 0 0);
   --popover-foreground: oklch(0% 0 0);
-  /* AZUL DOMINICANO - Primary */
-  --primary: oklch(55% 0.2 260);
-  --primary-foreground: oklch(100% 0 0);
-  /* ROJO DOMINICANO - Secondary */
-  --secondary: oklch(55% 0.25 30);
+  --primary: oklch(75% 0.1 90);
+  --primary-foreground: oklch(0% 0 0);
+  --secondary: oklch(60% 0 0);
   --secondary-foreground: oklch(100% 0 0);
   --muted: oklch(96% 0 0);
   --muted-foreground: oklch(45% 0 0);
-  --accent: oklch(95% 0.05 260);
-  --accent-foreground: oklch(30% 0.15 260);
+  --accent: oklch(96% 0 0);
+  --accent-foreground: oklch(0% 0 0);
   --destructive: oklch(55% 0.25 30);
   --destructive-foreground: oklch(100% 0 0);
   --border: oklch(90% 0 0);
   --input: oklch(90% 0 0);
-  --ring: oklch(55% 0.2 260);
+  --ring: oklch(75% 0.1 90);
   --radius: 0.75rem;
   --sidebar: oklch(98% 0 0);
   --sidebar-foreground: oklch(0% 0 0);
-  --sidebar-primary: oklch(55% 0.2 260);
-  --sidebar-primary-foreground: oklch(100% 0 0);
+  --sidebar-primary: oklch(75% 0.1 90);
+  --sidebar-primary-foreground: oklch(0% 0 0);
   --sidebar-accent: oklch(96% 0 0);
   --sidebar-accent-foreground: oklch(0% 0 0);
   --sidebar-border: oklch(90% 0 0);
-  --sidebar-ring: oklch(55% 0.2 260);
-  /* Colores Dominicanos personalizados */
-  --dominicana-blue: oklch(55% 0.2 260);
-  --dominicana-red: oklch(55% 0.25 30);
-  --dominicana-white: oklch(100% 0 0);
+  --sidebar-ring: oklch(75% 0.1 90);
 }
 
 .dark {
-  /* Modo Oscuro - Colores Dominicanos más sobrios */
+  /* Modo Oscuro - Negro y Dorado */
   --background: oklch(7% 0 0);
   --foreground: oklch(100% 0 0);
   --card: oklch(10% 0 0);
   --card-foreground: oklch(100% 0 0);
   --popover: oklch(10% 0 0);
   --popover-foreground: oklch(100% 0 0);
-  /* AZUL DOMINICANO más brillante en oscuro */
-  --primary: oklch(60% 0.2 260);
-  --primary-foreground: oklch(100% 0 0);
-  /* ROJO DOMINICANO más brillante en oscuro */
-  --secondary: oklch(60% 0.25 30);
+  --primary: oklch(75% 0.12 85);
+  --primary-foreground: oklch(0% 0 0);
+  --secondary: oklch(15% 0 0);
   --secondary-foreground: oklch(100% 0 0);
   --muted: oklch(15% 0 0);
   --muted-foreground: oklch(65% 0 0);
-  --accent: oklch(20% 0.1 260);
-  --accent-foreground: oklch(80% 0.1 260);
+  --accent: oklch(15% 0 0);
+  --accent-foreground: oklch(100% 0 0);
   --destructive: oklch(55% 0.25 30);
   --destructive-foreground: oklch(100% 0 0);
   --border: oklch(20% 0 0);
   --input: oklch(20% 0 0);
-  --ring: oklch(60% 0.2 260);
+  --ring: oklch(75% 0.12 85);
   --sidebar: oklch(10% 0 0);
   --sidebar-foreground: oklch(100% 0 0);
-  --sidebar-primary: oklch(60% 0.2 260);
-  --sidebar-primary-foreground: oklch(100% 0 0);
+  --sidebar-primary: oklch(75% 0.12 85);
+  --sidebar-primary-foreground: oklch(0% 0 0);
   --sidebar-accent: oklch(15% 0 0);
   --sidebar-accent-foreground: oklch(100% 0 0);
   --sidebar-border: oklch(20% 0 0);
-  --sidebar-ring: oklch(60% 0.2 260);
-  /* Colores Dominicanos en modo oscuro */
-  --dominicana-blue: oklch(60% 0.2 260);
-  --dominicana-red: oklch(60% 0.25 30);
-  --dominicana-white: oklch(100% 0 0);
+  --sidebar-ring: oklch(75% 0.12 85);
 }
 
 @theme inline {
-  --font-sans: 'Poppins', 'Geist', 'Geist Fallback';
+  --font-sans: 'Inter', 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-display: 'Playfair Display', serif;
   --color-background: var(--background);
@@ -113,10 +101,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  /* Colores Dominicanos */
-  --color-dominicana-blue: var(--dominicana-blue);
-  --color-dominicana-red: var(--dominicana-red);
-  --color-dominicana-white: var(--dominicana-white);
 }
 
 @layer base {
@@ -129,134 +113,55 @@
   }
 }
 
-@layer components {
-  /* Patrón de bandera dominicana */
-  .dominican-pattern {
-    background: linear-gradient(
-      90deg,
-      oklch(55% 0.2 260) 0%,
-      oklch(55% 0.2 260) 25%,
-      oklch(55% 0.25 30) 25%,
-      oklch(55% 0.25 30) 50%,
-      oklch(55% 0.2 260) 50%,
-      oklch(55% 0.2 260) 75%,
-      oklch(55% 0.25 30) 75%,
-      oklch(55% 0.25 30) 100%
-    );
-  }
+/* Colores personalizados */
+.text-gold {
+  color: #d1b275;
 }
 
-/* Ajustes de contraste para modo claro */
-.light .text-dominicana-blue {
-  color: #0050FF;
+.border-gold {
+  border-color: #d1b275;
 }
 
-.light .text-dominicana-red {
-  color: #FF0000;
+.bg-gold {
+  background-color: #d1b275;
 }
 
-.dark .text-dominicana-blue {
-  color: #6080FF;
+.bg-gold-dark {
+  background-color: #b89a5e;
 }
 
-.dark .text-dominicana-red {
-  color: #FF6060;
+.hover\\:bg-gold-dark:hover {
+  background-color: #b89a5e;
 }
 
-/* Mejora del botón de tema */
-.light .theme-toggle-icon {
-  color: #1a1a1a;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.dark .theme-toggle-icon {
-  color: #ffffff;
+::-webkit-scrollbar-track {
+  background: #111827;
+  border-radius: 9999px;
 }
 
-/* Animaciones para el botón de WhatsApp */
-@keyframes ping-slow {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  75%, 100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
+::-webkit-scrollbar-thumb {
+  background: #d1b275;
+  border-radius: 9999px;
 }
 
-@keyframes ping-slower {
-  0% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #b89a5e;
 }
 
-@keyframes ping-slowest {
-  0% {
-    transform: scale(1);
-    opacity: 0.2;
-  }
-  75%, 100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
+/* Animación para ticker */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-ping-slow {
-  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.animate-ping-slower {
-  animation: ping-slower 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.animate-ping-slowest {
-  animation: ping-slowest 3s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Animación de gradiente para botones */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.btn-gradient-animate {
-  background-size: 200% 200%;
-  animation: gradient-shift 1.5s ease infinite;
-}
-
-/* Botones de categorías - eliminar efecto azul al hacer clic */
-button[id^="cat-btn-"] {
-  -webkit-tap-highlight-color: transparent;
-  cursor: pointer;
-}
-
-button[id^="cat-btn-"]:active {
-  transform: scale(0.98);
+.animate-marquee {
+  animation-name: marquee;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }

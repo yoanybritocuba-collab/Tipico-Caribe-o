@@ -19,7 +19,7 @@ export default function HomePage() {
   const [subtitulo, setSubtitulo] = useState('')
   const [isLoadingPortada, setIsLoadingPortada] = useState(true)
   const [whatsappNumber, setWhatsappNumber] = useState('34634492023')
-  const [lineaConfig, setLineaConfig] = useState<any>(null)
+  const [tickerConfig, setTickerConfig] = useState<any>(null)
 
   useEffect(() => {
     const loadPortada = async () => {
@@ -52,17 +52,14 @@ export default function HomePage() {
             setWhatsappNumber(cleanNumber)
           }
           
-          setLineaConfig({
-            activo: data.lineaActiva || false,
-            texto: data.lineaTexto || '',
-            colorTexto: data.lineaColorTexto || '#ffffff',
-            colorFondo: data.lineaColorFondo || '#000000',
-            tamanioLetra: data.lineaTamanioLetra || 16,
-            tipoLetra: data.lineaTipoLetra || 'Arial',
-            velocidad: data.lineaVelocidad || 10,
-            tiempoEntre: data.lineaTiempoEntre || 2,
-            ancho: data.lineaAncho || 100,
-            posicion: data.lineaPosicion || 'center'
+          setTickerConfig({
+            activo: data.tickerActivo || false,
+            texto: data.tickerTexto || '',
+            colorTexto: data.tickerColorTexto || '#d1b275',
+            colorFondo: data.tickerColorFondo || '#000000',
+            velocidad: data.tickerVelocidad || 15,
+            altura: data.tickerAltura || 40,
+            posicion: data.tickerPosicion || 'top'
           })
         }
       } catch (error) {
@@ -80,17 +77,18 @@ export default function HomePage() {
   if (isLoading || isLoadingPortada) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-yellow-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-gold" />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-black">
-      {lineaConfig && <LineaInformativa config={lineaConfig} />}
+      {/* Línea Informativa */}
+      {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Hero Section - Imagen ajustada a pantalla completa */}
-      <section className="relative h-screen w-full overflow-hidden">
+      {/* Hero Section - altura ajustada para PC */}
+      <section className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
         <div className="absolute inset-0">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -104,16 +102,16 @@ export default function HomePage() {
             <span className="text-xs uppercase tracking-wider">{t('hero.welcome')}</span>
           </div>
           <h1 className="mb-4 font-display text-5xl md:text-7xl lg:text-8xl font-bold">{titulo}</h1>
-          <div className="h-0.5 w-20 bg-gradient-to-r from-blue-600 via-red-600 to-blue-600 mx-auto my-6 rounded-full" />
+          <div className="h-0.5 w-20 bg-gold mx-auto my-6 rounded-full" />
           <p className="mb-8 max-w-2xl text-lg md:text-xl text-white/90">{subtitulo}</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/carta">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700">
+              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
                 {t('hero.cta.menu')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600">
+              <Button variant="default" size="lg" className="text-lg px-8 rounded-full bg-gold text-black hover:bg-gold-dark">
                 {t('hero.cta.reserve')} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </a>
@@ -121,33 +119,34 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Features Section */}
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-600/10 flex items-center justify-center group-hover:scale-110">
-                <Truck className="h-8 w-8 text-blue-600" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Truck className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.delivery.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.delivery.subtitle')}</p>
             </div>
             <div className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-600/10 flex items-center justify-center group-hover:scale-110">
-                <Heart className="h-8 w-8 text-red-600" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Heart className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.homemade.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.homemade.subtitle')}</p>
             </div>
             <div className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-600/10 flex items-center justify-center group-hover:scale-110">
-                <Shield className="h-8 w-8 text-blue-600" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Shield className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.quality.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.quality.subtitle')}</p>
             </div>
             <div className="text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-600/10 flex items-center justify-center group-hover:scale-110">
-                <Clock className="h-8 w-8 text-red-600" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Clock className="h-8 w-8 text-gold" />
               </div>
               <h3 className="font-semibold mb-1 text-white">{t('features.flexible.title')}</h3>
               <p className="text-sm text-gray-400">{t('features.flexible.subtitle')}</p>
@@ -156,25 +155,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Suggestions Section */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-blue-600/10 rounded-full px-4 py-1.5 mb-5">
-              <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">{t('home.mostRequested')}</span>
+            <div className="inline-flex items-center gap-2 bg-gold/10 rounded-full px-4 py-1.5 mb-5">
+              <Star className="h-4 w-4 text-gold fill-gold" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-gold">{t('home.mostRequested')}</span>
             </div>
             <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">{t('home.specialties')}</span>
-              <span className="text-red-600 mx-3">{t('home.ofTheHouse')}</span>
+              <span className="text-white">{t('home.specialties')}</span>
+              <span className="text-gold mx-3">{t('home.ofTheHouse')}</span>
             </h2>
             <div className="flex items-center justify-center gap-3 my-4">
-              <div className="h-px w-16 bg-gradient-to-r from-transparent to-blue-600" />
+              <div className="h-px w-16 bg-gradient-to-r from-transparent to-gold" />
               <div className="flex gap-1">
-                <Coffee className="h-4 w-4 text-amber-500" />
-                <Utensils className="h-4 w-4 text-red-600" />
-                <Wine className="h-4 w-4 text-blue-600" />
+                <Coffee className="h-4 w-4 text-gold" />
+                <Utensils className="h-4 w-4 text-gold" />
+                <Wine className="h-4 w-4 text-gold" />
               </div>
-              <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-600" />
+              <div className="h-px w-16 bg-gradient-to-l from-transparent to-gold" />
             </div>
             <p className="text-lg text-gray-400 max-w-2xl mx-auto">{t('home.favoritesDescription')}</p>
           </div>
@@ -185,7 +185,7 @@ export default function HomePage() {
           </div>
           <div className="mt-12 text-center">
             <Link href="/carta">
-              <Button variant="outline" size="lg" className="rounded-full px-8 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black">
+              <Button variant="outline" size="lg" className="rounded-full px-8 border-gold text-gold hover:bg-gold hover:text-black">
                 {t('home.discoverMenu')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -193,12 +193,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-blue-600 to-red-600">
+      {/* CTA Section */}
+      <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-gray-900 to-black">
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90">{t('home.cta.subtitle')}</p>
+          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-gray-300">{t('home.cta.subtitle')}</p>
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-            <Button variant="default" size="lg" className="bg-white text-gray-900 hover:bg-gray-100 text-lg px-8 rounded-full shadow-xl">
+            <Button variant="default" size="lg" className="bg-gold text-black hover:bg-gold-dark text-lg px-8 rounded-full shadow-xl">
               {t('home.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </a>
