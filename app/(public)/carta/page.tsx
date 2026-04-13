@@ -241,11 +241,9 @@ export default function MenuPage() {
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
                   </div>
                   <div className="p-4">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-bold text-base text-white">{productName}</h3>
-                      <p className="font-bold text-lg text-gold">€{product.precio.toFixed(2)}</p>
-                    </div>
+                    <h3 className="font-bold text-base text-white mb-2">{productName}</h3>
                     {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
+                    <p className="font-bold text-lg text-gold mt-2">€{product.precio.toFixed(2)}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -282,8 +280,8 @@ export default function MenuPage() {
                         <h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>
                         {productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}
                       </div>
-                      <p className="font-bold text-base sm:text-lg text-gold whitespace-nowrap">€{product.precio.toFixed(2)}</p>
                     </div>
+                    <p className="font-bold text-base sm:text-lg text-gold text-right mt-2">€{product.precio.toFixed(2)}</p>
                     <div className="flex items-center justify-end gap-2 mt-3">
                       <Button size="sm" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8 text-gold hover:text-gold-dark hover:bg-gold/10" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
                         <Maximize2 className="h-3 w-3" />
@@ -304,11 +302,9 @@ export default function MenuPage() {
                   <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
                   </div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-xl font-bold text-white">{productName}</h3>
-                    <p className="text-2xl font-bold text-gold">€{product.precio.toFixed(2)}</p>
-                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">{productName}</h3>
                   {productDescription && <p className="text-sm text-gray-400 mb-4 leading-relaxed">{productDescription}</p>}
+                  <p className="text-2xl font-bold text-gold mb-4">€{product.precio.toFixed(2)}</p>
                   <div className="flex items-center justify-end mt-4 pt-3 border-t border-gray-800">
                     <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
                       <X className="h-4 w-4" />
