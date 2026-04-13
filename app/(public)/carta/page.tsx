@@ -237,6 +237,14 @@ export default function MenuPage() {
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
   const getCategoryName = (category: MenuCategory) => language === 'en' ? category.nameEn : category.name
 
+  // Obtener el nombre de la categoría actual para mostrar
+  const getCurrentCategoryName = () => {
+    if (activeCategory === 'sugerencias') return t('menu.suggestionsCategory')
+    if (activeCategory === 'todo') return t('menu.todo')
+    const cat = categories.find(c => c.id === activeCategory)
+    return cat?.nombre || ''
+  }
+
   const renderProducts = (productsList: Producto[]) => {
     if (view === 'grid') {
       return (
@@ -250,7 +258,7 @@ export default function MenuPage() {
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
                 {isSuggested && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
                 <CardContent className="p-0">
-                  <div className="aspect-[4/3] overflow-hidden bg-gray-800">
+                  <div className="aspect-[3/2] overflow-hidden bg-gray-800">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
                   </div>
                   <div className="p-4">
@@ -271,7 +279,7 @@ export default function MenuPage() {
       )
     }
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {productsList.map((product) => {
           const quantity = quantities[product.id] || 0
           const productName = product.nombre || ''
@@ -284,7 +292,7 @@ export default function MenuPage() {
               {isSuggested && !isExpanded && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
               {!isExpanded && (
                 <div className="flex">
-                  <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] flex-shrink-0 bg-gray-800">
+                  <div className="w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] flex-shrink-0 bg-gray-800">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl">🍽️</div>}
                   </div>
                   <div className="flex-1 p-3 sm:p-4">
@@ -302,7 +310,7 @@ export default function MenuPage() {
               {isExpanded && (
                 <div className="p-4">
                   {isSuggested && <div className="flex justify-end mb-2 gap-0.5"><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /></div>}
-                  <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
+                  <div className="aspect-[3/2] bg-gray-800 rounded-xl overflow-hidden mb-4">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
                   </div>
                   <div className="flex items-start justify-between gap-2 mb-2"><h3 className="text-xl font-bold text-white">{productName}</h3><p className="text-2xl font-bold text-gold">€{product.precio.toFixed(2)}</p></div>
@@ -356,6 +364,7 @@ export default function MenuPage() {
         </Link>
       </div>
 
+      {/* Imagen del banner */}
       <div className="pt-[70px] md:pt-[85px]">
         {cartaImagen && (
           <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
@@ -368,8 +377,7 @@ export default function MenuPage() {
         )}
       </div>
 
-      <div className="pt-6"></div>
-
+      {/* Barra de categorías (tabs) */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center gap-2">
@@ -402,8 +410,12 @@ export default function MenuPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-end mb-6">
+      {/* Cabecera con nombre de categoría y selector de vista */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl md:text-3xl font-bold text-gold">
+            {getCurrentCategoryName()}
+          </h2>
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
             <button 
               onClick={() => setView('grid')} 
@@ -421,11 +433,12 @@ export default function MenuPage() {
             </button>
           </div>
         </div>
+        {/* Línea fina separadora */}
+        <div className="h-px w-full bg-gold/30 mt-3"></div>
+      </div>
 
-        {currentCategory && activeCategory !== 'todo' && (
-          <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-gold/30 text-white">{getCategoryName(currentCategory)}</h2></div>
-        )}
-
+      {/* Contenido principal */}
+      <div className="container mx-auto px-4 py-6">
         {renderMainContent()}
         
         {currentData.type === 'single' && (currentData.data as Producto[]).length === 0 && (
