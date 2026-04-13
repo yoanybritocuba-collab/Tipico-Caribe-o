@@ -85,27 +85,25 @@ export default function CategoriasPage() {
   const clearFilters = () => { setSearchTerm(''); setStatusFilter('all') }
 
   if (isLoading) {
-    return <div className="flex h-[60vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-blue-500" /></div>
+    return <div className="flex h-[60vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>
   }
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/20 via-blue-500/10 to-red-600/20 p-6 border border-blue-500/30">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-500/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 p-6 border border-gold/30">
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
-            <FolderTree className="h-5 w-5 text-blue-400" />
-            <span className="text-xs font-medium text-blue-400 uppercase tracking-wider">Organización del menú</span>
+            <FolderTree className="h-5 w-5 text-gold" />
+            <span className="text-xs font-medium text-gold uppercase tracking-wider">Organización</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-red-400 bg-clip-text text-transparent">Categorías del Menú</h1>
-          <p className="text-gray-400 text-sm mt-1">Gestiona las categorías que organizan tu carta</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gold">Categorías</h1>
+          <p className="text-gray-400 text-sm mt-1">Gestiona las categorías del menú</p>
         </div>
       </div>
 
       <div className="flex justify-end">
         <Link href="/admin/categorias/nueva">
-          <Button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600">
+          <Button className="bg-gold text-black hover:bg-gold-dark">
             <Plus className="h-4 w-4 mr-2" />
             Nueva Categoría
           </Button>
@@ -169,9 +167,16 @@ export default function CategoriasPage() {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
                         <Link href={`/admin/categorias/editar/${category.id}`}>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><Edit2 className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gold hover:text-gold-dark hover:bg-gold/10">
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
                         </Link>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/50" onClick={() => setDeleteId(category.id)}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/50" 
+                          onClick={() => setDeleteId(category.id)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -198,7 +203,9 @@ export default function CategoriasPage() {
         <AlertDialogContent className="bg-gray-950 border-gray-800">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">¿Eliminar categoría?</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">Esta acción no se puede deshacer. Los productos asociados a esta categoría quedarán sin categoría.</AlertDialogDescription>
+            <AlertDialogDescription className="text-gray-400">
+              Esta acción no se puede deshacer. Los productos asociados a esta categoría quedarán sin categoría.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="bg-gray-800 text-white hover:bg-gray-700 border-0">Cancelar</AlertDialogCancel>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home } from 'lucide-react'
+import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { addToCart } from '@/lib/cart-store'
@@ -174,7 +174,7 @@ export default function MenuPage() {
   if (isLoading || isLoadingConfig) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-gold" />
+        <Wine className="h-8 w-8 animate-spin text-gold" />
       </div>
     )
   }
@@ -196,7 +196,7 @@ export default function MenuPage() {
   interface MenuCategory { id: string; name: string; nameEn: string; type: 'suggestion' | 'all' | 'normal' }
   
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
+    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Bartender's Suggestions", type: 'suggestion' as const }] : []),
     { id: 'todo', name: t('menu.todo'), nameEn: 'All', type: 'all' as const },
     ...categories.filter(cat => cat.activo === true).map(cat => ({ 
       id: cat.id, 
@@ -248,7 +248,13 @@ export default function MenuPage() {
             const isSuggested = product.destacado === true
             return (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
-                {isSuggested && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
+                {isSuggested && (
+                  <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                    <Star className="h-3 w-3 fill-gold text-gold" />
+                    <Star className="h-3 w-3 fill-gold text-gold" />
+                    <Star className="h-3 w-3 fill-gold text-gold" />
+                  </div>
+                )}
                 <CardContent className="p-0">
                   <div className="aspect-[4/3] overflow-hidden bg-gray-800">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
@@ -281,7 +287,13 @@ export default function MenuPage() {
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
           return (
             <div key={product.id} className={cn("bg-gray-900/95 rounded-xl border border-gray-800 transition-all duration-300 cursor-pointer relative overflow-hidden", isExpanded ? "shadow-xl" : "hover:shadow-md")} onClick={() => toggleExpand(product.id, currentCategoryId)}>
-              {isSuggested && !isExpanded && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1"><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /><Star className="h-3 w-3 fill-gold text-gold" /></div>}
+              {isSuggested && !isExpanded && (
+                <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1">
+                  <Star className="h-3 w-3 fill-gold text-gold" />
+                  <Star className="h-3 w-3 fill-gold text-gold" />
+                  <Star className="h-3 w-3 fill-gold text-gold" />
+                </div>
+              )}
               {!isExpanded && (
                 <div className="flex">
                   <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] flex-shrink-0 bg-gray-800">
@@ -301,7 +313,13 @@ export default function MenuPage() {
               )}
               {isExpanded && (
                 <div className="p-4">
-                  {isSuggested && <div className="flex justify-end mb-2 gap-0.5"><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /><Star className="h-4 w-4 fill-gold text-gold" /></div>}
+                  {isSuggested && (
+                    <div className="flex justify-end mb-2 gap-0.5">
+                      <Star className="h-4 w-4 fill-gold text-gold" />
+                      <Star className="h-4 w-4 fill-gold text-gold" />
+                      <Star className="h-4 w-4 fill-gold text-gold" />
+                    </div>
+                  )}
                   <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
                     {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
                   </div>
@@ -343,8 +361,8 @@ export default function MenuPage() {
     <div className="min-h-screen bg-black">
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
-      {/* Botón volver a home */}
-      <div className="fixed top-4 left-4 z-50">
+      {/* Botón volver a home - más abajo para no tapar navbar */}
+      <div className="fixed top-20 left-4 z-50">
         <Link href="/">
           <Button 
             variant="outline" 
@@ -368,10 +386,8 @@ export default function MenuPage() {
         )}
       </div>
 
-      {/* Espacio reducido entre banner y categorías */}
       <div className="pt-2"></div>
 
-      {/* Barra de categorías */}
       <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center gap-2">
@@ -393,7 +409,13 @@ export default function MenuPage() {
                         : 'bg-black border-2 border-gold text-gold hover:shadow-gold'
                     }`}
                   >
-                    {category.type === 'suggestion' && <Star className="inline-block h-3 w-3 mr-1 fill-gold text-gold" />}
+                    {category.type === 'suggestion' && (
+                      <div className="flex gap-0.5 mr-1">
+                        <Star className="h-3 w-3 fill-gold text-gold" />
+                        <Star className="h-3 w-3 fill-gold text-gold" />
+                        <Star className="h-3 w-3 fill-gold text-gold" />
+                      </div>
+                    )}
                     {categoryName}
                   </Button>
                 )
@@ -404,9 +426,7 @@ export default function MenuPage() {
         </div>
       </div>
 
-      {/* Contenido principal - espacio reducido */}
       <div className="container mx-auto px-4 py-4">
-        {/* Selector de vista a la derecha */}
         <div className="flex justify-end mb-3">
           <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
             <button 
@@ -426,7 +446,6 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* Nombre de la categoría activa */}
         {currentCategory && activeCategory !== 'todo' && (
           <div className="mb-3">
             <h2 className="text-2xl font-bold pb-2 border-b border-gold/30 text-white">

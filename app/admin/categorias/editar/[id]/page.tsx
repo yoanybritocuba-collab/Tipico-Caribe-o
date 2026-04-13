@@ -81,7 +81,7 @@ export default function EditarCategoriaPage() {
         updatedAt: new Date().toISOString()
       })
       
-      toast.success('Categoría actualizada y traducida a 4 idiomas', { id: 'saving' })
+      toast.success('Categoría actualizada y traducida', { id: 'saving' })
       router.push('/admin/categorias')
     } catch (error) {
       console.error('Error:', error)
@@ -94,7 +94,7 @@ export default function EditarCategoriaPage() {
   if (isLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-gold" />
       </div>
     )
   }
@@ -108,44 +108,46 @@ export default function EditarCategoriaPage() {
         </Button>
       </div>
       
-      <Card>
+      <Card className="border border-gray-800 bg-gray-950/50">
         <CardHeader>
-          <CardTitle>Editar Categoría</CardTitle>
-          <p className="text-sm text-gray-500">Se traducirá automáticamente a 4 idiomas</p>
+          <CardTitle className="text-gold">Editar Categoría</CardTitle>
+          <p className="text-sm text-gray-400">Se traducirá automáticamente a 4 idiomas</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label>Nombre (español) *</Label>
+              <Label className="text-gray-300">Nombre (español) *</Label>
               <Input
                 value={formData.nombre}
                 onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 required
                 placeholder="Ej: Entradas"
+                className="bg-gray-900 border-gray-700 text-white"
               />
             </div>
             
             <div>
-              <Label>Orden</Label>
+              <Label className="text-gray-300">Orden</Label>
               <Input
                 type="number"
                 value={formData.order}
                 onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
+                className="bg-gray-900 border-gray-700 text-white"
               />
             </div>
             
             <div className="flex items-center justify-between">
-              <Label>Activa</Label>
+              <Label className="text-gray-300">Activa</Label>
               <Switch
                 checked={formData.activo}
                 onCheckedChange={(checked) => setFormData({ ...formData, activo: checked })}
               />
             </div>
             
-            <Button type="submit" disabled={isSaving} className="w-full bg-gradient-to-r from-green-600 to-green-500">
+            <Button type="submit" disabled={isSaving} className="w-full bg-gold text-black hover:bg-gold-dark">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Languages className="mr-2 h-4 w-4" />
-              {isSaving ? 'Guardando y traduciendo...' : 'Guardar y traducir'}
+              {isSaving ? 'Guardando y traduciendo...' : 'Guardar cambios'}
             </Button>
           </form>
         </CardContent>
