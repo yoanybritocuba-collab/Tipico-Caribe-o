@@ -20,8 +20,8 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Gaby's Club | Coctelería y Picaderas",
   description: "El mejor lugar para disfrutar de cócteles y picaderas en Barcelona",
-  keywords: ['bar', 'cócteles', 'picaderas', 'Barcelona', 'Gaby\'s Club'],
-  authors: [{ name: 'Gaby\'s Club' }],
+  keywords: ['bar', 'cócteles', 'picaderas', 'Barcelona', "Gaby's Club"],
+  authors: [{ name: "Gaby's Club" }],
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',

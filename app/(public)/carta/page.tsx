@@ -221,7 +221,6 @@ export default function MenuPage() {
     type: 'suggestion' | 'all' | 'normal'
   }
   
-  // Construir categorías del menú
   const menuCategories: MenuCategory[] = [
     ...(suggestedProducts.length > 0 ? [{ 
       id: 'sugerencias', 
@@ -246,11 +245,9 @@ export default function MenuPage() {
     }))
   ]
 
-  // Mostrar TODAS las categorías activas (sin filtrar por productos)
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
     if (cat.type === 'all') return true
-    // Mostrar todas las categorías normales activas
     return true
   })
 
@@ -430,31 +427,39 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* ANUNCIO GRANDE - Pedir en barra con efecto llamativo */}
+      {/* ANUNCIO GRANDE - Pedir en barra con efecto de movimiento */}
       <div className="container mx-auto px-4 py-6">
-        <div className="relative overflow-hidden bg-gradient-to-r from-gold/30 via-gold/20 to-gold/30 border-2 border-gold rounded-xl p-5 text-center shadow-lg shadow-gold/20 animate-pulse-gold">
+        <div className="relative overflow-hidden bg-gradient-to-r from-gold/30 via-gold/20 to-gold/30 border-2 border-gold rounded-xl p-5 text-center shadow-lg shadow-gold/20 animate-shake">
           <div className="absolute inset-0 bg-gold/5 animate-shimmer" />
           <div className="flex items-center justify-center gap-3 mb-2">
             <Info className="h-6 w-6 text-gold animate-bounce" />
             <span className="text-gold text-sm uppercase tracking-wider font-semibold">Información</span>
           </div>
-          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold tracking-wide">
+          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold tracking-wide animate-pulse-text">
             {getAnuncioTexto()}
           </p>
         </div>
       </div>
 
       <style jsx>{`
-        @keyframes pulse-gold {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(209, 178, 117, 0.4); }
-          50% { box-shadow: 0 0 0 8px rgba(209, 178, 117, 0); }
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+          20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+        @keyframes pulse-text {
+          0%, 100% { opacity: 1; text-shadow: 0 0 5px rgba(209, 178, 117, 0.5); }
+          50% { opacity: 0.9; text-shadow: 0 0 15px rgba(209, 178, 117, 0.8); }
         }
         @keyframes shimmer {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
-        .animate-pulse-gold {
-          animation: pulse-gold 2s infinite;
+        .animate-shake {
+          animation: shake 0.8s ease-in-out infinite;
+        }
+        .animate-pulse-text {
+          animation: pulse-text 1.5s ease-in-out infinite;
         }
         .animate-shimmer {
           background: linear-gradient(90deg, transparent, rgba(209, 178, 117, 0.3), transparent);
