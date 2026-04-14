@@ -13,6 +13,15 @@ export function Footer() {
   const [isLoading, setIsLoading] = useState(true)
   const [bgColor, setBgColor] = useState('#000000')
   const [textColor, setTextColor] = useState('#d1b275')
+  const [horario, setHorario] = useState({
+    lunes: { apertura: '20:00', cierre: '02:30' },
+    martes: { apertura: '20:00', cierre: '02:30' },
+    miercoles: { apertura: '20:00', cierre: '02:30' },
+    jueves: { apertura: '20:00', cierre: '02:30' },
+    viernes: { apertura: '20:00', cierre: '03:00' },
+    sabado: { apertura: '20:00', cierre: '03:00' },
+    domingo: { apertura: '20:00', cierre: '03:00' }
+  })
 
   const negocio = {
     nombre: "Gaby's Club",
@@ -21,16 +30,7 @@ export function Footer() {
     whatsapp: "+34634492023",
     email: "info@gabysclub.com",
     instagram: "gabys_club",
-    tiktok: "GABYSCLUB",
-    horarioNormal: {
-      lunes: { apertura: '12:00', cierre: '00:00' },
-      martes: { apertura: '12:00', cierre: '00:00' },
-      miercoles: { apertura: '12:00', cierre: '00:00' },
-      jueves: { apertura: '12:00', cierre: '00:00' },
-      viernes: { apertura: '12:00', cierre: '02:00' },
-      sabado: { apertura: '12:00', cierre: '02:00' },
-      domingo: { apertura: '12:00', cierre: '00:00' }
-    }
+    tiktok: "GABYSCLUB"
   }
 
   useEffect(() => {
@@ -42,6 +42,10 @@ export function Footer() {
           const data = docSnap.data()
           setBgColor(data.footerBgColor || '#000000')
           setTextColor(data.footerTextColor || '#d1b275')
+          
+          if (data.horario) {
+            setHorario(data.horario)
+          }
         }
       } catch (error) {
         console.error('Error cargando configuración:', error)
@@ -81,7 +85,6 @@ export function Footer() {
   const tiktokUrl = `https://tiktok.com/@${negocio.tiktok.replace('@', '')}`
   const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
-  const reservasWhatsappUrl = "https://wa.me/34634492023?text=Hola%2C%20me%20gustar%C3%ADa%20hacer%20una%20reserva"
 
   return (
     <footer style={{ backgroundColor: bgColor }} className="border-t border-gold/30">
@@ -172,7 +175,7 @@ export function Footer() {
             
             {horarioAbierto && (
               <ul className="space-y-2 text-sm">
-                {Object.entries(negocio.horarioNormal).map(([dia, horas]: [string, any]) => (
+                {Object.entries(horario).map(([dia, horas]: [string, any]) => (
                   <li key={dia} className="flex justify-between">
                     <span style={{ color: textColor }}>{dayNames[dia] || dia}</span>
                     <span className="font-medium" style={{ color: textColor }}>
@@ -192,17 +195,6 @@ export function Footer() {
                 <Link href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
                   <Globe className="h-3 w-3" /> Carta
                 </Link>
-              </li>
-              <li>
-                <a 
-                  href={reservasWhatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 transition-colors hover:opacity-80"
-                  style={{ color: textColor }}
-                >
-                  <MessageCircle className="h-3 w-3" /> Reservas
-                </a>
               </li>
               <li>
                 <Link href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
