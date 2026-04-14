@@ -7,16 +7,13 @@ import {
 } from 'lucide-react'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { useI18n } from '@/lib/i18n'
 
 export function Footer() {
-  const { t } = useI18n()
   const [horarioAbierto, setHorarioAbierto] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [bgColor, setBgColor] = useState('#000000')
   const [textColor, setTextColor] = useState('#d1b275')
 
-  // Datos del negocio
   const negocio = {
     nombre: "Gaby's Club",
     direccion: "Carrer del Tropazi, 24, Gracia, 08012 Barcelona",
@@ -84,6 +81,7 @@ export function Footer() {
   const tiktokUrl = `https://tiktok.com/@${negocio.tiktok.replace('@', '')}`
   const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
+  const reservasWhatsappUrl = "https://wa.me/34634492023?text=Hola%2C%20me%20gustar%C3%ADa%20hacer%20una%20reserva"
 
   return (
     <footer style={{ backgroundColor: bgColor }} className="border-t border-gold/30">
@@ -135,7 +133,6 @@ export function Footer() {
               </a>
             </div>
             
-            {/* Redes Sociales */}
             <div className="flex gap-4 pt-2">
               <a 
                 href={instagramUrl}
@@ -186,7 +183,7 @@ export function Footer() {
             )}
           </div>
 
-          {/* Columna 3: Enlaces rápidos */}
+          {/* Columna 3: Enlaces rápidos - Reservas va a WhatsApp */}
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>Enlaces</h4>
             <ul className="space-y-2 text-sm">
@@ -196,9 +193,15 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
-                  <Globe className="h-3 w-3" /> Reservas
-                </Link>
+                <a 
+                  href={reservasWhatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 transition-colors hover:opacity-80"
+                  style={{ color: textColor }}
+                >
+                  <MessageCircle className="h-3 w-3" /> Reservas
+                </a>
               </li>
               <li>
                 <Link href="/sugerencias" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
