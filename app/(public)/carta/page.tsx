@@ -10,7 +10,6 @@ import { useI18n } from '@/lib/i18n'
 import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function MenuPage() {
   const { t, language } = useI18n()
@@ -31,7 +30,6 @@ export default function MenuPage() {
   const [cartaTituloFr, setCartaTituloFr] = useState('La Carte')
   const [cartaTituloDe, setCartaTituloDe] = useState('Die Karte')
   const [cartaTituloRu, setCartaTituloRu] = useState('Меню')
-  const [tickerConfig, setTickerConfig] = useState<any>(null)
   const [isLoadingConfig, setIsLoadingConfig] = useState(true)
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -85,15 +83,6 @@ export default function MenuPage() {
           setCartaTituloFr(data.cartaTituloFr || 'La Carte')
           setCartaTituloDe(data.cartaTituloDe || 'Die Karte')
           setCartaTituloRu(data.cartaTituloRu || 'Меню')
-          setTickerConfig({
-            activo: data.tickerActivo || false,
-            texto: data.tickerTexto || '',
-            colorTexto: data.tickerColorTexto || '#d1b275',
-            colorFondo: data.tickerColorFondo || '#000000',
-            velocidad: data.tickerVelocidad || 15,
-            altura: data.tickerAltura || 40,
-            posicion: data.tickerPosicion || 'top'
-          })
         }
       } catch (error) {
         console.error('Error cargando configuración carta:', error)
@@ -245,11 +234,9 @@ export default function MenuPage() {
     }))
   ]
 
-  // Mostrar TODAS las categorías normales activas
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
     if (cat.type === 'all') return true
-    // Mostrar todas las categorías normales activas
     return cat.type === 'normal'
   })
 
@@ -280,7 +267,6 @@ export default function MenuPage() {
   const getCategoryButtonName = (category: MenuCategory): string => {
     if (category.type === 'suggestion') return category.name
     if (category.type === 'all') return category.name
-    // Para categorías normales, usar el nombre traducido
     if (language === 'en') return category.nameEn || category.name
     if (language === 'fr') return category.nameFr || category.name
     if (language === 'de') return category.nameDe || category.name
@@ -406,21 +392,8 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {tickerConfig && <LineaInformativa config={tickerConfig} />}
-
       {/* Botón volver a home */}
-      <div className="fixed top-24 left-4 z-50">
-        <Link href="/">
-          <Button 
-            variant="outline" 
-            size="icon"
-            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-8 w-8"
-          >
-            <Home className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
-
+     
       {/* Imagen de portada */}
       {cartaImagen && (
         <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
@@ -434,7 +407,7 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* ANUNCIO GRANDE - Pedir en barra con efecto de movimiento */}
+      {/* ANUNCIO GRANDE - Pedir en barra */}
       <div className="container mx-auto px-4 py-6">
         <div className="relative overflow-hidden bg-gradient-to-r from-gold/30 via-gold/20 to-gold/30 border-2 border-gold rounded-xl p-5 text-center shadow-lg shadow-gold/20 animate-shake">
           <div className="absolute inset-0 bg-gold/5 animate-shimmer" />
