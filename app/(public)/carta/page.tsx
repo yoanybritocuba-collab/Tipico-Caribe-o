@@ -36,6 +36,33 @@ export default function MenuPage() {
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
+  // Función para obtener nombre traducido del producto
+  const getTranslatedProductName = (product: Producto) => {
+    if (language === 'en') return product.nameEn || product.nombre
+    if (language === 'fr') return product.nameFr || product.nombre
+    if (language === 'de') return product.nameDe || product.nombre
+    if (language === 'ru') return product.nameRu || product.nombre
+    return product.nombre
+  }
+
+  // Función para obtener descripción traducida del producto
+  const getTranslatedProductDescription = (product: Producto) => {
+    if (language === 'en') return product.descriptionEn || product.descripcion
+    if (language === 'fr') return product.descriptionFr || product.descripcion
+    if (language === 'de') return product.descriptionDe || product.descripcion
+    if (language === 'ru') return product.descriptionRu || product.descripcion
+    return product.descripcion
+  }
+
+  // Función para obtener nombre traducido de la categoría
+  const getTranslatedCategoryName = (cat: any) => {
+    if (language === 'en') return cat.nameEn || cat.nombre
+    if (language === 'fr') return cat.nameFr || cat.nombre
+    if (language === 'de') return cat.nameDe || cat.nombre
+    if (language === 'ru') return cat.nameRu || cat.nombre
+    return cat.nombre
+  }
+
   useEffect(() => {
     const loadConfig = async () => {
       try {
@@ -185,15 +212,6 @@ export default function MenuPage() {
     type: 'suggestion' | 'all' | 'normal'
   }
   
-  // Función para obtener el nombre traducido de la categoría según el idioma
-  const getTranslatedCategoryName = (cat: any): string => {
-    if (language === 'en') return cat.nameEn || cat.nombre
-    if (language === 'fr') return cat.nameFr || cat.nombre
-    if (language === 'de') return cat.nameDe || cat.nombre
-    if (language === 'ru') return cat.nameRu || cat.nombre
-    return cat.nombre
-  }
-
   const menuCategories: MenuCategory[] = [
     ...(suggestedProducts.length > 0 ? [{ 
       id: 'sugerencias', 
@@ -248,21 +266,10 @@ export default function MenuPage() {
   const currentData = getProductsByCategory()
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
 
-  // Obtener nombre de categoría para mostrar en el botón del menú horizontal
   const getCategoryButtonName = (category: MenuCategory): string => {
     if (category.type === 'suggestion') return category.name
     if (category.type === 'all') return category.name
-    // Para categorías normales, usar la traducción
     return getTranslatedCategoryName(category)
-  }
-
-  // Obtener nombre de categoría para el título (cuando se selecciona una categoría normal)
-  const getCurrentCategoryTitle = (): string => {
-    if (activeCategory === 'sugerencias') return t('menu.suggestionsCategory')
-    if (activeCategory === 'todo') return t('menu.todo')
-    const cat = categories.find(c => c.id === activeCategory)
-    if (cat) return getTranslatedCategoryName(cat)
-    return ''
   }
 
   const renderProducts = (productsList: Producto[]) => {
@@ -270,8 +277,8 @@ export default function MenuPage() {
       return (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
-            const productName = product.nombre || ''
-            const productDescription = product.descripcion || ''
+            const productName = getTranslatedProductName(product)
+            const productDescription = getTranslatedProductDescription(product)
             const isSuggested = product.destacado === true
             return (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
@@ -301,8 +308,8 @@ export default function MenuPage() {
     return (
       <div className="space-y-4">
         {productsList.map((product) => {
-          const productName = product.nombre || ''
-          const productDescription = product.descripcion || ''
+          const productName = getTranslatedProductName(product)
+          const productDescription = getTranslatedProductDescription(product)
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
@@ -398,7 +405,7 @@ export default function MenuPage() {
         </Link>
       </div>
 
-      {/* Imagen de portada - SIN padding superior */}
+      {/* Imagen de portada */}
       {cartaImagen && (
         <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
@@ -470,15 +477,6 @@ export default function MenuPage() {
             </button>
           </div>
         </div>
-
-        {/* Título de categoría (solo para categorías normales, no para "Todo" ni "Sugerencias") */}
-        {activeCategory !== 'todo' && activeCategory !== 'sugerencias' && (
-          <div className="mb-3">
-            <h2 className="text-2xl font-bold pb-2 border-b border-gold/30 text-white">
-              {getCurrentCategoryTitle()}
-            </h2>
-          </div>
-        )}
 
         {renderMainContent()}
         
