@@ -280,7 +280,12 @@ export default function MenuPage() {
   const getCategoryButtonName = (category: MenuCategory): string => {
     if (category.type === 'suggestion') return category.name
     if (category.type === 'all') return category.name
-    return getTranslatedCategoryName(category)
+    // Para categorías normales, usar el nombre traducido
+    if (language === 'en') return category.nameEn || category.name
+    if (language === 'fr') return category.nameFr || category.name
+    if (language === 'de') return category.nameDe || category.name
+    if (language === 'ru') return category.nameRu || category.name
+    return category.name
   }
 
   const renderProducts = (productsList: Producto[]) => {
