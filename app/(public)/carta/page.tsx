@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -388,15 +388,6 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Botón volver a home - SOLO UNO */}
-      <Link
-        href="/"
-        className="fixed top-24 left-4 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
-        aria-label="Volver al inicio"
-      >
-        <Home className="h-4 w-4" />
-      </Link>
-
       {/* Imagen de portada */}
       {cartaImagen && (
         <div className="relative h-[45vh] min-h-[350px] md:h-[55vh] w-full overflow-hidden">
