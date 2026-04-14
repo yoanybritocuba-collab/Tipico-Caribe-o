@@ -7,7 +7,7 @@ import {
   Upload, X, Eye, Image as ImageIcon, LayoutTemplate, Type, AlignLeft, Maximize2,
   Instagram, Facebook, MapPin, Phone, MessageCircle, Mail, Clock, Save,
   Monitor, MoveHorizontal, Gauge, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight,
-  Calendar, Timer
+  Calendar, Timer, Lock, LogOut
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
-import { getAuth, updateProfile } from 'firebase/auth'
+import { getAuth, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth'
 import { app, db } from '@/lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/firebase-services'
@@ -29,6 +29,12 @@ export default function ConfiguracionPage() {
   const [adminEmail, setAdminEmail] = useState('')
   const [activeTab, setActiveTab] = useState('horarios')
   const [isSaving, setIsSaving] = useState(false)
+
+  // ============ CAMBIO DE CONTRASEÑA ============
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   // ============ HORARIOS ============
   const [horarios, setHorarios] = useState({
@@ -52,7 +58,6 @@ export default function ConfiguracionPage() {
   const [tickerAltura, setTickerAltura] = useState(40)
   const [tickerPosicion, setTickerPosicion] = useState<'top' | 'bottom'>('top')
 
-  // Fuentes disponibles
   const fuentes = [
     'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New',
     'Impact', 'Comic Sans MS', 'Trebuchet MS', 'Montserrat', 'Open Sans', 'Roboto',
@@ -77,14 +82,9 @@ export default function ConfiguracionPage() {
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
           const data = docSnap.data()
-          // Cargar horarios
           if (data.horarios) {
-            setHorarios(prev => ({
-              ...prev,
-              ...data.horarios
-            }))
+            setHorarios(prev => ({ ...prev, ...data.horarios }))
           }
-          // Cargar línea informativa
           setTickerActivo(data.tickerActivo || false)
           setTickerTexto(data.tickerTexto || '')
           setTickerColorTexto(data.tickerColorTexto || '#d1b275')
@@ -109,7 +109,51 @@ export default function ConfiguracionPage() {
     }
   }, [])
 
-  // Guardar horarios
+  // Cambiar contraseña
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword) {
+      toast.error('Completa todos los campos')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Las contraseñas nuevas no coinciden')
+      return
+    }
+    if (newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres')
+      return
+    }
+
+    setIsChangingPassword(true)
+    toast.loading('Verificando contraseña...', { id: 'changing-pwd' })
+    
+    try {
+      const auth = getAuth(app)
+      const user = auth.currentUser
+      if (!user || !user.email) throw new Error('No hay usuario logueado')
+      
+      const credential = EmailAuthProvider.credential(user.email, currentPassword)
+      await reauthenticateWithCredential(user, credential)
+      
+      toast.loading('Actualizando contraseña...', { id: 'changing-pwd' })
+      await updatePassword(user, newPassword)
+      
+      toast.success('Contraseña actualizada correctamente', { id: 'changing-pwd' })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error: any) {
+      console.error('Error:', error)
+      if (error.code === 'auth/wrong-password') {
+        toast.error('Contraseña actual incorrecta', { id: 'changing-pwd' })
+      } else {
+        toast.error('Error al cambiar la contraseña', { id: 'changing-pwd' })
+      }
+    } finally {
+      setIsChangingPassword(false)
+    }
+  }
+
   const handleSaveHorarios = async () => {
     setIsSaving(true)
     toast.loading('Guardando horarios...', { id: 'saving' })
@@ -126,7 +170,6 @@ export default function ConfiguracionPage() {
     }
   }
 
-  // Guardar línea informativa
   const handleSaveTicker = async () => {
     setIsSaving(true)
     toast.loading('Guardando línea informativa...', { id: 'saving' })
@@ -151,29 +194,47 @@ export default function ConfiguracionPage() {
     }
   }
 
+  const handleUpdateProfile = async () => {
+    if (!adminName.trim()) {
+      toast.error('El nombre no puede estar vacío')
+      return
+    }
+    setIsLoading(true)
+    toast.loading('Actualizando perfil...', { id: 'update-profile' })
+    try {
+      const auth = getAuth(app)
+      const user = auth.currentUser
+      if (user) {
+        await updateProfile(user, { displayName: adminName })
+        toast.success('Perfil actualizado', { id: 'update-profile' })
+      }
+    } catch (error) {
+      toast.error('Error al actualizar', { id: 'update-profile' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const tabs = [
     { id: 'horarios', label: '📅 Horarios', icon: Calendar },
     { id: 'ticker', label: '📢 Línea Informativa', icon: MoveHorizontal },
-    { id: 'perfil', label: '👤 Perfil', icon: User }
+    { id: 'perfil', label: '👤 Perfil', icon: User },
+    { id: 'seguridad', label: '🔒 Seguridad', icon: Shield }
   ]
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 p-6 border border-gold/30">
-        <div className="relative z-10 flex justify-between items-center flex-wrap gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Settings className="h-5 w-5 text-gold" />
-              <span className="text-xs font-medium text-gold uppercase tracking-wider">Configuración</span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gold">Panel de Configuración</h1>
-            <p className="text-gray-400 text-sm mt-1">Gestiona horarios y línea informativa</p>
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-2">
+            <Settings className="h-5 w-5 text-gold" />
+            <span className="text-xs font-medium text-gold uppercase tracking-wider">Configuración</span>
           </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gold">Panel de Configuración</h1>
+          <p className="text-gray-400 text-sm mt-1">Gestiona horarios, línea informativa y seguridad</p>
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-800 pb-2">
         {tabs.map((tab) => {
           const Icon = tab.icon
@@ -363,7 +424,6 @@ export default function ConfiguracionPage() {
                   </div>
                 </div>
 
-                {/* Vista previa en vivo */}
                 <div className="mt-6 pt-4 border-t border-gray-800">
                   <div className="flex items-center gap-2 mb-3">
                     <Monitor className="h-4 w-4 text-green-400" />
@@ -371,10 +431,7 @@ export default function ConfiguracionPage() {
                   </div>
                   <div 
                     className="w-full overflow-hidden rounded-lg" 
-                    style={{ 
-                      backgroundColor: tickerColorFondo, 
-                      height: `${tickerAltura}px`
-                    }}
+                    style={{ backgroundColor: tickerColorFondo, height: `${tickerAltura}px` }}
                   >
                     <div className="h-full flex items-center">
                       <div 
@@ -424,16 +481,65 @@ export default function ConfiguracionPage() {
                 <Input value={adminEmail} disabled className="mt-1 bg-gray-800 text-gray-400 cursor-not-allowed" />
               </div>
             </div>
-            <Button onClick={async () => {
-              if (!adminName.trim()) { toast.error('El nombre no puede estar vacío'); return }
-              setIsLoading(true)
-              try {
-                await updateProfile(getAuth(app).currentUser!, { displayName: adminName })
-                toast.success('Perfil actualizado')
-              } catch (error) { toast.error('Error') }
-              finally { setIsLoading(false) }
-            }} disabled={isLoading} className="bg-gold text-black hover:bg-gold-dark">
+            <Button onClick={handleUpdateProfile} disabled={isLoading} className="bg-gold text-black hover:bg-gold-dark">
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Actualizar perfil
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Panel Seguridad - Cambiar Contraseña */}
+      {activeTab === 'seguridad' && (
+        <Card className="border border-gray-800 bg-gray-950/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white">
+              <Shield className="h-5 w-5 text-gold" />
+              Cambiar Contraseña
+            </CardTitle>
+            <CardDescription className="text-gray-400">
+              Actualiza tu contraseña de acceso al panel de administración
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label className="text-gray-300">Contraseña actual</Label>
+              <Input 
+                type="password" 
+                value={currentPassword} 
+                onChange={(e) => setCurrentPassword(e.target.value)} 
+                className="mt-1 bg-gray-900" 
+                placeholder="••••••••"
+              />
+            </div>
+            <div>
+              <Label className="text-gray-300">Nueva contraseña</Label>
+              <Input 
+                type="password" 
+                value={newPassword} 
+                onChange={(e) => setNewPassword(e.target.value)} 
+                className="mt-1 bg-gray-900" 
+                placeholder="•••••••• (mínimo 6 caracteres)"
+              />
+            </div>
+            <div>
+              <Label className="text-gray-300">Confirmar nueva contraseña</Label>
+              <Input 
+                type="password" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)} 
+                className="mt-1 bg-gray-900" 
+                placeholder="••••••••"
+              />
+            </div>
+            <Button 
+              onClick={handleChangePassword} 
+              disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword} 
+              className="bg-gold text-black hover:bg-gold-dark"
+            >
+              {isChangingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Lock className="mr-2 h-4 w-4" />
+              Cambiar contraseña
             </Button>
           </CardContent>
         </Card>

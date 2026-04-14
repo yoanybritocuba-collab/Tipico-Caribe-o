@@ -13,7 +13,9 @@ import {
   Menu,
   Home,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar,
+  Palette
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -34,7 +36,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const isLoginPage = pathname === '/admin/login'
 
-  // Detectar si es móvil
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768
@@ -50,7 +51,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Cerrar sidebar al hacer clic fuera SOLO en móvil
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isMobile && sidebarOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
@@ -61,7 +61,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [sidebarOpen, isMobile])
 
-  // Verificar autenticación
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -82,12 +81,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     window.location.href = '/'
   }
 
-  // Función para cerrar sidebar después de navegar (en desktop también)
   const handleNavigation = () => {
     if (isMobile) {
       setSidebarOpen(false)
     }
-    // En desktop, el sidebar permanece abierto
   }
 
   if (isLoginPage) {
@@ -97,14 +94,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (isAuthenticated === null) {
     return (
       <div className="flex h-screen items-center justify-center bg-gray-900">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent" />
       </div>
     )
   }
 
   return (
     <div className="flex h-screen bg-gray-900 overflow-hidden">
-      {/* Overlay para móvil */}
       {isMobile && sidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-all duration-300"
@@ -112,7 +108,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       )}
 
-      {/* Sidebar */}
       <aside
         ref={sidebarRef}
         className={cn(
@@ -120,29 +115,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           sidebarOpen ? "w-72 translate-x-0" : "w-72 -translate-x-full lg:w-20 lg:translate-x-0"
         )}
       >
-        {/* Logo y botón de colapso */}
         <div className="flex h-16 items-center justify-between border-b border-gray-800 px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-red-600">
-              <span className="text-sm font-bold text-white">G</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-gold to-amber-600">
+              <span className="text-sm font-bold text-black">G</span>
             </div>
             {(sidebarOpen || !isMobile) && (
-              <span className="font-display text-lg font-bold bg-gradient-to-r from-blue-400 to-red-400 bg-clip-text text-transparent">
-                Gavi-Club
+              <span className="font-display text-lg font-bold text-gold">
+                Admin Panel
               </span>
             )}
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="hidden lg:flex text-gray-400 hover:text-white hover:bg-gray-800"
+            className="hidden lg:flex text-gray-400 hover:text-gold hover:bg-gray-800"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </Button>
         </div>
 
-        {/* Navegación */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon
@@ -155,8 +148,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-gradient-to-r from-blue-600 to-red-600 text-white shadow-lg"
-                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                    ? "bg-gold text-black shadow-lg"
+                    : "text-gray-400 hover:bg-gray-800 hover:text-gold"
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -166,12 +159,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* Botones inferiores */}
         <div className="border-t border-gray-800 p-3 space-y-2">
           <Button
             onClick={handleGoHome}
             variant="ghost"
-            className="w-full justify-start gap-3 px-3 py-3 text-gray-400 hover:text-white hover:bg-gray-800"
+            className="w-full justify-start gap-3 px-3 py-3 text-gray-400 hover:text-gold hover:bg-gray-800"
           >
             <Home className="h-5 w-5" />
             {(sidebarOpen || !isMobile) && <span>Ir al sitio web</span>}
@@ -187,15 +179,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      {/* Contenido principal */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header superior */}
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-800 bg-gray-950/80 backdrop-blur-xl px-4 md:px-6">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-gray-400 hover:text-white hover:bg-gray-800"
+              className="lg:hidden text-gray-400 hover:text-gold hover:bg-gray-800"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="h-5 w-5" />
@@ -227,7 +217,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        {/* Contenido */}
         <main className="flex-1 overflow-auto bg-gradient-to-br from-gray-900 to-gray-800 p-4 md:p-6">
           <div className="animate-fade-in">
             {children}

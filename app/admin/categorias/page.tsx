@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Edit2, Trash2, Eye, EyeOff, FolderTree, Search, X, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { Plus, Edit2, Trash2, Eye, EyeOff, FolderTree, Search, X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -18,8 +18,6 @@ export default function CategoriasPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
 
   useEffect(() => { loadData() }, [])
   useEffect(() => { filterCategories() }, [searchTerm, statusFilter, categories])
@@ -49,7 +47,6 @@ export default function CategoriasPage() {
       filtered = filtered.filter(category => category.activo === false)
     }
     setFilteredCategories(filtered)
-    setCurrentPage(1)
   }
 
   const toggleActive = async (id: string, currentActive: boolean) => {
@@ -79,9 +76,6 @@ export default function CategoriasPage() {
     }
   }
 
-  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedCategories = filteredCategories.slice(startIndex, startIndex + itemsPerPage)
   const clearFilters = () => { setSearchTerm(''); setStatusFilter('all') }
 
   if (isLoading) {
@@ -136,7 +130,41 @@ export default function CategoriasPage() {
         </CardContent>
       </Card>
 
-      <Card className="border border-gray-800 bg-gray-950/50">
+      {/* Vista en tarjetas para móvil y tabla para desktop */}
+      <div className="block md:hidden space-y-3">
+        {filteredCategories.map((category) => (
+          <Card key={category.id} className="border border-gray-800 bg-gray-950/50">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-medium text-white">{category.nombre}</h3>
+                  {category.nameEn && <p className="text-sm text-gray-400">{category.nameEn}</p>}
+                </div>
+                <button onClick={() => toggleActive(category.id, category.activo)} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${category.activo ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  {category.activo ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                  {category.activo ? 'Activa' : 'Inactiva'}
+                </button>
+              </div>
+              <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-800">
+                <span className="text-sm text-gray-400">Orden: {category.order || 0}</span>
+                <div className="flex items-center gap-2">
+                  <Link href={`/admin/categorias/editar/${category.id}`}>
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gold hover:text-gold-dark hover:bg-gold/10">
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/50" onClick={() => setDeleteId(category.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Tabla para desktop */}
+      <Card className="border border-gray-800 bg-gray-950/50 hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -149,7 +177,7 @@ export default function CategoriasPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
-                {paginatedCategories.map((category) => (
+                {filteredCategories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-900/30 transition-colors">
                     <td className="py-4 px-6"><span className="text-sm text-gray-300">{category.order || 0}</span></td>
                     <td className="py-4 px-6">
@@ -171,12 +199,7 @@ export default function CategoriasPage() {
                             <Edit2 className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/50" 
-                          onClick={() => setDeleteId(category.id)}
-                        >
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-950/50" onClick={() => setDeleteId(category.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -186,18 +209,12 @@ export default function CategoriasPage() {
               </tbody>
             </table>
           </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-800 px-6 py-4">
-              <div className="text-sm text-gray-400">Mostrando {startIndex + 1} - {Math.min(startIndex + itemsPerPage, filteredCategories.length)} de {filteredCategories.length}</div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
-                <span className="text-sm text-gray-400">Página {currentPage} de {totalPages}</span>
-                <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
+
+      {filteredCategories.length === 0 && !isLoading && (
+        <div className="text-center py-12 text-gray-400">No hay categorías que coincidan con los filtros</div>
+      )}
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent className="bg-gray-950 border-gray-800">
