@@ -1,10 +1,30 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n'
 import { Star } from 'lucide-react'
 
 export function SuggestionCard({ product }: { product: any }) {
-  const nombre = product.nombre || ''
-  const descripcion = product.descripcion || ''
+  const { language } = useI18n()
+  
+  // Obtener nombre y descripción traducidos según el idioma
+  const getTranslatedName = () => {
+    if (language === 'en') return product.nameEn || product.nombre
+    if (language === 'fr') return product.nameFr || product.nombre
+    if (language === 'de') return product.nameDe || product.nombre
+    if (language === 'ru') return product.nameRu || product.nombre
+    return product.nombre
+  }
+
+  const getTranslatedDescription = () => {
+    if (language === 'en') return product.descriptionEn || product.descripcion
+    if (language === 'fr') return product.descriptionFr || product.descripcion
+    if (language === 'de') return product.descriptionDe || product.descripcion
+    if (language === 'ru') return product.descriptionRu || product.descripcion
+    return product.descripcion
+  }
+
+  const nombre = getTranslatedName()
+  const descripcion = getTranslatedDescription()
 
   return (
     <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 backdrop-blur-sm border border-gray-800 hover:border-gold/50 transition-all duration-300">
