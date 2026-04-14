@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Star, Sparkles, Heart, Shield, Coffee, Utensils, Wine, Loader2, Clock, Music, PartyPopper } from 'lucide-react'
+import { ArrowRight, Star, Sparkles, Heart, Shield, Coffee, Utensils, Wine, Loader2, Music, PartyPopper } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SuggestionCard } from '@/components/suggestion-card'
 import { useI18n } from '@/lib/i18n'
 import { useStore } from '@/lib/store'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { LineaInformativa } from '@/components/LineaInformativa'
 
 export default function HomePage() {
   const { language, t } = useI18n()
@@ -19,7 +18,6 @@ export default function HomePage() {
   const [subtitulo, setSubtitulo] = useState('')
   const [isLoadingPortada, setIsLoadingPortada] = useState(true)
   const [whatsappNumber, setWhatsappNumber] = useState('34634492023')
-  const [tickerConfig, setTickerConfig] = useState<any>(null)
 
   useEffect(() => {
     const loadPortada = async () => {
@@ -51,16 +49,6 @@ export default function HomePage() {
             const cleanNumber = data.whatsapp.replace(/[^0-9]/g, '')
             setWhatsappNumber(cleanNumber)
           }
-          
-          setTickerConfig({
-            activo: data.tickerActivo || false,
-            texto: data.tickerTexto || '',
-            colorTexto: data.tickerColorTexto || '#d1b275',
-            colorFondo: data.tickerColorFondo || '#000000',
-            velocidad: data.tickerVelocidad || 15,
-            altura: data.tickerAltura || 40,
-            posicion: data.tickerPosicion || 'top'
-          })
         }
       } catch (error) {
         console.error('Error cargando portada:', error)
@@ -84,8 +72,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {tickerConfig && <LineaInformativa config={tickerConfig} />}
-
       {/* Hero Section */}
       <section className="relative h-[40vh] min-h-[350px] md:h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0">
@@ -130,7 +116,6 @@ export default function HomePage() {
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {/* Icono 1: Coctelería */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Wine className="h-8 w-8 text-gold" />
@@ -138,8 +123,6 @@ export default function HomePage() {
               <h3 className="font-semibold mb-1 text-white">Coctelería</h3>
               <p className="text-sm text-gray-400">Cócteles exclusivos</p>
             </div>
-            
-            {/* Icono 2: Tapas */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Utensils className="h-8 w-8 text-gold" />
@@ -147,8 +130,6 @@ export default function HomePage() {
               <h3 className="font-semibold mb-1 text-white">Tapas</h3>
               <p className="text-sm text-gray-400">Picaderas y más</p>
             </div>
-            
-            {/* Icono 3: Música en vivo */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Music className="h-8 w-8 text-gold" />
@@ -156,8 +137,6 @@ export default function HomePage() {
               <h3 className="font-semibold mb-1 text-white">Música</h3>
               <p className="text-sm text-gray-400">Ambiente único</p>
             </div>
-            
-            {/* Icono 4: Ambiente / Fiesta */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <PartyPopper className="h-8 w-8 text-gold" />
