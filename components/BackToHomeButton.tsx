@@ -10,8 +10,6 @@ export function BackToHomeButton() {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    // Mostrar el botón solo en páginas que NO son el home
-    // y que tienen más de 1 nivel o son páginas internas
     const isHome = pathname === '/'
     const isAdmin = pathname.startsWith('/admin')
     const showButton = !isHome && !isAdmin && pathname !== '/'
@@ -23,10 +21,10 @@ export function BackToHomeButton() {
   return (
     <Link
       href="/"
-      className="fixed bottom-6 left-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-black shadow-lg transition-all duration-300 hover:scale-110 hover:bg-gold-dark focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-black"
+      className="fixed bottom-6 left-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
       aria-label="Volver al inicio"
     >
-      <Home className="h-4 w-4" />
+      <Home className="h-3 w-3" />
     </Link>
   )
 }
