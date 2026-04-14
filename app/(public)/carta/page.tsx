@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine, Info } from 'lucide-react'
+import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Home, Wine } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -393,59 +393,40 @@ export default function MenuPage() {
   return (
     <div className="min-h-screen bg-black">
       {/* Botón volver a home */}
-     
-      {/* Imagen de portada */}
+      <div className="fixed top-24 left-4 z-50">
+        <Link href="/">
+          <Button 
+            variant="outline" 
+            size="icon"
+            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-8 w-8"
+          >
+            <Home className="h-4 w-4" />
+          </Button>
+        </Link>
+      </div>
+
+      {/* Imagen de portada - más grande y limpia */}
       {cartaImagen && (
-        <div className="relative h-[20vh] min-h-[150px] md:h-[25vh] w-full overflow-hidden">
+        <div className="relative h-[45vh] min-h-[350px] md:h-[55vh] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold font-serif tracking-wide text-gold">
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide text-white drop-shadow-lg">
               {getCartaTitulo()}
             </h1>
+            <div className="w-24 h-0.5 bg-gold mt-6 mb-4 mx-auto" />
+            <p className="text-sm md:text-base text-white/80 tracking-wider">Cócteles | Tapas | Música</p>
           </div>
         </div>
       )}
 
-      {/* ANUNCIO GRANDE - Pedir en barra */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="relative overflow-hidden bg-gradient-to-r from-gold/30 via-gold/20 to-gold/30 border-2 border-gold rounded-xl p-5 text-center shadow-lg shadow-gold/20 animate-shake">
-          <div className="absolute inset-0 bg-gold/5 animate-shimmer" />
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Info className="h-6 w-6 text-gold animate-bounce" />
-            <span className="text-gold text-sm uppercase tracking-wider font-semibold">Información</span>
-          </div>
-          <p className="text-white text-xl md:text-2xl lg:text-3xl font-bold tracking-wide animate-pulse-text">
-            {getAnuncioTexto()}
-          </p>
-        </div>
+      {/* Anuncio sutil - sin rectángulo llamativo */}
+      <div className="container mx-auto px-4 py-4 text-center">
+        <p className="text-gold text-sm md:text-base font-medium tracking-wide">
+          🍸 {getAnuncioTexto()} 🍹
+        </p>
+        <div className="w-16 h-px bg-gold/50 mx-auto mt-2" />
       </div>
-
-      <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-          20%, 40%, 60%, 80% { transform: translateX(2px); }
-        }
-        @keyframes pulse-text {
-          0%, 100% { opacity: 1; text-shadow: 0 0 5px rgba(209, 178, 117, 0.5); }
-          50% { opacity: 0.9; text-shadow: 0 0 15px rgba(209, 178, 117, 0.8); }
-        }
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shake {
-          animation: shake 0.8s ease-in-out infinite;
-        }
-        .animate-pulse-text {
-          animation: pulse-text 1.5s ease-in-out infinite;
-        }
-        .animate-shimmer {
-          background: linear-gradient(90deg, transparent, rgba(209, 178, 117, 0.3), transparent);
-          animation: shimmer 3s infinite;
-        }
-      `}</style>
 
       <div className="pt-2"></div>
 
