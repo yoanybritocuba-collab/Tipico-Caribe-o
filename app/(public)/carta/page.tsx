@@ -490,7 +490,7 @@ export default function MenuPage() {
                         <Star className="h-3 w-3 fill-gold text-gold" />
                       </div>
                     )}
-                    <span className="text-gold font-medium">{categoryName}</span>
+                    <span className={isActive ? "text-black font-medium" : "text-gold font-medium"}>{categoryName}</span>
                   </Button>
                 )
               })}
