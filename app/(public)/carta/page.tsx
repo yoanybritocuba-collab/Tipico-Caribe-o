@@ -392,18 +392,14 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Botón volver a home */}
-      <div className="fixed top-24 left-4 z-50">
-        <Link href="/">
-          <Button 
-            variant="outline" 
-            size="icon"
-            className="bg-black border-2 border-gold text-gold hover:shadow-gold transition-all duration-300 rounded-full h-8 w-8"
-          >
-            <Home className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
+      {/* Botón volver a home - UNO SOLO, pequeño, negro con borde dorado y home dorado */}
+      <Link
+        href="/"
+        className="fixed top-24 left-4 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
+        aria-label="Volver al inicio"
+      >
+        <Home className="h-4 w-4" />
+      </Link>
 
       {/* Imagen de portada - más grande y limpia */}
       {cartaImagen && (
