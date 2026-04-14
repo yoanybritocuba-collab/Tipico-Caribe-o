@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Star, Sparkles, Heart, Shield, Truck, Coffee, Utensils, Wine, Loader2, Clock } from 'lucide-react'
+import { ArrowRight, Star, Sparkles, Heart, Shield, Coffee, Utensils, Wine, Loader2, Clock, Music, PartyPopper } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SuggestionCard } from '@/components/suggestion-card'
 import { useI18n } from '@/lib/i18n'
@@ -86,6 +86,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-black">
       {tickerConfig && <LineaInformativa config={tickerConfig} />}
 
+      {/* Hero Section */}
       <section className="relative h-[40vh] min-h-[350px] md:h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <div 
@@ -125,37 +126,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Features Section - 4 iconos de bar */}
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {/* Icono 1: Sabor Casero */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {/* Icono 1: Coctelería */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Heart className="h-8 w-8 text-gold" />
+                <Wine className="h-8 w-8 text-gold" />
               </div>
-              <h3 className="font-semibold mb-1 text-white">{t('features.homemade.title')}</h3>
-              <p className="text-sm text-gray-400">{t('features.homemade.subtitle')}</p>
+              <h3 className="font-semibold mb-1 text-white">Coctelería</h3>
+              <p className="text-sm text-gray-400">Cócteles exclusivos</p>
             </div>
-            {/* Icono 2: Calidad */}
+            
+            {/* Icono 2: Tapas */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Shield className="h-8 w-8 text-gold" />
+                <Utensils className="h-8 w-8 text-gold" />
               </div>
-              <h3 className="font-semibold mb-1 text-white">{t('features.quality.title')}</h3>
-              <p className="text-sm text-gray-400">{t('features.quality.subtitle')}</p>
+              <h3 className="font-semibold mb-1 text-white">Tapas</h3>
+              <p className="text-sm text-gray-400">Picaderas y más</p>
             </div>
-            {/* Icono 3: Horario Flexible */}
+            
+            {/* Icono 3: Música en vivo */}
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Clock className="h-8 w-8 text-gold" />
+                <Music className="h-8 w-8 text-gold" />
               </div>
-              <h3 className="font-semibold mb-1 text-white">{t('features.flexible.title')}</h3>
-              <p className="text-sm text-gray-400">{t('features.flexible.subtitle')}</p>
+              <h3 className="font-semibold mb-1 text-white">Música</h3>
+              <p className="text-sm text-gray-400">Ambiente único</p>
+            </div>
+            
+            {/* Icono 4: Ambiente / Fiesta */}
+            <div className="text-center group">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <PartyPopper className="h-8 w-8 text-gold" />
+              </div>
+              <h3 className="font-semibold mb-1 text-white">Ambiente</h3>
+              <p className="text-sm text-gray-400">Buen rollo</p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Suggestions Section */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -193,6 +207,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-20 md:py-28 relative overflow-hidden bg-gradient-to-r from-gray-900 to-black">
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">{t('home.cta.title')}</h2>
