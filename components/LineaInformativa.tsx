@@ -10,8 +10,8 @@ interface LineaInformativaProps {
     colorFondo: string
     tamanioLetra: number
     tipoLetra: string
-    velocidad: number      // segundos para cruzar la pantalla
-    tiempoEntre: number    // segundos de pausa entre ciclos
+    velocidad: number      // segundos para cruzar la pantalla (3-30)
+    tiempoEntre: number    // segundos de pausa después de desaparecer (1-20)
     altura: number
     posicion?: 'top' | 'bottom'
   }
@@ -21,7 +21,8 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   const [isClient, setIsClient] = useState(false)
   const [navbarHeight, setNavbarHeight] = useState(70)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
-  const [shouldAnimate, setShouldAnimate] = useState(true)
+  const [isAnimating, setIsAnimating] = useState(true)
+  const [cycleKey, setCycleKey] = useState(0)
 
   useEffect(() => {
     setIsClient(true)
@@ -42,35 +43,31 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Controlar la animación con pausa
+  // Controlar el ciclo de animación y pausa
   useEffect(() => {
     if (!config.activo || !config.texto) return
 
-    // Ciclo de animación: se activa, se pausa, se reactiva
-    const animate = () => {
-      setShouldAnimate(true)
+    const velocidadMs = config.velocidad * 1000
+    const pausaMs = (config.tiempoEntre || 2) * 1000
+
+    const runCycle = () => {
+      // Iniciar animación
+      setIsAnimating(true)
       
-      // Duración de la animación = velocidad
-      const animationDuration = config.velocidad * 1000
-      
-      // Después de la animación, pausar
+      // Al terminar la animación, pausar y luego reiniciar
       setTimeout(() => {
-        setShouldAnimate(false)
+        setIsAnimating(false)
         
-        // Después de la pausa, reiniciar el ciclo
-        const pauseDuration = (config.tiempoEntre || 2) * 1000
+        // Pausa antes de reiniciar
         setTimeout(() => {
-          animate()
-        }, pauseDuration)
-      }, animationDuration)
+          // Forzar reinicio del componente con una key nueva
+          setCycleKey(prev => prev + 1)
+        }, pausaMs)
+      }, velocidadMs)
     }
-    
-    animate()
-    
-    return () => {
-      setShouldAnimate(false)
-    }
-  }, [config.activo, config.texto, config.velocidad, config.tiempoEntre])
+
+    runCycle()
+  }, [config.activo, config.texto, config.velocidad, config.tiempoEntre, cycleKey])
 
   if (!isClient) return null
   if (!config.activo || !config.texto) return null
@@ -79,6 +76,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
 
   return (
     <div 
+      key={cycleKey}
       className="fixed left-0 right-0 z-40 overflow-hidden transition-all duration-300"
       style={{ 
         backgroundColor: config.colorFondo,
@@ -91,14 +89,14 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       <div
         className="whitespace-nowrap"
         style={{
-          animation: shouldAnimate ? `marquee ${config.velocidad}s linear forwards` : 'none',
+          animation: isAnimating ? `marquee ${config.velocidad}s linear forwards` : 'none',
           fontFamily: config.tipoLetra,
           fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
           display: 'inline-block',
           paddingRight: '20px',
-          transform: shouldAnimate ? 'translateX(0)' : 'translateX(100%)',
-          opacity: shouldAnimate ? 1 : 0
+          transform: isAnimating ? 'translateX(0)' : 'translateX(100%)',
+          opacity: isAnimating ? 1 : 0
         }}
       >
         {config.texto}
