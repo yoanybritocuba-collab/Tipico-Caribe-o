@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 interface LineaInformativaProps {
   config: {
@@ -13,63 +13,71 @@ interface LineaInformativaProps {
     velocidad: number
     tiempoEntre: number
     altura: number
-    posicion: 'top' | 'bottom'
-    ancho?: number
+    posicion?: 'top' | 'bottom'
   }
 }
 
 export function LineaInformativa({ config }: LineaInformativaProps) {
-  const [isVisible, setIsVisible] = useState(true)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isClient, setIsClient] = useState(false)
+  const [navbarHeight, setNavbarHeight] = useState(70)
 
   useEffect(() => {
-    if (!config.activo) return
-
-    const interval = setInterval(() => {
-      setIsVisible(false)
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      timeoutRef.current = setTimeout(() => {
-        setIsVisible(true)
-      }, 100)
-    }, (config.velocidad + config.tiempoEntre) * 1000)
-
-    return () => {
-      clearInterval(interval)
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIsClient(true)
+    // Calcular la altura real del navbar
+    const navbar = document.querySelector('header')
+    if (navbar) {
+      const height = navbar.offsetHeight
+      setNavbarHeight(height)
     }
-  }, [config.activo, config.velocidad, config.tiempoEntre])
+  }, [])
 
+  if (!isClient) return null
   if (!config.activo || !config.texto) return null
 
-  const positionClass = config.posicion === 'top' ? 'top-0' : 'bottom-0'
+  const animationDuration = config.velocidad
+  const pauseDuration = config.tiempoEntre || 0
+
+  const animationStyle = pauseDuration > 0 
+    ? `marquee ${animationDuration}s linear ${pauseDuration}s infinite`
+    : `marquee ${animationDuration}s linear infinite`
+
+  // Usar la altura real del navbar o un valor por defecto
+  const topPosition = config.posicion === 'top' ? navbarHeight : 'auto'
+  const bottomPosition = config.posicion === 'bottom' ? 0 : 'auto'
 
   return (
     <div 
-      className={`fixed left-0 right-0 ${positionClass} z-40 w-full overflow-hidden`}
+      className="fixed left-0 right-0 z-40 overflow-hidden"
       style={{ 
         backgroundColor: config.colorFondo,
         height: `${config.altura}px`,
-        lineHeight: `${config.altura}px`
+        lineHeight: `${config.altura}px`,
+        top: topPosition,
+        bottom: bottomPosition,
+        width: '100%'
       }}
     >
       <div
         className="whitespace-nowrap"
         style={{
-          animation: `marquee ${config.velocidad}s linear infinite`,
+          animation: animationStyle,
           fontFamily: config.tipoLetra,
           fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
           display: 'inline-block',
-          opacity: isVisible ? 1 : 0,
           paddingRight: '20px'
         }}
       >
         {config.texto}
       </div>
-      <style>{`
+      <style jsx global>{`
         @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% { 
+            transform: translateX(0);
+          }
+          100% { 
+            transform: translateX(-50%);
+          }
         }
       `}</style>
     </div>
