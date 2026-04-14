@@ -20,15 +20,28 @@ interface LineaInformativaProps {
 export function LineaInformativa({ config }: LineaInformativaProps) {
   const [isClient, setIsClient] = useState(false)
   const [navbarHeight, setNavbarHeight] = useState(70)
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true)
 
   useEffect(() => {
     setIsClient(true)
+    
     // Calcular la altura real del navbar
     const navbar = document.querySelector('header')
     if (navbar) {
       const height = navbar.offsetHeight
       setNavbarHeight(height)
     }
+    
+    // Detectar si el navbar está visible o no
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      // El navbar se esconde después de 10px de scroll
+      const navbarVisible = currentScrollY <= 10
+      setIsNavbarVisible(navbarVisible)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   if (!isClient) return null
@@ -41,19 +54,17 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     ? `marquee ${animationDuration}s linear ${pauseDuration}s infinite`
     : `marquee ${animationDuration}s linear infinite`
 
-  // Usar la altura real del navbar o un valor por defecto
-  const topPosition = config.posicion === 'top' ? navbarHeight : 'auto'
-  const bottomPosition = config.posicion === 'bottom' ? 0 : 'auto'
+  // Si el navbar está visible, la línea va debajo; si no, va arriba del todo
+  const topPosition = isNavbarVisible ? navbarHeight : 0
 
   return (
     <div 
-      className="fixed left-0 right-0 z-40 overflow-hidden"
+      className="fixed left-0 right-0 z-40 overflow-hidden transition-all duration-300"
       style={{ 
         backgroundColor: config.colorFondo,
         height: `${config.altura}px`,
         lineHeight: `${config.altura}px`,
-        top: topPosition,
-        bottom: bottomPosition,
+        top: `${topPosition}px`,
         width: '100%'
       }}
     >
