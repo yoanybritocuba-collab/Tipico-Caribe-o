@@ -29,8 +29,8 @@ export function Footer() {
     telefono: "+34634492023",
     whatsapp: "+34634492023",
     email: "info@gabysclub.com",
-    instagram: "gabys_club",
-    tiktok: "GABYSCLUB"
+    instagram: "https://www.instagram.com/gabys_club24",
+    tiktok: "https://www.tiktok.com/@gabysclub_24"
   }
 
   useEffect(() => {
@@ -81,8 +81,6 @@ export function Footer() {
     return `${apertura} - ${cierre}`
   }
 
-  const instagramUrl = `https://instagram.com/${negocio.instagram.replace('@', '')}`
-  const tiktokUrl = `https://tiktok.com/@${negocio.tiktok.replace('@', '')}`
   const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
 
@@ -139,7 +137,7 @@ export function Footer() {
             {/* Redes Sociales */}
             <div className="flex gap-4 pt-2">
               <a 
-                href={instagramUrl}
+                href={negocio.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-all hover:scale-110 hover:text-pink-500"
@@ -148,7 +146,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
-                href={tiktokUrl}
+                href={negocio.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-all hover:scale-110 hover:text-white"
@@ -194,6 +192,11 @@ export function Footer() {
               <li>
                 <Link href="/carta" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
                   <Globe className="h-3 w-3" /> Carta
+                </Link>
+              </li>
+              <li>
+                <Link href="/reservas" className="flex items-center gap-2 transition-colors hover:opacity-80" style={{ color: textColor }}>
+                  <MessageCircle className="h-3 w-3" /> Reservas
                 </Link>
               </li>
               <li>
