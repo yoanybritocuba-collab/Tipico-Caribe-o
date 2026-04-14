@@ -1,25 +1,42 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { db } from '@/lib/firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
-interface LineaInformativaProps {
-  config: {
-    activo: boolean
-    texto: string
-    colorTexto: string
-    colorFondo: string
-    velocidad: number
-    altura: number
-    posicion: 'top' | 'bottom'
-  }
-}
-
-export function LineaInformativa({ config }: LineaInformativaProps) {
+export function LineaInformativa() {
+  const [config, setConfig] = useState<any>(null)
   const [isVisible, setIsVisible] = useState(true)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (!config.activo) return
+    const loadConfig = async () => {
+      try {
+        const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          setConfig({
+            activo: data.tickerActivo || false,
+            texto: data.tickerTexto || '',
+            colorTexto: data.tickerColorTexto || '#d1b275',
+            colorFondo: data.tickerColorFondo || '#000000',
+            tamanioLetra: data.tickerTamanioLetra || 14,
+            tipoLetra: data.tickerTipoLetra || 'Arial',
+            velocidad: data.tickerVelocidad || 15,
+            altura: data.tickerAltura || 40,
+            posicion: data.tickerPosicion || 'top'
+          })
+        }
+      } catch (error) {
+        console.error('Error cargando línea informativa:', error)
+      }
+    }
+    loadConfig()
+  }, [])
+
+  useEffect(() => {
+    if (!config?.activo) return
 
     const interval = setInterval(() => {
       setIsVisible(false)
@@ -33,9 +50,9 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       clearInterval(interval)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-  }, [config.activo, config.velocidad])
+  }, [config?.activo, config?.velocidad])
 
-  if (!config.activo || !config.texto) return null
+  if (!config || !config.activo || !config.texto) return null
 
   const positionClass = config.posicion === 'top' ? 'top-0' : 'bottom-0'
 
@@ -52,6 +69,8 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
         className="whitespace-nowrap"
         style={{
           animation: `marquee ${config.velocidad}s linear infinite`,
+          fontFamily: config.tipoLetra,
+          fontSize: `${config.tamanioLetra}px`,
           color: config.colorTexto,
           display: 'inline-block',
           opacity: isVisible ? 1 : 0,
