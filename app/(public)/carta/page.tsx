@@ -403,7 +403,7 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Anuncio "Pedir en barra" - con efecto de aumento, sombra dorada y repetición */}
+      {/* Anuncio "Pedir en barra" */}
       <div className="container mx-auto px-4 py-6 text-center">
         <div className="inline-block">
           <p className="text-gold text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide animate-pulse-glow shadow-glow">
