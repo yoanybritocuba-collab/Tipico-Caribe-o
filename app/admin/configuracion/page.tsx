@@ -20,6 +20,7 @@ import { getAuth, updateProfile, updatePassword, EmailAuthProvider, reauthentica
 import { app, db } from '@/lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { uploadImage } from '@/lib/firebase-services'
+import { translateText } from '@/lib/translate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 export default function ConfiguracionPage() {
@@ -74,6 +75,35 @@ export default function ConfiguracionPage() {
     { id: 'sabado', nombre: 'Sábado' },
     { id: 'domingo', nombre: 'Domingo' }
   ]
+
+  // Función para traducir el texto del ticker a todos los idiomas
+  const translateTickerToAllLanguages = async (text: string): Promise<{ es: string; en: string; fr: string; de: string; ru: string }> => {
+    const languages = [
+      { code: 'en', name: 'English' },
+      { code: 'fr', name: 'Français' },
+      { code: 'de', name: 'Deutsch' },
+      { code: 'ru', name: 'Русский' }
+    ]
+    
+    const translations: { es: string; en: string; fr: string; de: string; ru: string } = { 
+      es: text, 
+      en: '', 
+      fr: '', 
+      de: '', 
+      ru: '' 
+    }
+    
+    for (const lang of languages) {
+      try {
+        translations[lang.code as 'en' | 'fr' | 'de' | 'ru'] = await translateText(text, lang.code)
+      } catch (error) {
+        console.error(`Error traduciendo a ${lang.code}:`, error)
+        translations[lang.code as 'en' | 'fr' | 'de' | 'ru'] = text
+      }
+    }
+    
+    return translations
+  }
 
   // Cargar configuración
   useEffect(() => {
@@ -172,12 +202,35 @@ export default function ConfiguracionPage() {
   }
 
   const handleSaveTicker = async () => {
+    if (!tickerTexto.trim()) {
+      toast.error('Escribe un texto para la línea informativa')
+      return
+    }
+
     setIsSaving(true)
-    toast.loading('Guardando línea informativa...', { id: 'saving' })
+    toast.loading('Guardando y traduciendo línea informativa...', { id: 'saving' })
+    
     try {
+      let tickerTraducciones: { es: string; en: string; fr: string; de: string; ru: string } = { 
+        es: tickerTexto, 
+        en: '', 
+        fr: '', 
+        de: '', 
+        ru: '' 
+      }
+      
+      // Traducir solo si hay texto
+      if (tickerTexto.trim()) {
+        tickerTraducciones = await translateTickerToAllLanguages(tickerTexto)
+      }
+      
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
         tickerActivo,
         tickerTexto,
+        tickerTextoEn: tickerTraducciones.en || '',
+        tickerTextoFr: tickerTraducciones.fr || '',
+        tickerTextoDe: tickerTraducciones.de || '',
+        tickerTextoRu: tickerTraducciones.ru || '',
         tickerColorTexto,
         tickerColorFondo,
         tickerTamanioLetra,
@@ -188,8 +241,10 @@ export default function ConfiguracionPage() {
         tickerPosicion,
         updatedAt: new Date().toISOString()
       })
-      toast.success('Línea informativa guardada', { id: 'saving' })
+      
+      toast.success('Línea informativa guardada y traducida', { id: 'saving' })
     } catch (error) {
+      console.error('Error:', error)
       toast.error('Error al guardar', { id: 'saving' })
     } finally {
       setIsSaving(false)
@@ -352,7 +407,7 @@ export default function ConfiguracionPage() {
             {tickerActivo && (
               <>
                 <div>
-                  <Label className="text-white">Texto</Label>
+                  <Label className="text-white">Texto (Español)</Label>
                   <Textarea 
                     value={tickerTexto} 
                     onChange={(e) => setTickerTexto(e.target.value)} 
@@ -360,6 +415,7 @@ export default function ConfiguracionPage() {
                     className="mt-1 bg-gray-900 border-gray-700 text-white"
                     placeholder="Ej: 🍸 Envío gratis desde 20€ | 🍹 Happy Hour 18-20h | 🎵 Música en vivo"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Se traducirá automáticamente a Inglés, Francés, Alemán y Ruso</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -468,7 +524,7 @@ export default function ConfiguracionPage() {
 
             <Button onClick={handleSaveTicker} disabled={isSaving} className="bg-gold text-black hover:bg-gold-dark">
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Guardar línea informativa
+              Guardar y traducir línea informativa
             </Button>
           </CardContent>
         </Card>
