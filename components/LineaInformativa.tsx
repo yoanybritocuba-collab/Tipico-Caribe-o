@@ -1,11 +1,16 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useI18n } from '@/lib/i18n'
 
 interface LineaInformativaProps {
   config: {
     activo: boolean
     texto: string
+    textoEn?: string
+    textoFr?: string
+    textoDe?: string
+    textoRu?: string
     colorTexto: string
     colorFondo: string
     tamanioLetra: number
@@ -18,11 +23,23 @@ interface LineaInformativaProps {
 }
 
 export function LineaInformativa({ config }: LineaInformativaProps) {
+  const { language } = useI18n()
   const [isClient, setIsClient] = useState(false)
   const [navbarHeight, setNavbarHeight] = useState(70)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
   const [isAnimating, setIsAnimating] = useState(true)
   const [cycleKey, setCycleKey] = useState(0)
+
+  // Obtener el texto traducido según el idioma actual
+  const getTranslatedText = () => {
+    if (language === 'en' && config.textoEn) return config.textoEn
+    if (language === 'fr' && config.textoFr) return config.textoFr
+    if (language === 'de' && config.textoDe) return config.textoDe
+    if (language === 'ru' && config.textoRu) return config.textoRu
+    return config.texto
+  }
+
+  const textoTraducido = getTranslatedText()
 
   useEffect(() => {
     setIsClient(true)
@@ -44,7 +61,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   }, [])
 
   useEffect(() => {
-    if (!config.activo || !config.texto) return
+    if (!config.activo || !textoTraducido) return
 
     const velocidadMs = config.velocidad * 1000
     const pausaMs = (config.tiempoEntre || 2) * 1000
@@ -62,10 +79,10 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     }
 
     runCycle()
-  }, [config.activo, config.texto, config.velocidad, config.tiempoEntre, cycleKey])
+  }, [config.activo, textoTraducido, config.velocidad, config.tiempoEntre, cycleKey])
 
   if (!isClient) return null
-  if (!config.activo || !config.texto) return null
+  if (!config.activo || !textoTraducido) return null
 
   const topPosition = isNavbarVisible ? navbarHeight : 0
 
@@ -90,11 +107,11 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
           color: config.colorTexto,
           display: 'inline-block',
           paddingRight: '20px',
-          transform: isAnimating ? 'translateX(0%)' : 'translateX(100%)',
+          transform: isAnimating ? 'translateX(100%)' : 'translateX(100%)',
           opacity: isAnimating ? 1 : 0
         }}
       >
-        {config.texto}
+        {textoTraducido}
       </div>
       <style jsx global>{`
         @keyframes marquee {
