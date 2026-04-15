@@ -197,4 +197,20 @@
   animation-name: marquee;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+  /* Ocultar completamente el toolbar de Vercel */
+#__next-vercel-toolbar,
+.vercel-toolbar,
+[data-vercel-toolbar],
+div[class*="vercel-toolbar"],
+iframe[title*="toolbar"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+  position: fixed !important;
+  bottom: -100px !important;
+  z-index: -9999 !important;
+}
 }
