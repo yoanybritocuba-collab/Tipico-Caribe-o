@@ -23,15 +23,6 @@ import { uploadImage } from '@/lib/firebase-services'
 import { translateText } from '@/lib/translate'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
-// Tipo para las traducciones del ticker
-interface TickerTraducciones {
-  es: string
-  en: string
-  fr: string
-  de: string
-  ru: string
-}
-
 export default function ConfiguracionPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -86,13 +77,13 @@ export default function ConfiguracionPage() {
   ]
 
   // Función para traducir el texto del ticker a todos los idiomas
-  const translateTickerToAllLanguages = async (text: string): Promise<TickerTraducciones> => {
-    const translations: TickerTraducciones = { 
-      es: text, 
-      en: '', 
-      fr: '', 
-      de: '', 
-      ru: '' 
+  const translateTickerToAllLanguages = async (text: string) => {
+    const translations = {
+      es: text,
+      en: '',
+      fr: '',
+      de: '',
+      ru: ''
     }
     
     // Traducir a inglés
@@ -236,26 +227,16 @@ export default function ConfiguracionPage() {
     toast.loading('Guardando y traduciendo línea informativa...', { id: 'saving' })
     
     try {
-      let tickerTraducciones: TickerTraducciones = { 
-        es: tickerTexto, 
-        en: '', 
-        fr: '', 
-        de: '', 
-        ru: '' 
-      }
-      
-      // Traducir solo si hay texto
-      if (tickerTexto.trim()) {
-        tickerTraducciones = await translateTickerToAllLanguages(tickerTexto)
-      }
+      // Obtener traducciones
+      const traducciones = await translateTickerToAllLanguages(tickerTexto)
       
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
         tickerActivo,
         tickerTexto,
-        tickerTextoEn: tickerTraducciones.en,
-        tickerTextoFr: tickerTraducciones.fr,
-        tickerTextoDe: tickerTraducciones.de,
-        tickerTextoRu: tickerTraducciones.ru,
+        tickerTextoEn: traducciones.en,
+        tickerTextoFr: traducciones.fr,
+        tickerTextoDe: traducciones.de,
+        tickerTextoRu: traducciones.ru,
         tickerColorTexto,
         tickerColorFondo,
         tickerTamanioLetra,
