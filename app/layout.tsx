@@ -18,18 +18,18 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Gaby's Club | Coctelería y Picaderas",
-  description: "El mejor lugar para disfrutar de cócteles y picaderas en Barcelona",
-  keywords: ['bar', 'cócteles', 'picaderas', 'Barcelona', "Gaby's Club"],
-  authors: [{ name: "Gaby's Club" }],
+  title: "Tipico Caribeño | Auténtica Cocina Dominicana",
+  description: "El mejor lugar para disfrutar de auténtica cocina dominicana en Barcelona",
+  keywords: ['comida dominicana', 'restaurante dominicano', 'Barcelona', 'Tipico Caribeño'],
+  authors: [{ name: "Tipico Caribeño" }],
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
-    title: "Gaby's Club | Coctelería y Picaderas",
-    description: 'El mejor lugar para disfrutar de cócteles y picaderas en Barcelona',
+    title: "Tipico Caribeño | Auténtica Cocina Dominicana",
+    description: 'El mejor lugar para disfrutar de auténtica cocina dominicana en Barcelona',
     type: 'website',
     locale: 'es_ES',
     alternateLocale: 'en_US',
