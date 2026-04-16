@@ -58,6 +58,14 @@ export default function MenuPage() {
     return cat.nombre
   }
 
+  const getAnuncioTexto = () => {
+    if (language === 'en') return "Please order at the bar"
+    if (language === 'fr') return "Veuillez commander au bar"
+    if (language === 'de') return "Bitte an der Bar bestellen"
+    if (language === 'ru') return "Пожалуйста, заказывайте у бара"
+    return "Pedir en barra"
+  }
+
   useEffect(() => {
     const loadConfig = async () => {
       try {
@@ -202,7 +210,7 @@ export default function MenuPage() {
     ...(suggestedProducts.length > 0 ? [{ 
       id: 'sugerencias', 
       name: t('menu.suggestionsCategory'), 
-      nameEn: "Chef's Suggestions",
+      nameEn: "Bartender's Suggestions",
       type: 'suggestion' as const 
     }] : []),
     { 
@@ -395,7 +403,14 @@ export default function MenuPage() {
         </div>
       )}
 
-      {/* Eliminado el cartel "Pedir en barra" */}
+      {/* Anuncio "Pedir en barra" */}
+      <div className="container mx-auto px-4 py-6 text-center">
+        <div className="inline-block">
+          <p className="text-gold text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide animate-pulse-glow shadow-glow">
+            🍸 {getAnuncioTexto()} 🍹
+          </p>
+        </div>
+      </div>
 
       <div className="pt-2"></div>
 
@@ -468,7 +483,7 @@ export default function MenuPage() {
 
       {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
 
-      {/* Botón home flotante en esquina inferior izquierda */}
+      {/* Botón home flotante - SOLO UNO (esquina inferior izquierda) - MÁS PEQUEÑO */}
       <Link
         href="/"
         className="fixed bottom-6 left-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
@@ -476,6 +491,39 @@ export default function MenuPage() {
       >
         <Home className="h-3 w-3" />
       </Link>
+
+      <style jsx>{`
+        @keyframes pulse-glow {
+          0%, 100% {
+            transform: scale(1);
+            text-shadow: 0 0 5px rgba(209, 178, 117, 0.5);
+          }
+          20% {
+            transform: scale(1.15);
+            text-shadow: 0 0 20px rgba(209, 178, 117, 0.9), 0 0 30px rgba(209, 178, 117, 0.5);
+          }
+          40% {
+            transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(209, 178, 117, 0.7);
+          }
+          60% {
+            transform: scale(1.12);
+            text-shadow: 0 0 25px rgba(209, 178, 117, 0.8);
+          }
+          80% {
+            transform: scale(1.02);
+            text-shadow: 0 0 8px rgba(209, 178, 117, 0.6);
+          }
+        }
+        
+        .animate-pulse-glow {
+          animation: pulse-glow 1.8s ease-in-out 3;
+        }
+        
+        .shadow-glow {
+          filter: drop-shadow(0 0 8px rgba(209, 178, 117, 0.4));
+        }
+      `}</style>
     </div>
   )
 }
