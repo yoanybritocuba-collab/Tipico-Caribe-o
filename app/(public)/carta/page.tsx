@@ -12,18 +12,27 @@ import { useI18n } from '@/lib/i18n'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
-// Función auxiliar para obtener el valor localizado de un producto
-function getLocalizedValue(product: Producto, field: 'nombre' | 'descripcion', language: string): string {
-  if (language === 'en') {
-    if (field === 'nombre' && product.nameEn) return product.nameEn
-    if (field === 'descripcion' && product.descriptionEn) return product.descriptionEn
-  }
-  return product[field] || ''
+// Función para obtener el nombre traducido de un producto
+function getProductName(product: Producto, language: string): string {
+  if (language === 'en' && product.nameEn) return product.nameEn
+  if (language === 'fr' && product.nameFr) return product.nameFr
+  if (language === 'de' && product.nameDe) return product.nameDe
+  if (language === 'ru' && product.nameRu) return product.nameRu
+  return product.nombre
+}
+
+// Función para obtener la descripción traducida de un producto
+function getProductDescription(product: Producto, language: string): string {
+  if (language === 'en' && product.descriptionEn) return product.descriptionEn
+  if (language === 'fr' && product.descriptionFr) return product.descriptionFr
+  if (language === 'de' && product.descriptionDe) return product.descriptionDe
+  if (language === 'ru' && product.descriptionRu) return product.descriptionRu
+  return product.descripcion || ''
 }
 
 export default function MenuPage() {
   const { t, language } = useI18n()
-  const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [view, setView] = useState<'grid' | 'list'>('list') // Cambiado a 'list' por defecto
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null)
@@ -38,6 +47,19 @@ export default function MenuPage() {
   const [isLoadingFondo, setIsLoadingFondo] = useState(true)
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Guardar la vista preferida en localStorage
+  useEffect(() => {
+    const savedView = localStorage.getItem('tipico-caribeno-view') as 'grid' | 'list'
+    if (savedView === 'grid' || savedView === 'list') {
+      setView(savedView)
+    }
+  }, [])
+
+  // Actualizar localStorage cuando cambie la vista
+  useEffect(() => {
+    localStorage.setItem('tipico-caribeno-view', view)
+  }, [view])
 
   // Cargar fondo de carta desde Firestore
   useEffect(() => {
@@ -134,7 +156,7 @@ export default function MenuPage() {
   const handleAddToCart = (product: Producto, productId: string) => {
     const quantity = quantities[productId] || 1
     if (quantity > 0) {
-      const productName = getLocalizedValue(product, 'nombre', language)
+      const productName = getProductName(product, language)
       addToCart({
         id: product.id,
         name: productName,
@@ -171,20 +193,37 @@ export default function MenuPage() {
   interface MenuCategory {
     id: string
     name: string
-    nameEn: string
+    nameEn?: string
+    nameFr?: string
+    nameDe?: string
+    nameRu?: string
     type: 'suggestion' | 'all' | 'normal'
   }
 
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Bartender's Suggestions", type: 'suggestion' as const }] : []),
-    { id: 'todo', name: t('menu.todo'), nameEn: 'All', type: 'all' as const },
+    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), type: 'suggestion' as const }] : []),
+    { id: 'todo', name: t('menu.todo'), type: 'all' as const },
     ...categories.filter(cat => cat.activo === true).map(cat => ({
       id: cat.id,
       name: cat.nombre,
-      nameEn: cat.nameEn || '',
+      nameEn: cat.nameEn,
+      nameFr: cat.nameFr,
+      nameDe: cat.nameDe,
+      nameRu: cat.nameRu,
       type: 'normal' as const
     }))
   ]
+
+  const getCategoryDisplayName = (category: MenuCategory): string => {
+    if (category.type === 'suggestion') return t('menu.suggestionsCategory')
+    if (category.type === 'all') return t('menu.todo')
+    
+    if (language === 'en' && category.nameEn) return category.nameEn
+    if (language === 'fr' && category.nameFr) return category.nameFr
+    if (language === 'de' && category.nameDe) return category.nameDe
+    if (language === 'ru' && category.nameRu) return category.nameRu
+    return category.name
+  }
 
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
@@ -197,9 +236,15 @@ export default function MenuPage() {
     categories.forEach(cat => {
       const catProducts = activeProducts.filter(p => p.categoriaGlobalId === cat.id).sort((a, b) => (a.orden || 0) - (b.orden || 0))
       if (catProducts.length > 0) {
+        let categoryName = cat.nombre
+        if (language === 'en' && cat.nameEn) categoryName = cat.nameEn
+        else if (language === 'fr' && cat.nameFr) categoryName = cat.nameFr
+        else if (language === 'de' && cat.nameDe) categoryName = cat.nameDe
+        else if (language === 'ru' && cat.nameRu) categoryName = cat.nameRu
+        
         grouped.push({ 
           categoryId: cat.id, 
-          categoryName: language === 'en' && cat.nameEn ? cat.nameEn : cat.nombre, 
+          categoryName, 
           products: catProducts 
         })
       }
@@ -216,21 +261,14 @@ export default function MenuPage() {
   const currentData = getProductsByCategory()
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
 
-  const getCategoryName = (category: MenuCategory) => {
-    if (category.type === 'suggestion') return t('menu.suggestionsCategory')
-    if (category.type === 'all') return t('menu.todo')
-    if (language === 'en' && category.nameEn) return category.nameEn
-    return category.name
-  }
-
   const renderProducts = (productsList: Producto[]) => {
     if (view === 'grid') {
       return (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
             const quantity = quantities[product.id] || 0
-            const productName = getLocalizedValue(product, 'nombre', language)
-            const productDescription = getLocalizedValue(product, 'descripcion', language)
+            const productName = getProductName(product, language)
+            const productDescription = getProductDescription(product, language)
             const isSuggested = product.destacado === true
 
             return (
@@ -262,8 +300,8 @@ export default function MenuPage() {
       <div className="space-y-4">
         {productsList.map((product) => {
           const quantity = quantities[product.id] || 0
-          const productName = getLocalizedValue(product, 'nombre', language)
-          const productDescription = getLocalizedValue(product, 'descripcion', language)
+          const productName = getProductName(product, language)
+          const productDescription = getProductDescription(product, language)
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
@@ -340,7 +378,7 @@ export default function MenuPage() {
               {showLeftArrow && <button onClick={() => scrollHorizontal('left')} className="hidden md:flex absolute left-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-background shadow-md border"><ChevronLeft className="h-4 w-4" /></button>}
               <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto scroll-smooth py-3" style={{ scrollbarWidth: 'thin' }}>
                 {availableCategories.map((category) => {
-                  const categoryName = getCategoryName(category)
+                  const categoryName = getCategoryDisplayName(category)
                   const isActive = activeCategory === category.id
                   return (
                     <Button key={category.id} id={`cat-btn-${category.id}`} onClick={() => changeCategory(category.id)} variant={isActive ? "default" : "outline"} size="default" className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0">
@@ -365,7 +403,7 @@ export default function MenuPage() {
           </div>
 
           {currentCategory && activeCategory !== 'todo' && (
-            <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-primary/30 flex items-center gap-2">{getCategoryName(currentCategory)}</h2></div>
+            <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-primary/30 flex items-center gap-2">{getCategoryDisplayName(currentCategory)}</h2></div>
           )}
 
           {renderMainContent()}
