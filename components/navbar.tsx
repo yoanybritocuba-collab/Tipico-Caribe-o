@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Shield, Wine } from 'lucide-react'
+import { Menu, X, Shield, Wine, Utensils } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageToggle } from '@/components/language-toggle'
@@ -37,7 +37,7 @@ export function Navbar() {
   const [logoUrl, setLogoUrl] = useState('/logo.png')
   const [logoTamaño, setLogoTamaño] = useState('h-20 sm:h-24 md:h-28 lg:h-32 xl:h-36')
   const [logoPosicion, setLogoPosicion] = useState('justify-start')
-  const [nombreWeb, setNombreWeb] = useState("Gaby's Club")
+  const [nombreWeb, setNombreWeb] = useState("Tipico Caribeño")
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -47,7 +47,7 @@ export function Navbar() {
         if (docSnap.exists()) {
           const data = docSnap.data()
           setLogoUrl(data.logoUrl || '/logo.png')
-          setNombreWeb(data.nombreWeb || "Gaby's Club")
+          setNombreWeb(data.nombreWeb || "Tipico Caribeño")
           
           const tamaño = data.logoTamaño || 'medio'
           const tamaños: Record<string, string> = {
@@ -97,10 +97,10 @@ export function Navbar() {
               <img src={logoUrl} alt={nombreWeb} className={`${logoTamaño} object-contain`} />
               <div className="flex flex-col leading-tight">
                 <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gold">
-                  Gaby's
+                  Tipico
                 </span>
                 <span className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-gold -ml-1 sm:-ml-2">
-                  Club
+                  Caribeño
                 </span>
               </div>
             </HiddenLink>

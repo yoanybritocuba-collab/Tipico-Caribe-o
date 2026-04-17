@@ -18,9 +18,9 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Tipico Caribeño | Auténtica Cocina Dominicana",
-  description: "El mejor lugar para disfrutar de auténtica cocina dominicana en Barcelona",
-  keywords: ['comida dominicana', 'restaurante dominicano', 'Barcelona', 'Tipico Caribeño'],
+  title: "Tipico Caribeño | Restaurante Dominicano en Barcelona",
+  description: "Auténtica cocina dominicana en el corazón de Barcelona. Disfruta de nuestros platos tradicionales.",
+  keywords: ['restaurante dominicano', 'comida caribeña', 'Barcelona', 'Tipico Caribeño', 'comida dominicana'],
   authors: [{ name: "Tipico Caribeño" }],
   icons: {
     icon: '/logo.png',
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     apple: '/logo.png',
   },
   openGraph: {
-    title: "Tipico Caribeño | Auténtica Cocina Dominicana",
-    description: 'El mejor lugar para disfrutar de auténtica cocina dominicana en Barcelona',
+    title: "Tipico Caribeño | Restaurante Dominicano en Barcelona",
+    description: 'Auténtica cocina dominicana en el corazón de Barcelona',
     type: 'website',
     locale: 'es_ES',
     alternateLocale: 'en_US',

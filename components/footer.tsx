@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { 
-  Instagram, Facebook, Phone, Mail, Clock, Wine, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2,
+  Instagram, Facebook, Phone, Mail, Clock, Wine, Utensils, ChevronDown, ChevronUp, MapPin, MessageCircle, Globe, Loader2,
   Menu, CalendarCheck, Star, MapPinned
 } from 'lucide-react'
 import { db } from '@/lib/firebase'
@@ -26,10 +26,9 @@ export function Footer() {
     domingo: { apertura: '20:00', cierre: '03:00' }
   })
 
-  // DATOS DE TIPICO CARIBEÑO (no de Gaby's Club)
   const negocio = {
     nombre: "Tipico Caribeño",
-    direccion: "Carrer del Tropazi, 24, Gracia, 08012 Barcelona",
+    direccion: "Carrer de la Indústria 202, 08026 Barcelona",
     telefono: "+34634492023",
     whatsapp: "+34634492023",
     email: "info@tipicocaribeno.com",
@@ -97,6 +96,7 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Wine className="h-6 w-6" style={{ color: textColor }} />
+              <Utensils className="h-6 w-6" style={{ color: textColor }} />
               <h3 className="font-serif text-2xl font-bold" style={{ color: textColor }}>{negocio.nombre}</h3>
             </div>
             <div className="space-y-3 text-sm">
