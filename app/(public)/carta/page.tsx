@@ -1,20 +1,22 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
-import { LayoutGrid, List, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2, Wine, Home } from 'lucide-react'
+import { LayoutGrid, List, Plus, Minus, ArrowUp, ChevronLeft, ChevronRight, X, Maximize2, Star, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { addToCart } from '@/lib/cart-store'
 import { cn } from '@/lib/utils'
-import { useI18n } from '@/lib/i18n'
+import { toast } from 'sonner'
 import { getAllProductos, getCategoriasActivasGlobales, type Producto, type CategoriaGlobal } from '@/lib/firebase-services'
+import { useI18n } from '@/lib/i18n'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
 export default function MenuPage() {
-  const { t, language } = useI18n()
-  const [view, setView] = useState<'grid' | 'list'>('list')
+  const { t, language, getLocalizedField } = useI18n()
+  const [view, setView] = useState<'grid' | 'list'>('grid')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null)
   const [expandedCategoryId, setExpandedCategoryId] = useState<string>('')
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -23,70 +25,30 @@ export default function MenuPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(true)
-  
-  const [cartaImagen, setCartaImagen] = useState('')
-  const [cartaTitulo, setCartaTitulo] = useState('La Carta')
-  const [cartaTituloEn, setCartaTituloEn] = useState('The Menu')
-  const [cartaTituloFr, setCartaTituloFr] = useState('La Carte')
-  const [cartaTituloDe, setCartaTituloDe] = useState('Die Karte')
-  const [cartaTituloRu, setCartaTituloRu] = useState('Меню')
-  const [isLoadingConfig, setIsLoadingConfig] = useState(true)
+  const [fondoCarta, setFondoCarta] = useState<string>('')
+  const [isLoadingFondo, setIsLoadingFondo] = useState(true)
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  const getTranslatedProductName = (product: Producto) => {
-    if (language === 'en') return product.nameEn || product.nombre
-    if (language === 'fr') return product.nameFr || product.nombre
-    if (language === 'de') return product.nameDe || product.nombre
-    if (language === 'ru') return product.nameRu || product.nombre
-    return product.nombre
-  }
-
-  const getTranslatedProductDescription = (product: Producto) => {
-    if (language === 'en') return product.descriptionEn || product.descripcion
-    if (language === 'fr') return product.descriptionFr || product.descripcion
-    if (language === 'de') return product.descriptionDe || product.descripcion
-    if (language === 'ru') return product.descriptionRu || product.descripcion
-    return product.descripcion
-  }
-
-  const getTranslatedCategoryName = (cat: any) => {
-    if (language === 'en') return cat.nameEn || cat.nombre
-    if (language === 'fr') return cat.nameFr || cat.nombre
-    if (language === 'de') return cat.nameDe || cat.nombre
-    if (language === 'ru') return cat.nameRu || cat.nombre
-    return cat.nombre
-  }
-
-  const getAnuncioTexto = () => {
-    if (language === 'en') return "Please order at the bar"
-    if (language === 'fr') return "Veuillez commander au bar"
-    if (language === 'de') return "Bitte an der Bar bestellen"
-    if (language === 'ru') return "Пожалуйста, заказывайте у бара"
-    return "Pedir en barra"
-  }
-
+  // Cargar fondo de carta desde Firestore
   useEffect(() => {
-    const loadConfig = async () => {
+    const loadFondoCarta = async () => {
       try {
         const docRef = doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt')
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-          const data = docSnap.data()
-          setCartaImagen(data.cartaImagen || '')
-          setCartaTitulo(data.cartaTitulo || 'La Carta')
-          setCartaTituloEn(data.cartaTituloEn || 'The Menu')
-          setCartaTituloFr(data.cartaTituloFr || 'La Carte')
-          setCartaTituloDe(data.cartaTituloDe || 'Die Karte')
-          setCartaTituloRu(data.cartaTituloRu || 'Меню')
+          setFondoCarta(docSnap.data().fondoCarta || '')
         }
       } catch (error) {
-        console.error('Error cargando configuración carta:', error)
+        console.error('Error cargando fondo carta:', error)
       } finally {
-        setIsLoadingConfig(false)
+        setIsLoadingFondo(false)
       }
     }
-    loadConfig()
+    loadFondoCarta()
+  }, [])
+
+  useEffect(() => {
     loadData()
   }, [language])
 
@@ -104,14 +66,6 @@ export default function MenuPage() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const getCartaTitulo = () => {
-    if (language === 'en') return cartaTituloEn
-    if (language === 'fr') return cartaTituloFr
-    if (language === 'de') return cartaTituloDe
-    if (language === 'ru') return cartaTituloRu
-    return cartaTitulo
   }
 
   const checkScrollPosition = () => {
@@ -164,6 +118,26 @@ export default function MenuPage() {
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
+  const updateQuantity = (productId: string, delta: number) => {
+    setQuantities(prev => ({ ...prev, [productId]: Math.max(0, (prev[productId] || 0) + delta) }))
+  }
+
+  const handleAddToCart = (product: Producto, productId: string) => {
+    const quantity = quantities[productId] || 1
+    if (quantity > 0) {
+      const productName = getLocalizedField(product, 'nombre')
+      addToCart({
+        id: product.id,
+        name: productName,
+        price: product.precio,
+        image: product.imagenUrl,
+      }, quantity)
+      toast.success(`${productName} agregado`, { duration: 2000 })
+      setQuantities(prev => ({ ...prev, [productId]: 0 }))
+      setExpandedProduct(null)
+    }
+  }
+
   const toggleExpand = (productId: string, categoryId: string) => {
     if (expandedProduct === productId) {
       setExpandedProduct(null)
@@ -174,66 +148,39 @@ export default function MenuPage() {
     }
   }
 
-  if (isLoading || isLoadingConfig) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <Wine className="h-8 w-8 animate-spin text-gold" />
-      </div>
-    )
+  if (isLoading || isLoadingFondo) {
+    return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
   }
 
   const activeProducts = products.filter(p => p.activo === true)
   const suggestedProducts = activeProducts.filter(p => p.destacado === true)
 
   if (activeProducts.length === 0) {
-    return (
-      <div className="bg-black min-h-screen">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <h2 className="text-2xl font-bold mb-4 text-white">{t('menu.title')}</h2>
-          <p className="text-gray-400">{t('menu.noProducts')}</p>
-        </div>
-      </div>
-    )
+    return <div className="container mx-auto px-4 py-16 text-center"><h2 className="text-2xl font-bold mb-4">{t('menu.title')}</h2><p className="text-muted-foreground">No hay productos disponibles</p></div>
   }
 
-  interface MenuCategory { 
+  interface MenuCategory {
     id: string
     name: string
     nameEn: string
-    nameFr?: string
-    nameDe?: string
-    nameRu?: string
     type: 'suggestion' | 'all' | 'normal'
   }
-  
+
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ 
-      id: 'sugerencias', 
-      name: t('menu.suggestionsCategory'), 
-      nameEn: "Bartender's Suggestions",
-      type: 'suggestion' as const 
-    }] : []),
-    { 
-      id: 'todo', 
-      name: t('menu.todo'), 
-      nameEn: 'All', 
-      type: 'all' as const 
-    },
-    ...categories.filter(cat => cat.activo === true).map(cat => ({ 
-      id: cat.id, 
+    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: 'Sugerencias del Chef', nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
+    { id: 'todo', name: 'Todo', nameEn: 'All', type: 'all' as const },
+    ...categories.filter(cat => cat.activo === true).map(cat => ({
+      id: cat.id,
       name: cat.nombre,
-      nameEn: cat.nameEn || '', 
-      nameFr: cat.nameFr || '',
-      nameDe: cat.nameDe || '',
-      nameRu: cat.nameRu || '',
-      type: 'normal' as const 
+      nameEn: cat.nameEn || '',
+      type: 'normal' as const
     }))
   ]
 
   const availableCategories = menuCategories.filter(cat => {
     if (cat.type === 'suggestion') return suggestedProducts.length > 0
-    if (cat.type === 'all') return true
-    return cat.type === 'normal'
+    if (cat.type === 'all') return activeProducts.length > 0
+    return activeProducts.some(p => p.categoriaGlobalId === cat.id)
   })
 
   const getGroupedProductsByCategory = () => {
@@ -241,11 +188,7 @@ export default function MenuPage() {
     categories.forEach(cat => {
       const catProducts = activeProducts.filter(p => p.categoriaGlobalId === cat.id).sort((a, b) => (a.orden || 0) - (b.orden || 0))
       if (catProducts.length > 0) {
-        grouped.push({ 
-          categoryId: cat.id, 
-          categoryName: getTranslatedCategoryName(cat), 
-          products: catProducts 
-        })
+        grouped.push({ categoryId: cat.id, categoryName: getLocalizedField(cat, 'name'), products: catProducts })
       }
     })
     return grouped
@@ -260,41 +203,34 @@ export default function MenuPage() {
   const currentData = getProductsByCategory()
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
 
-  const getCategoryButtonName = (category: MenuCategory): string => {
-    if (category.type === 'suggestion') return category.name
-    if (category.type === 'all') return category.name
-    if (language === 'en') return category.nameEn || category.name
-    if (language === 'fr') return category.nameFr || category.name
-    if (language === 'de') return category.nameDe || category.name
-    if (language === 'ru') return category.nameRu || category.name
-    return category.name
-  }
+  const getCategoryName = (category: MenuCategory) => language === 'en' ? category.nameEn : category.name
 
   const renderProducts = (productsList: Producto[]) => {
     if (view === 'grid') {
       return (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
-            const productName = getTranslatedProductName(product)
-            const productDescription = getTranslatedProductDescription(product)
+            const quantity = quantities[product.id] || 0
+            const productName = getLocalizedField(product, 'nombre')
+            const productDescription = getLocalizedField(product, 'descripcion')
             const isSuggested = product.destacado === true
+
             return (
-              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-gray-900/95 border-gray-800">
-                {isSuggested && (
-                  <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
-                    <Star className="h-3 w-3 fill-gold text-gold" />
-                    <Star className="h-3 w-3 fill-gold text-gold" />
-                    <Star className="h-3 w-3 fill-gold text-gold" />
-                  </div>
-                )}
+              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-all group cursor-pointer bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+                {isSuggested && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1"><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /></div>}
                 <CardContent className="p-0">
-                  <div className="aspect-[4/3] overflow-hidden bg-gray-800">
-                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gray-800">🍽️</div>}
+                  <div className="aspect-[4/3] overflow-hidden bg-muted">
+                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-4xl bg-gradient-to-br from-amber-100 to-orange-100">🍽️</div>}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-bold text-base text-white mb-2">{productName}</h3>
-                    {productDescription && <p className="text-sm text-gray-400 line-clamp-2 mb-3">{productDescription}</p>}
-                    <p className="font-bold text-xl text-gold mt-2">{product.precio.toFixed(2)}€</p>
+                    <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-bold text-base">{productName}</h3><p className="font-bold text-lg text-primary">€{product.precio.toFixed(2)}</p></div>
+                    {productDescription && <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{productDescription}</p>}
+                    <div className="flex items-center justify-end gap-2 mt-2">
+                      {quantity > 0 && <><Button size="icon" variant="outline" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium">{quantity}</span></>}
+                      <Button size={quantity > 0 ? "icon" : "default"} className={cn(quantity > 0 ? "h-8 w-8" : "gap-1")} onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }}>
+                        {quantity === 0 ? <>Agregar <Plus className="h-3 w-3" /></> : <Plus className="h-3 w-3" />}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -303,63 +239,53 @@ export default function MenuPage() {
         </div>
       )
     }
+
     return (
       <div className="space-y-4">
         {productsList.map((product) => {
-          const productName = getTranslatedProductName(product)
-          const productDescription = getTranslatedProductDescription(product)
+          const quantity = quantities[product.id] || 0
+          const productName = getLocalizedField(product, 'nombre')
+          const productDescription = getLocalizedField(product, 'descripcion')
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
+
           return (
-            <div key={product.id} className={cn("bg-gray-900/95 rounded-xl border border-gray-800 transition-all duration-300 cursor-pointer relative overflow-hidden", isExpanded ? "shadow-xl" : "hover:shadow-md")} onClick={() => toggleExpand(product.id, currentCategoryId)}>
-              {isSuggested && !isExpanded && (
-                <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 rounded-full px-2 py-1">
-                  <Star className="h-3 w-3 fill-gold text-gold" />
-                  <Star className="h-3 w-3 fill-gold text-gold" />
-                  <Star className="h-3 w-3 fill-gold text-gold" />
-                </div>
-              )}
+            <div key={product.id} className={cn("bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl border transition-all duration-300 cursor-pointer relative overflow-hidden", isExpanded ? "shadow-xl" : "hover:shadow-md")} onClick={() => toggleExpand(product.id, currentCategoryId)}>
+              {isSuggested && !isExpanded && <div className="absolute top-2 right-2 z-10 flex gap-0.5 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1"><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /><Star className="h-3 w-3 fill-yellow-500 text-yellow-500" /></div>}
+              
               {!isExpanded && (
                 <div className="flex">
-                  <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] flex-shrink-0 bg-gray-800">
-                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl">🍽️</div>}
+                  <div className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] flex-shrink-0 bg-muted">
+                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-3xl bg-gradient-to-br from-amber-100 to-orange-100">🍽️</div>}
                   </div>
                   <div className="flex-1 p-3 sm:p-4">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-sm sm:text-base text-white">{productName}</h3>
-                        {productDescription && <p className="text-xs text-gray-400 line-clamp-2 mt-1">{productDescription}</p>}
-                      </div>
-                    </div>
-                    <p className="font-bold text-base sm:text-lg text-gold text-right mt-2">{product.precio.toFixed(2)}€</p>
+                    <div className="flex items-start justify-between gap-2"><div className="flex-1"><h3 className="font-semibold text-sm sm:text-base">{productName}</h3>{productDescription && <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{productDescription}</p>}</div><p className="font-bold text-base sm:text-lg text-primary whitespace-nowrap">€{product.precio.toFixed(2)}</p></div>
                     <div className="flex items-center justify-end gap-2 mt-3">
-                      <Button size="sm" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8 text-gold hover:text-gold-dark hover:bg-gold/10" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
-                        <Maximize2 className="h-3 w-3" />
+                      {quantity > 0 && <><Button size="icon" variant="outline" className="h-7 w-7 sm:h-8 sm:w-8" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-6 text-center font-medium text-sm">{quantity}</span></>}
+                      <Button size={quantity > 0 ? "icon" : "sm"} className={cn(quantity > 0 ? "h-7 w-7 sm:h-8 sm:w-8" : "gap-1 h-7 sm:h-8 text-xs sm:text-sm")} onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }}>
+                        {quantity === 0 ? <>Agregar <Plus className="h-3 w-3" /></> : <Plus className="h-3 w-3" />}
                       </Button>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}><Maximize2 className="h-3 w-3" /></Button>
                     </div>
                   </div>
                 </div>
               )}
+
               {isExpanded && (
                 <div className="p-4">
-                  {isSuggested && (
-                    <div className="flex justify-end mb-2 gap-0.5">
-                      <Star className="h-4 w-4 fill-gold text-gold" />
-                      <Star className="h-4 w-4 fill-gold text-gold" />
-                      <Star className="h-4 w-4 fill-gold text-gold" />
-                    </div>
-                  )}
-                  <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden mb-4">
-                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl">🍽️</div>}
+                  {isSuggested && <div className="flex justify-end mb-2 gap-0.5"><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /><Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /></div>}
+                  <div className="aspect-[4/3] bg-muted rounded-xl overflow-hidden mb-4">
+                    {product.imagenUrl ? <img src={product.imagenUrl} alt={productName} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-6xl bg-gradient-to-br from-amber-100 to-orange-100">🍽️</div>}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-2">{productName}</h3>
-                  {productDescription && <p className="text-sm text-gray-400 mb-4 leading-relaxed">{productDescription}</p>}
-                  <p className="text-2xl font-bold text-gold mb-4">{product.precio.toFixed(2)}€</p>
-                  <div className="flex items-center justify-end mt-4 pt-3 border-t border-gray-800">
-                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}>
-                      <X className="h-4 w-4" />
+                  <div className="flex items-start justify-between gap-2 mb-2"><h3 className="text-xl font-bold">{productName}</h3><p className="text-2xl font-bold text-primary">€{product.precio.toFixed(2)}</p></div>
+                  {productDescription && <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{productDescription}</p>}
+                  <div className="flex items-center justify-end gap-3 mt-4 pt-3 border-t">
+                    {quantity > 0 && <><Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); updateQuantity(product.id, -1); }}><Minus className="h-3 w-3" /></Button><span className="w-8 text-center font-semibold">{quantity}</span></>}
+                    <Button size="default" onClick={(e) => { e.stopPropagation(); if (quantity === 0) updateQuantity(product.id, 1); else handleAddToCart(product, product.id); }} className="gap-2">
+                      {quantity === 0 ? "Agregar al pedido" : `Confirmar ${quantity} x €${product.precio.toFixed(2)}`} <Plus className="h-4 w-4" />
                     </Button>
+                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); toggleExpand(product.id, currentCategoryId); }}><X className="h-4 w-4" /></Button>
                   </div>
                 </div>
               )}
@@ -376,7 +302,7 @@ export default function MenuPage() {
         <div className="space-y-12">
           {(currentData.data as { categoryId: string; categoryName: string; products: Producto[] }[]).map((group) => (
             <div key={group.categoryId}>
-              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-gold/30 text-gold">{group.categoryName}</h2>
+              <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-primary/30">{group.categoryName}</h2>
               {renderProducts(group.products)}
             </div>
           ))}
@@ -387,143 +313,52 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Imagen de portada */}
-      {cartaImagen && (
-        <div className="relative h-[45vh] min-h-[350px] md:h-[55vh] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${cartaImagen})` }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10" />
-          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white px-4">
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide text-white drop-shadow-lg">
-              {getCartaTitulo()}
-            </h1>
-            <div className="w-24 h-0.5 bg-gold mt-6 mb-4 mx-auto" />
-            <p className="text-sm md:text-base text-white/80 tracking-wider">Cócteles | Tapas | Música</p>
-          </div>
-        </div>
-      )}
-
-      {/* Anuncio "Pedir en barra" */}
-      <div className="container mx-auto px-4 py-6 text-center">
-        <div className="inline-block">
-          <p className="text-gold text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide animate-pulse-glow shadow-glow">
-            🍸 {getAnuncioTexto()} 🍹
-          </p>
-        </div>
-      </div>
-
-      <div className="pt-2"></div>
-
-      {/* Menú horizontal de categorías */}
-      <div className="sticky top-0 z-30 bg-black/95 backdrop-blur border-b border-gray-800 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="relative flex items-center gap-2">
-            {showLeftArrow && <button onClick={() => scrollHorizontal('left')} className="hidden md:flex absolute left-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-gray-900 shadow-md border border-gray-700"><ChevronLeft className="h-4 w-4 text-white" /></button>}
-            <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto scroll-smooth py-3" style={{ scrollbarWidth: 'thin' }}>
-              {availableCategories.map((category) => {
-                const categoryName = getCategoryButtonName(category)
-                const isActive = activeCategory === category.id
-                return (
-                  <Button 
-                    key={category.id} 
-                    id={`cat-btn-${category.id}`} 
-                    onClick={() => changeCategory(category.id)} 
-                    variant="outline"
-                    size="default" 
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition-all duration-300 ${
-                      isActive 
-                        ? 'bg-gold text-black border-gold' 
-                        : 'bg-black border-2 border-gold text-gold hover:shadow-gold'
-                    }`}
-                  >
-                    {category.type === 'suggestion' && (
-                      <div className="flex gap-0.5 mr-1">
-                        <Star className="h-3 w-3 fill-gold text-gold" />
-                        <Star className="h-3 w-3 fill-gold text-gold" />
-                        <Star className="h-3 w-3 fill-gold text-gold" />
-                      </div>
-                    )}
-                    <span className={isActive ? "text-black font-medium" : "text-gold font-medium"}>{categoryName}</span>
-                  </Button>
-                )
-              })}
+    <div className="min-h-screen bg-fixed bg-cover bg-center" style={{ backgroundImage: `url(${fondoCarta || '/default-bg.jpg'})` }}>
+      <div className="min-h-screen backdrop-blur-sm bg-black/30">
+        {/* Menú horizontal de categorías */}
+        <div className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b shadow-md">
+          <div className="container mx-auto px-4">
+            <div className="relative flex items-center gap-2">
+              {showLeftArrow && <button onClick={() => scrollHorizontal('left')} className="hidden md:flex absolute left-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-background shadow-md border"><ChevronLeft className="h-4 w-4" /></button>}
+              <div ref={scrollContainerRef} className="flex gap-2 overflow-x-auto scroll-smooth py-3" style={{ scrollbarWidth: 'thin' }}>
+                {availableCategories.map((category) => {
+                  const categoryName = getCategoryName(category)
+                  const isActive = activeCategory === category.id
+                  return (
+                    <Button key={category.id} id={`cat-btn-${category.id}`} onClick={() => changeCategory(category.id)} variant={isActive ? "default" : "outline"} size="default" className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0">
+                      {category.type === 'suggestion' && <Star className="inline-block h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />}
+                      {categoryName}
+                    </Button>
+                  )
+                })}
+              </div>
+              {showRightArrow && <button onClick={() => scrollHorizontal('right')} className="hidden md:flex absolute right-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-background shadow-md border"><ChevronRight className="h-4 w-4" /></button>}
             </div>
-            {showRightArrow && <button onClick={() => scrollHorizontal('right')} className="hidden md:flex absolute right-0 z-10 h-8 w-8 items-center justify-center rounded-full bg-gray-900 shadow-md border border-gray-700"><ChevronRight className="h-4 w-4 text-white" /></button>}
-          </div>
-        </div>
-      </div>
-
-      {/* Contenido principal */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-end mb-3">
-          <div className="flex items-center gap-2 bg-gray-900/30 rounded-lg p-1">
-            <button 
-              onClick={() => setView('grid')} 
-              className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-all", view === 'grid' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}
-              title={t('menu.gridView')}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button 
-              onClick={() => setView('list')} 
-              className={cn("h-8 w-8 rounded-md flex items-center justify-center transition-all", view === 'list' ? "bg-gold text-black shadow-sm" : "text-gray-400 hover:bg-gray-800")}
-              title={t('menu.listView')}
-            >
-              <List className="h-4 w-4" />
-            </button>
           </div>
         </div>
 
-        {renderMainContent()}
-        
-        {currentData.type === 'single' && (currentData.data as Producto[]).length === 0 && (
-          <div className="text-center py-12"><p className="text-gray-400">{t('menu.noProductsInCategory')}</p></div>
-        )}
+        {/* Contenido principal */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-end mb-6">
+            <div className="flex items-center gap-2 bg-muted/30 rounded-lg p-1">
+              <button onClick={() => setView('grid')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'grid' ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted")}><LayoutGrid className="h-4 w-4" /></button>
+              <button onClick={() => setView('list')} className={cn("h-8 w-8 rounded-md flex items-center justify-center", view === 'list' ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted")}><List className="h-4 w-4" /></button>
+            </div>
+          </div>
+
+          {currentCategory && activeCategory !== 'todo' && (
+            <div className="mb-6"><h2 className="text-2xl font-bold pb-2 border-b border-primary/30 flex items-center gap-2">{getCategoryName(currentCategory)}</h2></div>
+          )}
+
+          {renderMainContent()}
+          
+          {currentData.type === 'single' && (currentData.data as Producto[]).length === 0 && (
+            <div className="text-center py-12"><p className="text-muted-foreground">No hay productos en esta categoría</p></div>
+          )}
+        </div>
+
+        {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
       </div>
-
-      {showScrollTop && <Button className="fixed bottom-6 right-6 rounded-full shadow-lg z-50 h-10 w-10 bg-gold hover:bg-gold-dark text-black" size="icon" onClick={scrollToTop}><ArrowUp className="h-4 w-4" /></Button>}
-
-      {/* Botón home flotante - SOLO UNO (esquina inferior izquierda) - MÁS PEQUEÑO */}
-      <Link
-        href="/"
-        className="fixed bottom-6 left-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black border border-gold text-gold transition-all duration-300 hover:scale-110 hover:bg-gold/10 focus:outline-none"
-        aria-label="Volver al inicio"
-      >
-        <Home className="h-3 w-3" />
-      </Link>
-
-      <style jsx>{`
-        @keyframes pulse-glow {
-          0%, 100% {
-            transform: scale(1);
-            text-shadow: 0 0 5px rgba(209, 178, 117, 0.5);
-          }
-          20% {
-            transform: scale(1.15);
-            text-shadow: 0 0 20px rgba(209, 178, 117, 0.9), 0 0 30px rgba(209, 178, 117, 0.5);
-          }
-          40% {
-            transform: scale(1.05);
-            text-shadow: 0 0 10px rgba(209, 178, 117, 0.7);
-          }
-          60% {
-            transform: scale(1.12);
-            text-shadow: 0 0 25px rgba(209, 178, 117, 0.8);
-          }
-          80% {
-            transform: scale(1.02);
-            text-shadow: 0 0 8px rgba(209, 178, 117, 0.6);
-          }
-        }
-        
-        .animate-pulse-glow {
-          animation: pulse-glow 1.8s ease-in-out 3;
-        }
-        
-        .shadow-glow {
-          filter: drop-shadow(0 0 8px rgba(209, 178, 117, 0.4));
-        }
-      `}</style>
     </div>
   )
 }
