@@ -29,20 +29,20 @@ export default function HomePage() {
           setPortadaUrl(data.portada || '')
           
           if (language === 'en') {
-            setTitulo(data.tituloEn || data.titulo || "Gaby's Club")
-            setSubtitulo(data.subtituloEn || data.subtitulo || 'The best cocktails in the city')
+            setTitulo(data.tituloEn || data.titulo || "Tipico Caribeño")
+            setSubtitulo(data.subtituloEn || data.subtitulo || 'Auténtica cocina dominicana')
           } else if (language === 'fr') {
-            setTitulo(data.tituloFr || data.titulo || "Gaby's Club")
-            setSubtitulo(data.subtituloFr || data.subtitulo || 'Les meilleurs cocktails de la ville')
+            setTitulo(data.tituloFr || data.titulo || "Tipico Caribeño")
+            setSubtitulo(data.subtituloFr || data.subtitulo || 'Authentique cuisine dominicaine')
           } else if (language === 'de') {
-            setTitulo(data.tituloDe || data.titulo || "Gaby's Club")
-            setSubtitulo(data.subtituloDe || data.subtitulo || 'Die besten Cocktails der Stadt')
+            setTitulo(data.tituloDe || data.titulo || "Tipico Caribeño")
+            setSubtitulo(data.subtituloDe || data.subtitulo || 'Authentische dominikanische Küche')
           } else if (language === 'ru') {
-            setTitulo(data.tituloRu || data.titulo || "Gaby's Club")
-            setSubtitulo(data.subtituloRu || data.subtitulo || 'Лучшие коктейли в городе')
+            setTitulo(data.tituloRu || data.titulo || "Tipico Caribeño")
+            setSubtitulo(data.subtituloRu || data.subtitulo || 'Аутентичная доминиканская кухня')
           } else {
-            setTitulo(data.titulo || "Gaby's Club")
-            setSubtitulo(data.subtitulo || 'Los mejores cócteles de la ciudad')
+            setTitulo(data.titulo || "Tipico Caribeño")
+            setSubtitulo(data.subtitulo || 'Auténtica cocina dominicana')
           }
           
           if (data.whatsapp) {
@@ -112,23 +112,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section - 4 iconos de bar */}
+      {/* Features Section - 4 iconos */}
       <section className="py-16 bg-gradient-to-b from-black to-gray-950">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Wine className="h-8 w-8 text-gold" />
+                <Utensils className="h-8 w-8 text-gold" />
               </div>
-              <h3 className="font-semibold mb-1 text-white">Coctelería</h3>
-              <p className="text-sm text-gray-400">Cócteles exclusivos</p>
+              <h3 className="font-semibold mb-1 text-white">Comida Casera</h3>
+              <p className="text-sm text-gray-400">Recetas tradicionales</p>
             </div>
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Utensils className="h-8 w-8 text-gold" />
+                <Wine className="h-8 w-8 text-gold" />
               </div>
-              <h3 className="font-semibold mb-1 text-white">Tapas</h3>
-              <p className="text-sm text-gray-400">Picaderas y más</p>
+              <h3 className="font-semibold mb-1 text-white">Cócteles</h3>
+              <p className="text-sm text-gray-400">Bebidas exclusivas</p>
             </div>
             <div className="text-center group">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/50 flex items-center justify-center group-hover:scale-110 transition-transform">

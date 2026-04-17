@@ -5,41 +5,40 @@ import Link from 'next/link'
 
 export default function UbicacionPage() {
   const negocio = {
-    nombre: "Gaby's Club",
-    direccion: "Carrer del Tropazi, 24, Gràcia, 08012 Barcelona",
-    telefono: "+34634492023",
-    whatsapp: "+34634492023",
-    email: "info@gabysclub.com"
+    nombre: "Tipico Caribeño",
+    direccion: "Carrer de la Indústria 202, 08026 Barcelona",
+    telefono: "+34682491444",
+    whatsapp: "+34682491444",
+    email: "info@tipicocaribeno.com"
   }
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(negocio.direccion)}`
   const whatsappUrl = `https://wa.me/${negocio.whatsapp.replace(/[^0-9]/g, '')}`
 
-  // Coordenadas aproximadas de Gràcia
-  const lat = 41.4015
-  const lng = 2.1565
+  // Coordenadas aproximadas de la nueva dirección
+  const lat = 41.4095
+  const lng = 2.1768
 
-  // Enlaces de transporte
   const transportes = [
     {
       icon: Bus,
       name: "Autobús",
-      lines: ["24", "39", "H6", "V17"],
-      description: "Parada Lesseps / Travessera de Dalt",
+      lines: ["H8", "V23", "19", "47"],
+      description: "Parada Carrer de la Indústria",
       url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
     },
     {
       icon: Train,
       name: "Metro",
-      lines: ["L3 (Lesseps)", "L3 (Fontana)", "L7 (Gràcia)"],
+      lines: ["L2 (Monumental)", "L5 (Sagrada Família)"],
       description: "Estaciones a 5-10 minutos",
       url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
     },
     {
       icon: Car,
       name: "Coche",
-      lines: ["Ronda de Dalt (B20)", "Travessera de Dalt"],
-      description: "Aparcamiento público cercano",
+      lines: ["Ronda del Mig", "Carrer de la Indústria"],
+      description: "Aparcamiento en la zona",
       url: `https://www.google.com/maps/dir//${lat},${lng}/@${lat},${lng},17z/data=!4m2!4m1!3e3`
     }
   ]
@@ -57,7 +56,7 @@ export default function UbicacionPage() {
             Nuestra Ubicación
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Ven a disfrutar de los mejores cócteles y tapas en el corazón de Gràcia
+            Ven a disfrutar de la mejor comida dominicana en el corazón de Barcelona
           </p>
         </div>
 
@@ -66,7 +65,7 @@ export default function UbicacionPage() {
           <div className="rounded-xl overflow-hidden border border-gold/30 shadow-lg bg-gray-900">
             <div className="relative w-full h-[400px] bg-gray-800 flex items-center justify-center">
               <img
-                src={`https://maps.googleapis.com/maps/api/staticmap?center=Carrer+del+Tropazi+24+Barcelona&zoom=15&size=600x400&markers=color:gold%7CCarrer+del+Tropazi+24+Barcelona&key=AIzaSyBtZzm_wnE_lyi3F8qr8iCQdQA4TSEyozU`}
+                src={`https://maps.googleapis.com/maps/api/staticmap?center=Carrer+de+la+Ind%C3%BAstria+202+Barcelona&zoom=15&size=600x400&markers=color:gold%7CCarrer+de+la+Ind%C3%BAstria+202+Barcelona&key=AIzaSyBtZzm_wnE_lyi3F8qr8iCQdQA4TSEyozU`}
                 alt="Mapa de ubicación"
                 className="w-full h-full object-cover"
                 onError={(e) => {
