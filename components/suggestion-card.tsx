@@ -1,7 +1,6 @@
 'use client'
 
 import { useI18n } from '@/lib/i18n'
-import { Star } from 'lucide-react'
 
 export function SuggestionCard({ product }: { product: any }) {
   const { language } = useI18n()
@@ -47,13 +46,7 @@ export function SuggestionCard({ product }: { product: any }) {
           <p className="font-bold text-gold">€{product.precio.toFixed(2)}</p>
         </div>
         {descripcion && (
-          <p className="text-sm text-gray-400 line-clamp-2 mb-3">{descripcion}</p>
-        )}
-        {product.destacado && (
-          <div className="flex items-center gap-1">
-            <Star className="h-3 w-3 fill-gold text-gold" />
-            <span className="text-xs text-gold">Destacado</span>
-          </div>
+          <p className="text-sm text-gray-400 line-clamp-2">{descripcion}</p>
         )}
       </div>
     </div>
