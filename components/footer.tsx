@@ -29,8 +29,8 @@ export function Footer() {
   const negocio = {
     nombre: "Tipico Caribeño",
     direccion: "Carrer de la Indústria 202, 08026 Barcelona",
-    telefono: "+34634492023",
-    whatsapp: "+34634492023",
+    telefono: "+34682491444",
+    whatsapp: "+34682491444",
     email: "info@tipicocaribeno.com",
     instagram: "https://www.instagram.com/tipicocaribeno",
     tiktok: "https://www.tiktok.com/@tipicocaribeno"
@@ -46,8 +46,9 @@ export function Footer() {
           setBgColor(data.footerBgColor || '#000000')
           setTextColor(data.footerTextColor || '#d1b275')
           
-          if (data.horario) {
-            setHorario(data.horario)
+          // El campo en Firestore se llama "horarios" (con s)
+          if (data.horarios) {
+            setHorario(data.horarios)
           }
         }
       } catch (error) {
