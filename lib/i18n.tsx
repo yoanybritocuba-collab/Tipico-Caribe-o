@@ -116,6 +116,8 @@ const translations: Record<string, Record<Language, string>> = {
   'common.clearFilters': { es: 'Limpiar filtros', en: 'Clear filters', fr: 'Effacer les filtres', de: 'Filter löschen', ru: 'Очистить фильтры' },
 }
 
+const STORAGE_KEY = 'tipico-caribeno-language'
+
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
@@ -124,7 +126,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setIsClient(true)
-    const stored = localStorage.getItem('gaby-club-language') as Language
+    const stored = localStorage.getItem(STORAGE_KEY) as Language
     if (stored && ['es', 'en', 'fr', 'de', 'ru'].includes(stored)) {
       setLanguageState(stored)
     }
@@ -132,7 +134,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
-    localStorage.setItem('gaby-club-language', lang)
+    localStorage.setItem(STORAGE_KEY, lang)
     window.location.reload()
   }
 
