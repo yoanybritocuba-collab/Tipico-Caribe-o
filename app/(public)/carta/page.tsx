@@ -12,8 +12,17 @@ import { useI18n } from '@/lib/i18n'
 import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
+// Función auxiliar para obtener el valor localizado de un producto
+function getLocalizedValue(product: Producto, field: 'nombre' | 'descripcion', language: string): string {
+  if (language === 'en') {
+    if (field === 'nombre' && product.nameEn) return product.nameEn
+    if (field === 'descripcion' && product.descriptionEn) return product.descriptionEn
+  }
+  return product[field] || ''
+}
+
 export default function MenuPage() {
-  const { t, language, getLocalizedField } = useI18n()
+  const { t, language } = useI18n()
   const [view, setView] = useState<'grid' | 'list'>('grid')
   const [activeCategory, setActiveCategory] = useState<string>('todo')
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
@@ -125,7 +134,7 @@ export default function MenuPage() {
   const handleAddToCart = (product: Producto, productId: string) => {
     const quantity = quantities[productId] || 1
     if (quantity > 0) {
-      const productName = getLocalizedField(product, 'nombre')
+      const productName = getLocalizedValue(product, 'nombre', language)
       addToCart({
         id: product.id,
         name: productName,
@@ -156,7 +165,7 @@ export default function MenuPage() {
   const suggestedProducts = activeProducts.filter(p => p.destacado === true)
 
   if (activeProducts.length === 0) {
-    return <div className="container mx-auto px-4 py-16 text-center"><h2 className="text-2xl font-bold mb-4">{t('menu.title')}</h2><p className="text-muted-foreground">No hay productos disponibles</p></div>
+    return <div className="container mx-auto px-4 py-16 text-center"><h2 className="text-2xl font-bold mb-4">{t('carta.title')}</h2><p className="text-muted-foreground">No hay productos disponibles</p></div>
   }
 
   interface MenuCategory {
@@ -167,8 +176,8 @@ export default function MenuPage() {
   }
 
   const menuCategories: MenuCategory[] = [
-    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: 'Sugerencias del Chef', nameEn: "Chef's Suggestions", type: 'suggestion' as const }] : []),
-    { id: 'todo', name: 'Todo', nameEn: 'All', type: 'all' as const },
+    ...(suggestedProducts.length > 0 ? [{ id: 'sugerencias', name: t('menu.suggestionsCategory'), nameEn: "Bartender's Suggestions", type: 'suggestion' as const }] : []),
+    { id: 'todo', name: t('menu.todo'), nameEn: 'All', type: 'all' as const },
     ...categories.filter(cat => cat.activo === true).map(cat => ({
       id: cat.id,
       name: cat.nombre,
@@ -188,7 +197,11 @@ export default function MenuPage() {
     categories.forEach(cat => {
       const catProducts = activeProducts.filter(p => p.categoriaGlobalId === cat.id).sort((a, b) => (a.orden || 0) - (b.orden || 0))
       if (catProducts.length > 0) {
-        grouped.push({ categoryId: cat.id, categoryName: getLocalizedField(cat, 'name'), products: catProducts })
+        grouped.push({ 
+          categoryId: cat.id, 
+          categoryName: language === 'en' && cat.nameEn ? cat.nameEn : cat.nombre, 
+          products: catProducts 
+        })
       }
     })
     return grouped
@@ -203,7 +216,12 @@ export default function MenuPage() {
   const currentData = getProductsByCategory()
   const currentCategory = availableCategories.find(c => c.id === activeCategory)
 
-  const getCategoryName = (category: MenuCategory) => language === 'en' ? category.nameEn : category.name
+  const getCategoryName = (category: MenuCategory) => {
+    if (category.type === 'suggestion') return t('menu.suggestionsCategory')
+    if (category.type === 'all') return t('menu.todo')
+    if (language === 'en' && category.nameEn) return category.nameEn
+    return category.name
+  }
 
   const renderProducts = (productsList: Producto[]) => {
     if (view === 'grid') {
@@ -211,8 +229,8 @@ export default function MenuPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {productsList.map((product) => {
             const quantity = quantities[product.id] || 0
-            const productName = getLocalizedField(product, 'nombre')
-            const productDescription = getLocalizedField(product, 'descripcion')
+            const productName = getLocalizedValue(product, 'nombre', language)
+            const productDescription = getLocalizedValue(product, 'descripcion', language)
             const isSuggested = product.destacado === true
 
             return (
@@ -244,8 +262,8 @@ export default function MenuPage() {
       <div className="space-y-4">
         {productsList.map((product) => {
           const quantity = quantities[product.id] || 0
-          const productName = getLocalizedField(product, 'nombre')
-          const productDescription = getLocalizedField(product, 'descripcion')
+          const productName = getLocalizedValue(product, 'nombre', language)
+          const productDescription = getLocalizedValue(product, 'descripcion', language)
           const isExpanded = expandedProduct === product.id
           const isSuggested = product.destacado === true
           const currentCategoryId = activeCategory === 'sugerencias' ? 'sugerencias' : product.categoriaGlobalId
