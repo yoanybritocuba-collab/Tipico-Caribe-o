@@ -18,52 +18,31 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Tipico Caribeño | Restaurante Dominicano en Barcelona",
-  description: "Auténtica cocina dominicana en el corazón de Barcelona. Disfruta de nuestros platos tradicionales.",
-  keywords: ['restaurante dominicano', 'comida caribeña', 'Barcelona', 'Tipico Caribeño', 'comida dominicana'],
-  authors: [{ name: "Tipico Caribeño" }],
+  title: "Tipico Caribeño | Cocktail Bar",
+  description: "Auténtico bar en el corazón de Barcelona",
   icons: {
     icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
-  },
-  openGraph: {
-    title: "Tipico Caribeño | Restaurante Dominicano en Barcelona",
-    description: 'Auténtica cocina dominicana en el corazón de Barcelona',
-    type: 'website',
-    locale: 'es_ES',
-    alternateLocale: 'en_US',
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#1a1816' },
-    { media: '(prefers-color-scheme: dark)', color: '#1a1816' },
-  ],
+  themeColor: '#1a1816',
   width: 'device-width',
   initialScale: 1,
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
         <link rel="icon" type="image/png" href="/logo.png" />
-        <link rel="shortcut icon" href="/logo.png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <I18nProvider>
             <StoreProvider>
               {children}
@@ -72,43 +51,6 @@ export default function RootLayout({
           </I18nProvider>
         </ThemeProvider>
         <Toaster position="bottom-center" richColors />
-        
-        {/* Script para eliminar el toolbar de Vercel en móviles */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                function removeVercelToolbar() {
-                  const selectors = [
-                    '#__next-vercel-toolbar',
-                    '.vercel-toolbar',
-                    '[data-vercel-toolbar]',
-                    'div[class*="vercel-toolbar"]',
-                    'iframe[title*="toolbar"]'
-                  ];
-                  
-                  selectors.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(el => {
-                      if (el) el.remove();
-                    });
-                  });
-                  
-                  const allDivs = document.querySelectorAll('div');
-                  allDivs.forEach(div => {
-                    if (div.style && div.style.position === 'fixed' && div.style.bottom === '20px' && div.style.right === '20px') {
-                      div.remove();
-                    }
-                  });
-                }
-                
-                removeVercelToolbar();
-                setTimeout(removeVercelToolbar, 1000);
-                setTimeout(removeVercelToolbar, 3000);
-              })();
-            `,
-          }}
-        />
       </body>
     </html>
   )
