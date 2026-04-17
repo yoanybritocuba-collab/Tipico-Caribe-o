@@ -11,15 +11,15 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { initializeApp, getApps } from 'firebase/app'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBtZzm_wnE_lyi3F8qr8iCQdQA4TSEyozU",
-  authDomain: "gaby-club.firebaseapp.com",
-  projectId: "gaby-club",
-  storageBucket: "gaby-club.firebasestorage.app",
-  messagingSenderId: "1088486906554",
-  appId: "1:1088486906554:web:7a30202f2a92c0010d8083"
+  apiKey: "AIzaSyAl_IO_Y-xWCK333pnXQmGiaJ3IuIrdJEk",
+  authDomain: "tipico-caribeno.firebaseapp.com",
+  projectId: "tipico-caribeno",
+  storageBucket: "tipico-caribeno.firebasestorage.app",
+  messagingSenderId: "349147555780",
+  appId: "1:349147555780:web:35372f753cb66d50cca691"
 }
 
-// Inicializar Firebase si no existe
+// Inicializar Firebase solo si no existe
 if (!getApps().length) {
   initializeApp(firebaseConfig)
 }
@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const token = await userCredential.user.getIdToken()
       localStorage.setItem('firebase-token', token)
-      toast.success('Bienvenido')
+      toast.success('Bienvenido al panel de administración')
       router.push('/admin/dashboard')
     } catch (error: any) {
       console.error('Error:', error)
@@ -53,17 +53,21 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-900 p-4">
       <Card className="w-full max-w-md border-gray-800 bg-gray-950">
         <CardHeader>
-          <CardTitle className="text-center text-2xl text-white">Admin Login</CardTitle>
+          <CardTitle className="text-center text-2xl font-bold text-gold">
+            Tipico Caribeño
+          </CardTitle>
+          <p className="text-center text-sm text-gray-400">Panel de Administración</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-gray-300">Email</Label>
+              <Label className="text-gray-300">Correo electrónico</Label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+                placeholder="admin@tipicocaribeno.com"
                 required
               />
             </div>
@@ -73,12 +77,17 @@ export default function AdminLoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="mt-1 bg-gray-900 border-gray-700 text-white"
+                placeholder="••••••••"
                 required
               />
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
-              {isLoading ? 'Entrando...' : 'Ingresar'}
+            <Button 
+              type="submit" 
+              className="w-full bg-gold text-black hover:bg-gold-dark font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Ingresando...' : 'Ingresar'}
             </Button>
           </form>
         </CardContent>
