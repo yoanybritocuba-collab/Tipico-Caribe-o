@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
 export function WhatsAppButton() {
-  const [whatsappNumber, setWhatsappNumber] = useState('34634492023')
+  const [whatsappNumber, setWhatsappNumber] = useState('')
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -37,7 +37,14 @@ export function WhatsAppButton() {
   }, [])
 
   const handleClick = () => {
-    window.open(`https://wa.me/${whatsappNumber}`, '_blank')
+    if (whatsappNumber) {
+      window.open(`https://wa.me/${whatsappNumber}`, '_blank')
+    }
+  }
+
+  // No mostrar el botón hasta que tengamos el número
+  if (!whatsappNumber) {
+    return null
   }
 
   return (
@@ -48,7 +55,6 @@ export function WhatsAppButton() {
       }`}
       aria-label="WhatsApp"
     >
-      {/* Efecto de onda de radio */}
       <span className="absolute inset-0 rounded-full animate-ping-slow bg-green-400 opacity-75"></span>
       <span className="absolute inset-0 rounded-full animate-ping-slower bg-green-300 opacity-50"></span>
       <span className="absolute inset-0 rounded-full animate-ping-slowest bg-green-200 opacity-25"></span>
