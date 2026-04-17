@@ -26,14 +26,15 @@ export function Footer() {
     domingo: { apertura: '20:00', cierre: '03:00' }
   })
 
+  // DATOS DE TIPICO CARIBEÑO (no de Gaby's Club)
   const negocio = {
-    nombre: "Gaby's Club",
+    nombre: "Tipico Caribeño",
     direccion: "Carrer del Tropazi, 24, Gracia, 08012 Barcelona",
     telefono: "+34634492023",
     whatsapp: "+34634492023",
-    email: "info@gabysclub.com",
-    instagram: "https://www.instagram.com/gabys_club24",
-    tiktok: "https://www.tiktok.com/@gabysclub_24"
+    email: "info@tipicocaribeno.com",
+    instagram: "https://www.instagram.com/tipicocaribeno",
+    tiktok: "https://www.tiktok.com/@tipicocaribeno"
   }
 
   useEffect(() => {
@@ -188,7 +189,7 @@ export function Footer() {
             )}
           </div>
 
-          {/* Columna 3: Enlaces rápidos con iconos correctos */}
+          {/* Columna 3: Enlaces rápidos */}
           <div className="space-y-4">
             <h4 className="font-semibold" style={{ color: textColor }}>{t('footer.links') || 'Enlaces'}</h4>
             <ul className="space-y-2 text-sm">
