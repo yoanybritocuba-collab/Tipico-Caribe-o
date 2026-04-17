@@ -6,7 +6,7 @@ import { db } from '@/lib/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 
 export function WhatsAppButton() {
-  const [whatsappNumber, setWhatsappNumber] = useState('')
+  const [whatsappNumber, setWhatsappNumber] = useState('34682491444')
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
