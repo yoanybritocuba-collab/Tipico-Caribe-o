@@ -30,7 +30,6 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
   const [isAnimating, setIsAnimating] = useState(true)
   const [cycleKey, setCycleKey] = useState(0)
 
-  // Obtener el texto traducido según el idioma actual
   const getTranslatedText = () => {
     if (!config) return ''
     if (language === 'en' && config.textoEn) return config.textoEn
@@ -47,8 +46,7 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
     
     const navbar = document.querySelector('header')
     if (navbar) {
-      const height = navbar.offsetHeight
-      setNavbarHeight(height)
+      setNavbarHeight(navbar.offsetHeight)
     }
     
     const handleScroll = () => {
@@ -116,12 +114,8 @@ export function LineaInformativa({ config }: LineaInformativaProps) {
       </div>
       <style jsx global>{`
         @keyframes marquee {
-          0% { 
-            transform: translateX(100%);
-          }
-          100% { 
-            transform: translateX(-100%);
-          }
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
         }
       `}</style>
     </div>

@@ -7,7 +7,7 @@ import {
   Upload, X, Eye, Image as ImageIcon, LayoutTemplate, Type, AlignLeft, Maximize2,
   Instagram, Facebook, MapPin, Phone, MessageCircle, Mail, Clock, Save,
   Monitor, MoveHorizontal, Gauge, Repeat, AlignCenter, AlignLeft as AlignLeftIcon, AlignRight,
-  Calendar, Timer, Lock, LogOut
+  Calendar, Timer, Lock, LogOut, Circle, CircleCheck
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -86,37 +86,10 @@ export default function ConfiguracionPage() {
       ru: ''
     }
     
-    // Traducir a inglés
-    try {
-      translations.en = await translateText(text, 'en')
-    } catch (error) {
-      console.error('Error traduciendo a inglés:', error)
-      translations.en = text
-    }
-    
-    // Traducir a francés
-    try {
-      translations.fr = await translateText(text, 'fr')
-    } catch (error) {
-      console.error('Error traduciendo a francés:', error)
-      translations.fr = text
-    }
-    
-    // Traducir a alemán
-    try {
-      translations.de = await translateText(text, 'de')
-    } catch (error) {
-      console.error('Error traduciendo a alemán:', error)
-      translations.de = text
-    }
-    
-    // Traducir a ruso
-    try {
-      translations.ru = await translateText(text, 'ru')
-    } catch (error) {
-      console.error('Error traduciendo a ruso:', error)
-      translations.ru = text
-    }
+    try { translations.en = await translateText(text, 'en') } catch (error) { translations.en = text }
+    try { translations.fr = await translateText(text, 'fr') } catch (error) { translations.fr = text }
+    try { translations.de = await translateText(text, 'de') } catch (error) { translations.de = text }
+    try { translations.ru = await translateText(text, 'ru') } catch (error) { translations.ru = text }
     
     return translations
   }
@@ -129,9 +102,7 @@ export default function ConfiguracionPage() {
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
           const data = docSnap.data()
-          if (data.horarios) {
-            setHorarios(prev => ({ ...prev, ...data.horarios }))
-          }
+          if (data.horarios) setHorarios(prev => ({ ...prev, ...data.horarios }))
           setTickerActivo(data.tickerActivo || false)
           setTickerTexto(data.tickerTexto || '')
           setTickerColorTexto(data.tickerColorTexto || '#d1b275')
@@ -227,7 +198,6 @@ export default function ConfiguracionPage() {
     toast.loading('Guardando y traduciendo línea informativa...', { id: 'saving' })
     
     try {
-      // Obtener traducciones
       const traducciones = await translateTickerToAllLanguages(tickerTexto)
       
       await updateDoc(doc(db, 'configuracion', 'vUJ7J8q0KfoLrph2QAgt'), {
@@ -402,6 +372,21 @@ export default function ConfiguracionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* INDICADOR VISUAL MODERNO */}
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900/50 border border-gray-700">
+              <div className={`h-3 w-3 rounded-full animate-pulse ${tickerActivo ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className={`text-sm font-medium ${tickerActivo ? 'text-green-400' : 'text-red-400'}`}>
+                {tickerActivo ? 'ACTIVO - La línea se muestra en la web' : 'INACTIVO - No se muestra en la web'}
+              </span>
+              {tickerActivo && (
+                <div className="ml-auto flex items-center gap-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping" />
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping" style={{ animationDelay: '0.3s' }} />
+                  <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-ping" style={{ animationDelay: '0.6s' }} />
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
               <div>
                 <Label className="text-white font-medium">Activar línea informativa</Label>
